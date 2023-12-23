@@ -20,12 +20,12 @@ class Client {
 
   _run(query) {
     if (query.startsWith("CREATE EXTENSION")) {
-      console.log(`Skipping query: ${query}`);
+      // console.log(`Skipping query: ${query}`);
       return new Promise((resolve) => resolve(undefined));
     }
 
     if (query.startsWith('SELECT')) {
-      console.log(`Running query: ${query}`);
+      // console.log(`Running query: ${query}`);
       return new Promise((resolve, reject) => {
         this.db.all(query, (err, rows) => {
           if (!err) {
@@ -42,7 +42,7 @@ class Client {
       "id INTEGER PRIMARY KEY AUTOINCREMENT"
     );
 
-    console.log(`Running query: ${query}`);
+    // console.log(`Running query: ${query}`);
     return new Promise((resolve, reject) => {
       this.db.run(query, (err) => {
         if (!err) {
@@ -57,7 +57,7 @@ class Client {
   _prepare(query, params) {
     query = query.join('?');
 
-    console.log(`Running prepare: ${query}`, params);
+    // console.log(`Running prepare: ${query}`, params);
     return new Promise((resolve, reject) => {
       const stmt = this.db.prepare(query, (err) => {
         if (!err) {
