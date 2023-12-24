@@ -19,15 +19,17 @@ async function seedOptions(client, data) {
       fee FLOAT NOT NULL,
       action VARCHAR(4) CHECK(action IN ('STO', 'BTC')) NOT NULL,
       assigned INTEGER CHECK(assigned IN (0, 1)) NOT NULL,
+      closed_by INTEGER,
       traded DATETIME NOT NULL,
-      created DATETIME NOT NULL
+      created DATETIME NOT NULL,
+      FOREIGN KEY(closed_by) REFERENCES options(id)
     );`
     console.log(`Created options table`);
 
     for (let i = 0; i < data.length; i++) {
       const entry = data[i];
       await client.sql`INSERT INTO options (
-        id, symbol, strike, otype, exp, price, fee, action, assigned, traded, created
+        id, symbol, strike, otype, exp, price, fee, action, assigned, closed_by, traded, created
       ) VALUES (
         ${entry.id},
         ${entry.symbol},
@@ -38,6 +40,7 @@ async function seedOptions(client, data) {
         ${entry.fee},
         ${entry.action},
         ${entry.assigned},
+        ${entry.closed_by},
         ${entry.traded},
         ${new Date().toISOString().split('T')[0]}
       );`;
@@ -49,42 +52,75 @@ async function seedOptions(client, data) {
   }
 }
 
-async function seedOptionPairs(client, data) {
+async function seedGoals(client, data) {
   try {
-    await client.sql`CREATE TABLE option_pairs (
+    await client.sql`CREATE TABLE goals (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      o1 INTEGER,
-      o2 INTERGER,
-      created DATETIME NOT NULL,
-      FOREIGN KEY(o1) REFERENCES options(id),
-      FOREIGN KEY(o2) REFERENCES options(id)
+      name TEXT NOT NULL,
+      amt FLOAT NOT NULL,
+      curr_amt INTEGER NOT NULL,
+      created DATETIME NOT NULL
     );`
-    console.log(`Created options table`);
+    console.log(`Created goals table`);
 
     for (let i = 0; i < data.length; i++) {
       const entry = data[i];
-      await client.sql`INSERT INTO option_pairs (
-        id, o1, o2, created
+      await client.sql`INSERT INTO goals (
+        id, name, amt, curr_amt, created
       ) VALUES (
         ${entry.id},
-        ${entry.o1},
-        ${entry.o2},
+        ${entry.name},
+        ${entry.amt},
+        ${entry.curr_amt},
         ${new Date().toISOString().split('T')[0]}
       );`;
     }
-    console.log(`Added option pairings`);
+    console.log(`Added goals`);
   } catch (ex) {
-    console.error(`Failed to seed option pairings`, ex);
+    console.error(`Failed to seed goals`, ex);
+    throw ex;
+  }
+}
+
+async function seedGoalContributions(client, data) {
+  try {
+    await client.sql`CREATE TABLE goal_contribs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      goal INTEGER NOT NULL,
+      option INTEGER,
+      amt FLOAT NOT NULL,
+      created DATETIME NOT NULL,
+      FOREIGN KEY(goal) REFERENCES goals(id),
+      FOREIGN KEY(option) REFERENCES options(id)
+    );`
+    console.log(`Created goals table`);
+
+    for (let i = 0; i < data.length; i++) {
+      const entry = data[i];
+      await client.sql`INSERT INTO goal_contribs (
+        id, goal, option, amt, created
+      ) VALUES (
+        ${entry.id},
+        ${entry.goal},
+        ${entry.option},
+        ${entry.amt},
+        ${new Date().toISOString().split('T')[0]}
+      );`;
+    }
+    console.log(`Added goal contributions`);
+  } catch (ex) {
+    console.error(`Failed to seed goal contributions`, ex);
     throw ex;
   }
 }
 
 async function main() {
   console.log(process.env.SEED_OPTIONS_FILE);
-
+  const seedData = require(process.env.SEED_DATA_FILE);
   const client = await db.connect();
-  await seedOptions(client, require(process.env.SEED_OPTIONS_FILE));
-  await seedOptionPairs(client, require(process.env.SEED_OPTION_PAIRS_FILE));
+  await seedOptions(client, seedData.options);
+  await seedGoals(client, seedData.goals);
+  await seedGoalContributions(client, seedData.goal_contributions);
   await client.end();
 }
 

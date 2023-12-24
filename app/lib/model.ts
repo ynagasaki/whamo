@@ -11,3 +11,11 @@ export interface Option {
   traded: string,
   created: string,
 };
+
+export interface Goal {
+  id: number,
+  name: string,
+  amt: number,
+  curr_amt: number,
+  created: string,
+}

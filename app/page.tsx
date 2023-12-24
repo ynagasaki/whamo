@@ -1,6 +1,6 @@
-import { fetchOpenOptions } from "./lib/data";
+import { fetchOpenOptions, fetchGoals } from "./lib/data";
 import { Suspense } from 'react';
-import { Option } from './lib/model';
+import { Goal, Option } from './lib/model';
 
 export default function Page() {
   return (
@@ -10,6 +10,9 @@ export default function Page() {
       </p>
       <Suspense>
         <OptionsList></OptionsList>
+      </Suspense>
+      <Suspense>
+        <GoalsList></GoalsList>
       </Suspense>
     </main>
   );
@@ -30,4 +33,21 @@ async function OptionsList() {
       }
     </>
   );
+}
+
+async function GoalsList() {
+  const goals = await fetchGoals();
+  return (
+    <>
+      {
+        goals.map((goal: Goal) => {
+          return (
+            <div key={`GoalsList-item-${goal.id}`}>
+              {goal.name} @{goal.amt} so far: {goal.curr_amt} ({Math.round(goal.curr_amt / goal.amt * 100)}%)
+            </div >
+          );
+        })
+      }
+    </>
+  )
 }
