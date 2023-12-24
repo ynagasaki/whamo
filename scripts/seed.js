@@ -27,9 +27,9 @@ async function seedOptions(client, data) {
     for (let i = 0; i < data.length; i++) {
       const entry = data[i];
       await client.sql`INSERT INTO options (
-        id, symbol, strike, otype, exp, price, fee, action, assigned, traded, created)
-      VALUES (
-        NULL,
+        id, symbol, strike, otype, exp, price, fee, action, assigned, traded, created
+      ) VALUES (
+        ${entry.id},
         ${entry.symbol},
         ${entry.strike},
         ${entry.otype},
@@ -49,12 +49,42 @@ async function seedOptions(client, data) {
   }
 }
 
+async function seedOptionPairs(client, data) {
+  try {
+    await client.sql`CREATE TABLE option_pairs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      o1 INTEGER,
+      o2 INTERGER,
+      created DATETIME NOT NULL,
+      FOREIGN KEY(o1) REFERENCES options(id),
+      FOREIGN KEY(o2) REFERENCES options(id)
+    );`
+    console.log(`Created options table`);
+
+    for (let i = 0; i < data.length; i++) {
+      const entry = data[i];
+      await client.sql`INSERT INTO option_pairs (
+        id, o1, o2, created
+      ) VALUES (
+        ${entry.id},
+        ${entry.o1},
+        ${entry.o2},
+        ${new Date().toISOString().split('T')[0]}
+      );`;
+    }
+    console.log(`Added option pairings`);
+  } catch (ex) {
+    console.error(`Failed to seed option pairings`, ex);
+    throw ex;
+  }
+}
+
 async function main() {
   console.log(process.env.SEED_OPTIONS_FILE);
 
-  const optionsData = require(process.env.SEED_OPTIONS_FILE);
   const client = await db.connect();
-  await seedOptions(client, optionsData);
+  await seedOptions(client, require(process.env.SEED_OPTIONS_FILE));
+  await seedOptionPairs(client, require(process.env.SEED_OPTION_PAIRS_FILE));
   await client.end();
 }
 
