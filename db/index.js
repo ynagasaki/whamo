@@ -10,8 +10,8 @@ class Client {
   }
 
   sql(query, ...params) {
+    console.log(`sql`, query, params);
     if (params.length === 0) {
-      // console.log(`what`, query);
       return this._run(query[0]);
     } else {
       return this._prepare(query, params);
@@ -19,13 +19,9 @@ class Client {
   }
 
   _run(query) {
-    if (query.startsWith("CREATE EXTENSION")) {
-      // console.log(`Skipping query: ${query}`);
-      return new Promise((resolve) => resolve(undefined));
-    }
+    console.log(`_run query=${query}`);
 
     if (query.startsWith('SELECT')) {
-      // console.log(`Running query: ${query}`);
       return new Promise((resolve, reject) => {
         this.db.all(query, (err, rows) => {
           if (!err) {
@@ -33,20 +29,14 @@ class Client {
           } else {
             reject(getError(err));
           }
-        })
+        });
       });
     }
 
-    query = query.replace(
-      "id UUID DEFAULT uuid_generate_v4() PRIMARY KEY",
-      "id INTEGER PRIMARY KEY AUTOINCREMENT"
-    );
-
-    // console.log(`Running query: ${query}`);
     return new Promise((resolve, reject) => {
       this.db.run(query, (err) => {
         if (!err) {
-          resolve(undefined);
+          resolve({ rows: [] });
         } else {
           reject(getError(err));
         }
@@ -57,18 +47,29 @@ class Client {
   _prepare(query, params) {
     query = query.join('?');
 
-    // console.log(`Running prepare: ${query}`, params);
+    console.log(`Running prepare: ${query}`, params);
     return new Promise((resolve, reject) => {
       const stmt = this.db.prepare(query, (err) => {
         if (!err) {
-          stmt.run(params, (err_run) => {
-            if (!err_run) {
-              stmt.finalize();
-              resolve(undefined);
-            } else {
-              reject(getError(err_run));
-            }
-          });
+          if (query.startsWith('SELECT')) {
+            stmt.all(params, (err_run, rows) => {
+              if (!err_run) {
+                stmt.finalize();
+                resolve({ rows });
+              } else {
+                reject(getError(err_run));
+              }
+            });
+          } else {
+            stmt.run(params, (err_run) => {
+              if (!err_run) {
+                stmt.finalize();
+                resolve({ rows: [] });
+              } else {
+                reject(getError(err_run));
+              }
+            });
+          }
         } else {
           reject(getError(err));
         }
