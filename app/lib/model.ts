@@ -33,3 +33,7 @@ export interface ContributionSummary {
   amt: number,
   created: string,
 }
+
+export interface AllocatableOption extends Option {
+  remaining_amt: number,
+}

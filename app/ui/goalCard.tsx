@@ -3,6 +3,7 @@
 import { ContributionSummary, Goal } from '../lib/model';
 import { Dispatch, SetStateAction, useState } from 'react';
 import useSWR from 'swr';
+import { fmtMoney } from '../lib/util';
 
 const fetcher = async (input: RequestInfo | URL, init?: RequestInit): Promise<any> => {
   const response = await fetch(input, init);
@@ -27,7 +28,10 @@ export function GoalCard(params: { goal: Goal }) {
       <div className="flex">
         <div className="flex-1">
           <span className="text-gray-700 block">{goal.name}</span>
-          <span className="text-gray-400 block">{currAmt ?? '?'} of {goal.amt}</span>
+          <span className="text-gray-400 block">
+            {currAmt ? fmtMoney(currAmt) : '?'} of&nbsp;
+            {fmtMoney(goal.amt)}
+          </span>
         </div>
         <div className="flex-1 text-right">
           {currAmt &&
@@ -75,7 +79,7 @@ function GoalContributions({
                 &nbsp;<span className="text-gray-400">({cs.option_exp})</span>
               </div>
               <div className="flex-1 text-right">
-                {cs.amt}
+                <span className="text-gray-400">$</span>{cs.amt}
               </div>
             </div>
           );
