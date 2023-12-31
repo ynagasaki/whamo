@@ -39,7 +39,7 @@ async function OptionsList() {
               <span className="block text-gray-700">
                 <span className="text-blue-400">{option.otype}</span> {option.symbol} @ {option.strike}
               </span>
-              <span className="block text-gray-400">expires {new Date(option.exp).toDateString()}</span>
+              <span className="block text-gray-400">expires {option.exp}</span>
             </div>
           );
         })

@@ -1,8 +1,10 @@
+export type OptionType = 'CALL' | 'PUT';
+
 export interface Option {
   id: number,
   symbol: string,
   strike: number,
-  otype: 'CALL' | 'PUT',
+  otype: OptionType,
   exp: string,
   price: number,
   fee: number,
@@ -26,7 +28,7 @@ export interface ContributionSummary {
   option_id: number,
   option_symbol: string,
   option_strike: number,
-  option_type: 'CALL' | 'PUT'
+  option_type: OptionType,
   option_exp: string,
   amt: number,
   created: string,

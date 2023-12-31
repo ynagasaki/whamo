@@ -26,6 +26,7 @@ export async function fetchContributions(goalId: number): Promise<ContributionSu
     gc.amt AS amt
   FROM goal_contribs gc
     INNER JOIN options o ON gc.option = o.id
-  WHERE gc.goal = ${goalId};`;
+  WHERE gc.goal = ${goalId}
+  ORDER BY o.exp DESC;`;
   return result.rows;
 }
