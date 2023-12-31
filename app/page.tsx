@@ -1,6 +1,7 @@
 import { fetchOpenOptions, fetchGoals } from "./lib/data";
 import { Suspense } from 'react';
 import { Goal, Option } from './lib/model';
+import { GoalCard } from './ui/goalCard';
 
 export default function Page() {
   return (
@@ -36,10 +37,10 @@ async function OptionsList() {
           return (
             <div key={`OptionList-item-${option.id}`} className="bg-white rounded-md p-3">
               <span className="block text-gray-700">
-                <span className="text-blue-500">{option.otype}</span> {option.symbol} @ {option.strike}
+                <span className="text-blue-400">{option.otype}</span> {option.symbol} @ {option.strike}
               </span>
-              <span className="block text-gray-500">expires {new Date(option.exp).toDateString()}</span>
-            </div >
+              <span className="block text-gray-400">expires {new Date(option.exp).toDateString()}</span>
+            </div>
           );
         })
       }
@@ -54,11 +55,7 @@ async function GoalsList() {
       {
         goals.map((goal: Goal) => {
           return (
-            <div key={`GoalsList-item-${goal.id}`} className="bg-white rounded-md p-3">
-              <span className="text-gray-700 block">{goal.name}</span>
-              <span className="text-gray-500 block">{goal.curr_amt} of {goal.amt}</span>
-              <span className="block">({Math.round(goal.curr_amt / goal.amt * 100)}%)</span>
-            </div >
+            <GoalCard key={`GoalsList-item-${goal.id}`} goal={goal}></GoalCard>
           );
         })
       }

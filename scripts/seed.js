@@ -58,7 +58,7 @@ async function seedGoals(client, data) {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       amt FLOAT NOT NULL,
-      curr_amt INTEGER NOT NULL,
+      curr_amt INTEGER,
       created DATETIME NOT NULL
     );`
     console.log(`Created goals table`);

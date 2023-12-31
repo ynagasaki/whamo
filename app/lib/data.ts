@@ -1,5 +1,5 @@
 import { getClient } from './db';
-import { Option, Goal } from './model';
+import { ContributionSummary, Option, Goal } from './model';
 import { sqldt } from './util';
 
 export async function fetchOpenOptions(dt: Date = new Date()): Promise<Option[]> {
@@ -11,5 +11,21 @@ export async function fetchOpenOptions(dt: Date = new Date()): Promise<Option[]>
 export async function fetchGoals(): Promise<Goal[]> {
   const client = await getClient();
   const result = await client.sql<Goal>`SELECT * FROM goals;`;
+  return result.rows;
+}
+
+export async function fetchContributions(goalId: number): Promise<ContributionSummary[]> {
+  const client = await getClient();
+  const result = await client.sql<ContributionSummary>`SELECT
+    gc.id AS id,
+    o.id AS option_id,
+    o.symbol AS option_symbol,
+    o.strike AS option_strike,
+    o.otype AS option_type,
+    o.exp AS option_exp,
+    gc.amt AS amt
+  FROM goal_contribs gc
+    INNER JOIN options o ON gc.option = o.id
+  WHERE gc.goal = ${goalId};`;
   return result.rows;
 }
