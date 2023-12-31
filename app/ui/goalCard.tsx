@@ -23,7 +23,7 @@ export function GoalCard(params: { goal: Goal }) {
   const currAmt = getCurrAmt(goal, calcAmount);
 
   return (
-    <div className="bg-white rounded-md p-3">
+    <div className="bg-white rounded-md p-3 mb-3">
       <div className="flex">
         <div className="flex-1">
           <span className="text-gray-700 block">{goal.name}</span>
@@ -68,7 +68,7 @@ function GoalContributions({
       {
         data.contributions.map((cs: ContributionSummary) => {
           return (
-            <div key={`ContribSummary-Item-${cs.id}`} className="p-3 flex">
+            <div key={`ContribSummary-Item-${cs.id}`} className="pt-3 pb-3 flex">
               <div className="flex-2">
                 <span className="text-blue-400">{cs.option_type}</span>
                 &nbsp;{cs.option_symbol} @ {cs.option_strike}
