@@ -1,6 +1,6 @@
 import { Option } from "./model";
 
-export function sqldt(dt: Date): string {
+export function sqldt(dt: Date = new Date()): string {
   return dt.toISOString().split('T')[0];
 }
 
