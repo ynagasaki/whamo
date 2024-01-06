@@ -1,15 +1,57 @@
 'use client';
 
+import useSWR, { mutate } from 'swr';
 import { Suspense } from 'react';
-import useSWR from 'swr';
+import {
+  ClientRect,
+  Collision,
+  DndContext,
+  DragEndEvent,
+  rectIntersection,
+  useDraggable
+} from '@dnd-kit/core';
 
 import { AllocatableOption, Goal, Option } from '@/app/lib/model';
 import { GoalCard } from '@/app/ui/goalCard';
-import { fetcher, fmtMoney, tenseExp } from '@/app/lib/util';
-
-import { DndContext, useDraggable } from '@dnd-kit/core';
+import { fetcher, fmtMoney, postData, tenseExp } from '@/app/lib/util';
 
 export default function Page() {
+  const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
+    const { active, over } = event;
+    const option: AllocatableOption = active.data.current?.option;
+    const goal: Goal = over?.data.current?.goal;
+
+    if (!option || !goal) {
+      return;
+    }
+
+    const result = await postData(`/api/contribs`, {
+      goalId: `${goal.id}`,
+      optionId: `${option.id}`,
+      amt: `${option.remaining_amt * 100}`,
+    }) as { leftover: number };
+
+    console.log(`Contributed to goal with leftover=${result.leftover}`);
+    mutate('/api/options/alloc');
+    mutate(`/api/contribs?goal=${goal.id}`);
+  };
+  const collisionDetector = (args: any): Collision[] => {
+    const { collisionRect }: { collisionRect: ClientRect } = args;
+    const xScale = 0.8;
+    const yScale = 0.9;
+    return rectIntersection({
+      ...args,
+      collisionRect: {
+        top: collisionRect.top * yScale,
+        right: collisionRect.right * xScale,
+        bottom: collisionRect.bottom * yScale,
+        left: collisionRect.left * xScale,
+        width: collisionRect.width * xScale,
+        height: collisionRect.height * yScale,
+      }
+    });
+  };
+
   return (
     <main className="bg-gray-100 min-h-screen flex flex-col">
       <div className="p-4">
@@ -19,7 +61,7 @@ export default function Page() {
         </span>
       </div>
       <div className="grid grid-cols-2">
-        <DndContext onDragEnd={(e) => console.log(`over: ${e.over?.id}`)}>
+        <DndContext onDragEnd={dragEndHandler} collisionDetection={collisionDetector}>
           <div className="p-4">
             <Suspense>
               <AllocatableOptionsList />
@@ -150,7 +192,7 @@ function GoalsList() {
 }
 
 function AllocOptionCard({ id, option }: { id: string, option: AllocatableOption }) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id, data: { option } });
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
   } : undefined;
