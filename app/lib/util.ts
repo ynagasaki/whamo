@@ -11,3 +11,8 @@ export function fmtMoney(amt: number): number {
 export function tenseExp(option: Option): string {
   return option.exp < sqldt(new Date()) ? 'expired' : 'expires';
 }
+
+export async function fetcher(input: RequestInfo | URL, init?: RequestInit): Promise<any> {
+  const response = await fetch(input, init);
+  return response.json();
+}

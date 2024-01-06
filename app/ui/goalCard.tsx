@@ -4,6 +4,7 @@ import { ContributionSummary, Goal } from '../lib/model';
 import { Dispatch, SetStateAction, useState } from 'react';
 import useSWR from 'swr';
 import { fmtMoney } from '../lib/util';
+import { useDroppable } from '@dnd-kit/core';
 
 const fetcher = async (input: RequestInfo | URL, init?: RequestInit): Promise<any> => {
   const response = await fetch(input, init);
@@ -17,14 +18,18 @@ function getCurrAmt(goal: Goal, calcAmount: number): number | undefined {
   return goal.curr_amt;
 }
 
-export function GoalCard(params: { goal: Goal }) {
+export function GoalCard(params: any) {
+  const { isOver, setNodeRef } = useDroppable({
+    id: params.id,
+  });
+
   const goal = params.goal;
   const [showDetails, setShowDetails] = useState(false);
   const [calcAmount, setCalcAmount] = useState(-1);
   const currAmt = getCurrAmt(goal, calcAmount);
 
   return (
-    <div className="bg-white rounded-md p-3 mb-3">
+    <div ref={setNodeRef} className="bg-white rounded-md p-3 mb-3">
       <div className="flex">
         <div className="flex-1">
           <span className="text-gray-700 block">{goal.name}</span>
