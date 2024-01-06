@@ -19,7 +19,6 @@ export default function Page() {
         </span>
       </div>
       <div className="grid grid-cols-2">
-
         <DndContext onDragEnd={(e) => console.log(`over: ${e.over?.id}`)}>
           <div className="p-4">
             <Suspense>
@@ -35,7 +34,6 @@ export default function Page() {
             </Suspense>
           </div>
         </DndContext>
-
       </div>
       {
         // <div className="absolute inset-x-0 bottom-0 bg-white ml-12 mr-12 p-3 shadow-md">
