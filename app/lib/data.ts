@@ -8,7 +8,7 @@ export async function fetchOpenOptions(dt: Date = new Date()): Promise<Option[]>
   return result.rows;
 }
 
-export async function fetchGoals(): Promise<Goal[]> {
+export async function fetchOpenGoals(): Promise<Goal[]> {
   const client = await getClient();
   const result = await client.sql<Goal>`SELECT
     g.id AS id,

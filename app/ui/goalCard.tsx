@@ -30,11 +30,7 @@ export function GoalCard({ id, goal }: { id: string, goal: Goal }) {
   );
 }
 
-function GoalContributions({
-  goal,
-}: {
-  goal: Goal,
-}) {
+function GoalContributions({ goal }: { goal: Goal }) {
   const { data, error } = useSWR(`/api/contribs?goal=${goal.id}`, fetcher)
 
   if (error) {

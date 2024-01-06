@@ -32,6 +32,7 @@ export default function Page() {
     }) as { leftover: number };
 
     console.log(`Contributed to goal with leftover=${result.leftover}`);
+    mutate('/api/goals');
     mutate('/api/options/alloc');
     mutate(`/api/contribs?goal=${goal.id}`);
   };
