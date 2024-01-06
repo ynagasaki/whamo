@@ -1,4 +1,4 @@
-import { fetchContributions } from '../../lib/data';
+import { fetchContributions } from '@/app/lib/data';
 
 export async function GET(request: Request): Promise<Response> {
   const { searchParams } = new URL(request.url);

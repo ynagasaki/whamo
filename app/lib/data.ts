@@ -10,7 +10,19 @@ export async function fetchOpenOptions(dt: Date = new Date()): Promise<Option[]>
 
 export async function fetchGoals(): Promise<Goal[]> {
   const client = await getClient();
-  const result = await client.sql<Goal>`SELECT * FROM goals;`;
+  const result = await client.sql<Goal>`SELECT
+    g.id AS id,
+    g.name AS name,
+    g.amt AS amt,
+    g.created AS created,
+    SUM(IFNULL(gc.amt, 0)) AS curr_amt
+  FROM goals g
+    LEFT JOIN goal_contribs gc ON gc.goal = g.id
+  GROUP BY
+    g.id
+  HAVING
+    SUM(IFNULL(gc.amt, 0)) < g.amt
+  ORDER BY g.name;`;
   return result.rows;
 }
 

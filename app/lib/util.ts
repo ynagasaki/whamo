@@ -4,8 +4,11 @@ export function sqldt(dt: Date = new Date()): string {
   return dt.toISOString().split('T')[0];
 }
 
-export function fmtMoney(amt: number): number {
-  return Math.round(amt * 100) / 100;
+export function fmtMoney(amt: number): string {
+  if (amt * 100 % 100 > 0) {
+    return `${Math.round(amt * 100) / 100}`;
+  }
+  return `${amt}.00`;
 }
 
 export function tenseExp(option: Option): string {
