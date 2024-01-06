@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 import { getClient } from './db';
-import { sqldt } from './util';
+import { sqldt, toCents } from './util';
 import { revalidatePath } from 'next/cache';
 
 const CreateOptionFormSchema = z.object({
@@ -29,8 +29,8 @@ export async function createOption(data: FormData): Promise<void> {
     ${rawEntries.strike_price},
     ${rawEntries.option_type},
     ${sqldt(rawEntries.expiration_date)},
-    ${rawEntries.price},
-    ${rawEntries.fee},
+    ${toCents(rawEntries.price)},
+    ${toCents(rawEntries.fee)},
     ${'STO'},
     ${0},
     ${null},

@@ -56,7 +56,7 @@ function GoalContributions({
                 &nbsp;<span className="text-gray-400">({cs.option_exp})</span>
               </div>
               <div className="flex-1 text-right">
-                <span className="text-gray-400">$</span>{cs.amt}
+                <span className="text-gray-400">$</span>{fmtMoney(cs.amt)}
               </div>
             </div>
           );

@@ -15,8 +15,8 @@ async function seedOptions(client, data) {
       strike FLOAT NOT NULL,
       otype VARCHAR(4) CHECK(otype IN ('CALL', 'PUT')) NOT NULL,
       exp DATE NOT NULL,
-      price FLOAT NOT NULL,
-      fee FLOAT NOT NULL,
+      price INTEGER NOT NULL,
+      fee INTEGER NOT NULL,
       action VARCHAR(4) CHECK(action IN ('STO', 'BTC')) NOT NULL,
       assigned INTEGER CHECK(assigned IN (0, 1)) NOT NULL,
       closed_by INTEGER,
@@ -57,7 +57,7 @@ async function seedGoals(client, data) {
     await client.sql`CREATE TABLE goals (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
-      amt FLOAT NOT NULL,
+      amt INTEGER NOT NULL,
       curr_amt INTEGER,
       created DATETIME NOT NULL
     );`
@@ -88,7 +88,7 @@ async function seedGoalContributions(client, data) {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       goal INTEGER NOT NULL,
       option INTEGER,
-      amt FLOAT NOT NULL,
+      amt INTEGER NOT NULL,
       created DATETIME NOT NULL,
       FOREIGN KEY(goal) REFERENCES goals(id),
       FOREIGN KEY(option) REFERENCES options(id)

@@ -5,10 +5,14 @@ export function sqldt(dt: Date = new Date()): string {
 }
 
 export function fmtMoney(amt: number): string {
-  if (amt * 100 % 100 > 0) {
-    return `${Math.round(amt * 100) / 100}`;
+  if (amt % 100 > 0) {
+    return `${Math.round(amt) / 100}`;
   }
-  return `${amt}.00`;
+  return `${amt / 100}.00`;
+}
+
+export function toCents(amt: number): number {
+  return Math.round(amt * 100);
 }
 
 export function tenseExp(option: Option): string {
