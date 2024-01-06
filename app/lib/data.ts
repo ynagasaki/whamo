@@ -62,3 +62,43 @@ export async function fetchAllocatableOptions(dt: Date = new Date()): Promise<Al
   ORDER BY o.exp DESC;`;
   return result.rows;
 }
+
+export async function makeContribution({
+  goalId,
+  optionId,
+  amt
+}: {
+  goalId: number,
+  optionId: number,
+  amt: number
+}): Promise<{ leftover: number }> {
+  const client = await getClient();
+  const result = await client.sql<{ goalAmt: number, currAmt: number }>`SELECT
+    g.amt AS goalAmt,
+    SUM(IFNULL(gc.amt, 0)) AS currAmt
+  FROM goals g
+    LEFT JOIN goal_contribs gc ON gc.goal = g.id
+  WHERE g.id = ${goalId};`;
+
+  if (result.rows.length != 1) {
+    throw new Error(`goal_not_found`);
+  }
+
+  const cumulativeAmt = result.rows[0].currAmt;
+  const goalAmt = result.rows[0].goalAmt;
+  const remaining = goalAmt - cumulativeAmt;
+  const contribution = amt > remaining ? remaining : amt;
+  const leftover = amt - contribution;
+
+  await client.sql`INSERT INTO goal_contribs (
+    id, goal, option, amt, created
+  ) VALUES (
+    ${null},
+    ${goalId},
+    ${optionId},
+    ${contribution},
+    ${sqldt()}
+  );`;
+
+  return { leftover };
+}

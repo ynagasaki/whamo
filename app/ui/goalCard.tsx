@@ -7,12 +7,8 @@ import { useDroppable } from '@dnd-kit/core';
 import { ContributionSummary, Goal } from '@/app/lib/model';
 import { fetcher, fmtMoney } from '@/app/lib/util';
 
-export function GoalCard(params: any) {
-  const { isOver, setNodeRef } = useDroppable({
-    id: params.id,
-  });
-
-  const goal = params.goal;
+export function GoalCard({ id, goal }: { id: string, goal: Goal }) {
+  const { isOver, setNodeRef } = useDroppable({ id, data: { goal } });
   const [showDetails, setShowDetails] = useState(false);
 
   return (

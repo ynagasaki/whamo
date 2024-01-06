@@ -19,3 +19,25 @@ export async function fetcher(input: RequestInfo | URL, init?: RequestInit): Pro
   const response = await fetch(input, init);
   return response.json();
 }
+
+export function assertNumber(s: string | undefined | null): asserts s {
+  if (!s || Number.isNaN(s)) {
+    throw new Error(`${s} is NaN`);
+  }
+}
+
+export async function postData(url: string, data: Record<string, string>): Promise<unknown> {
+  const response = await fetch(url, {
+    method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    redirect: "follow",
+    referrerPolicy: "no-referrer",
+    body: JSON.stringify(data),
+  });
+  return response.json();
+}
