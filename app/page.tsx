@@ -1,7 +1,8 @@
 'use client';
 
+import clsx from 'clsx';
 import useSWR, { mutate } from 'swr';
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import {
   ClientRect,
   Collision,
@@ -10,10 +11,11 @@ import {
   rectIntersection,
   useDraggable
 } from '@dnd-kit/core';
-
 import { AllocatableOption, Goal, Option } from '@/app/lib/model';
+import { dday, fetcher, fmtMoney, postData, tenseExp } from '@/app/lib/util';
 import { GoalCard } from '@/app/ui/goalCard';
-import { fetcher, fmtMoney, postData, tenseExp } from '@/app/lib/util';
+import { OptionForm } from '@/app/ui/optionForm';
+import { ChevronDownIcon } from '@heroicons/react/20/solid';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -53,6 +55,8 @@ export default function Page() {
     });
   };
 
+  const [showOptionForm, setShowOptionForm] = useState(false);
+
   return (
     <main className="bg-gray-100 min-h-screen flex flex-col">
       <div className="p-4">
@@ -60,6 +64,7 @@ export default function Page() {
           whamo&nbsp;
           <span className="text-purple-400">:)</span>
         </span>
+        <button onClick={() => setShowOptionForm(true)}>New Option</button>
       </div>
       <div className="grid grid-cols-2">
         <DndContext onDragEnd={dragEndHandler} collisionDetection={collisionDetector}>
@@ -79,40 +84,7 @@ export default function Page() {
         </DndContext>
       </div>
       {
-        // <div className="absolute inset-x-0 bottom-0 bg-white ml-12 mr-12 p-3 shadow-md">
-        //   <h2>Sold to Open</h2>
-        //   <form action={createOption}>
-        //     <div>
-        //       <label htmlFor="option_type">Type:</label>
-        //       <select id="option_type" name="option_type">
-        //         <option value="CALL">Call</option>
-        //         <option value="PUT">Put</option>
-        //       </select>
-
-        //       <label htmlFor="stock_symbol">Symbol:</label>
-        //       <input type="text" id="stock_symbol" name="stock_symbol" />
-
-        //       <label htmlFor="strike_price">Strike:</label>
-        //       <input type="number" id="strike_price" name="strike_price" />
-
-        //       <label htmlFor="expiration_date">Expiration:</label>
-        //       <input type="date" id="expiration_date" name="expiration_date" />
-        //     </div>
-        //     <div>
-        //       <label htmlFor="price">Price:</label>
-        //       <input type="number" step="0.01" id="price" name="price" />
-
-        //       <label htmlFor="fee">Fee:</label>
-        //       <input type="number" step="0.01" id="fee" name="fee" />
-
-        //       <label htmlFor="traded_date">Traded:</label>
-        //       <input type="date" id="traded_date" name="traded_date" />
-        //     </div>
-        //     <div>
-        //       <button>Save</button>
-        //     </div>
-        //   </form>
-        // </div>
+        showOptionForm && <OptionForm dismissHandler={() => setShowOptionForm(false)} />
       }
     </main>
   );
@@ -156,11 +128,23 @@ function OptionsList() {
       {
         data.options.map((option: Option) => {
           return (
-            <div key={`OptionList-item-${option.id}`} className="bg-white rounded-md p-3">
-              <span className="block text-gray-700">
-                <span className="text-blue-400">{option.otype}</span> {option.symbol} @ {option.strike}
-              </span>
-              <span className="block text-gray-400">{tenseExp(option)} {option.exp}</span>
+            <div key={`OptionList-item-${option.id}`} className="relative flex bg-white rounded-md p-3 mb-3">
+              <div className="flex-1">
+                <span className="block text-gray-700">
+                  <span className="text-blue-400">{option.otype}</span> {option.symbol} @ {option.strike}
+                </span>
+                <span className="block text-gray-400">{tenseExp(option)} {option.exp}</span>
+              </div>
+              <div className="flex-1 text-right">
+                <span className="block text-purple-400 text-xl">{dday(new Date(option.exp))}</span>
+              </div>
+              {/* <div className="absolute inset-x-0 bottom-0 cursor-pointer">
+                <ChevronDownIcon className={clsx("transform w-6 text-gray-300 ml-auto mr-auto",
+                  {
+                    "rotate-180": false,
+                  }
+                )} />
+              </div> */}
             </div>
           );
         })

@@ -45,3 +45,22 @@ export async function postData(url: string, data: Record<string, string>): Promi
   });
   return response.json();
 }
+
+export function dday(target: Date): string {
+  const now = new Date().getTime();
+  const targetMs = target.getTime();
+  const diffMs = targetMs - now;
+  const diffS = diffMs / 1000;
+  const diffMin = diffS / 60;
+  const diffHr = diffMin / 60;
+  const diffDay = diffHr / 24;
+  const diffWk = diffDay / 7;
+
+  if (diffDay >= 7) {
+    return `${Math.ceil(diffWk)}w`;
+  }
+  if (diffHr >= 24) {
+    return `${Math.ceil(diffDay)}d`;
+  }
+  return `today`;
+}
