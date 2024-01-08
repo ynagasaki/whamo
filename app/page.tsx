@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import useSWR, { mutate } from 'swr';
 import { Suspense, useState } from 'react';
 import {
@@ -14,6 +15,7 @@ import { AllocatableOption, Goal, Option } from '@/app/lib/model';
 import { dday, fetcher, fmtMoney, postData, tenseExp } from '@/app/lib/util';
 import { GoalCard } from '@/app/ui/goalCard';
 import { InputFormModal } from '@/app/ui/formModal';
+import { PlusIcon } from '@heroicons/react/20/solid';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -57,12 +59,17 @@ export default function Page() {
 
   return (
     <main className="bg-gray-100 min-h-screen flex flex-col">
+      <div className={clsx("absolute bottom-0 ml-auto mr-auto w-10 h-10 cursor-pointer left-0 right-0 bottom-3 rounded-full p-1 z-30", {
+        "bg-purple-400 text-white": !showOptionForm,
+        "bg-gray-400 text-white transform rotate-45": showOptionForm,
+      })}>
+        <PlusIcon onClick={() => setShowOptionForm(!showOptionForm)}>New Option</PlusIcon>
+      </div>
       <div className="p-4">
         <span className="text-gray-600">
           whamo&nbsp;
           <span className="text-purple-400">:)</span>
         </span>
-        <button onClick={() => setShowOptionForm(true)}>New Option</button>
       </div>
       <div className="grid grid-cols-2">
         <DndContext onDragEnd={dragEndHandler} collisionDetection={collisionDetector}>
@@ -82,7 +89,7 @@ export default function Page() {
         </DndContext>
       </div>
       {
-        showOptionForm && <InputFormModal dismissHandler={() => setShowOptionForm(false)} />
+        showOptionForm && <InputFormModal />
       }
     </main>
   );

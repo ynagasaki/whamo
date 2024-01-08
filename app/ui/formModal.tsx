@@ -3,14 +3,11 @@ import { useState } from "react";
 import { createOption } from "@/app/lib/actions";
 import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/20/solid";
 
-export function InputFormModal({ dismissHandler }: { dismissHandler: () => void }) {
+export function InputFormModal() {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <div className="absolute inset-x-0 bottom-8 bg-white ml-12 mr-12 p-6 shadow-md border rounded-lg text-gray-700">
-      <button onClick={dismissHandler} className="absolute right-6 p-2 rounded border text-gray-400">
-        <XMarkIcon className="h-6 w-6 inline-block align-top" />Close
-      </button>
+    <div className="absolute inset-x-0 bottom-8 bg-white ml-12 mr-12 p-6 shadow-md border rounded-lg text-gray-700 z-20">
       <div className="flex">
         <div className="w-1/4 pr-6">
           <div className={clsx("p-3 cursor-pointer", { "font-bold": activeTab === 0 })} onClick={() => setActiveTab(0)} >
