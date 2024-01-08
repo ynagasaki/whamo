@@ -13,7 +13,7 @@ import {
 import { AllocatableOption, Goal, Option } from '@/app/lib/model';
 import { dday, fetcher, fmtMoney, postData, tenseExp } from '@/app/lib/util';
 import { GoalCard } from '@/app/ui/goalCard';
-import { InputFormModal } from '@/app/ui/optionForm';
+import { InputFormModal } from '@/app/ui/formModal';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
