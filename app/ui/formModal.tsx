@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useState } from "react";
-import { createOption } from "@/app/lib/actions";
+import { createGoal, createOption } from "@/app/lib/actions";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
 export function InputFormModal() {
@@ -29,7 +29,7 @@ export function InputFormModal() {
 
 function GoalForm() {
   return (
-    <form>
+    <form action={createGoal}>
       <div>
         <div className="inline-block mr-3">
           <label htmlFor="goal_title" className="block text-gray-400 text-xs mb-1">Title</label>

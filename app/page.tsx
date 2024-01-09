@@ -71,27 +71,37 @@ export default function Page() {
           <span className="text-purple-400">:)</span>
         </span>
       </div>
-      <div className="grid grid-cols-2">
+      <div className="flex">
         <DndContext onDragEnd={dragEndHandler} collisionDetection={collisionDetector}>
-          <div className="p-4">
-            <Suspense>
-              <AllocatableOptionsList />
-            </Suspense>
-            <Suspense>
-              <OptionsList></OptionsList>
-            </Suspense>
+          <div className="w-1/2 z-10 pr-2 pl-4 pb-4">
+            {/*
+              z-index:
+                1. elements appearing later have higher z
+                2. positioned elements have higher z over non-positioned
+                3. z-indices are nested
+            */}
+            <div className="relative z-10">
+              <Suspense>
+                <AllocatableOptionsList />
+              </Suspense>
+            </div>
+            <div className="relative z-0">
+              <Suspense>
+                <OptionsList></OptionsList>
+              </Suspense>
+            </div>
           </div>
-          <div className="p-4">
+          <div className="w-1/2 z-0 pl-2 pr-4 pb-4">
             <Suspense>
               <GoalsList></GoalsList>
             </Suspense>
           </div>
         </DndContext>
-      </div>
+      </div >
       {
         showOptionForm && <InputFormModal />
       }
-    </main>
+    </main >
   );
 }
 

@@ -19,6 +19,11 @@ const CreateOptionFormSchema = z.object({
   traded_date_btc: z.string().nullish().transform((str) => str ? new Date(str) : null),
 });
 
+const CreateGoalFormSchema = z.object({
+  goal_title: z.string(),
+  goal_amt: z.coerce.number(),
+});
+
 export async function createOption(data: FormData): Promise<void> {
   const entries = CreateOptionFormSchema.parse(Object.fromEntries(data.entries()));
   const client = await getClient();
@@ -59,6 +64,23 @@ export async function createOption(data: FormData): Promise<void> {
     ${0},
     ${btcId},
     ${sqldt(entries.traded_date_sto)},
+    ${sqldt()}
+  );`;
+
+  revalidatePath('/');
+}
+
+export async function createGoal(data: FormData): Promise<void> {
+  const entries = CreateGoalFormSchema.parse(Object.fromEntries(data.entries()));
+  const client = await getClient();
+
+  client.sql`INSERT INTO goals (
+    id, name, amt, curr_amt, created
+  ) VALUES (
+    ${null},
+    ${entries.goal_title},
+    ${toCents(entries.goal_amt)},
+    ${0},
     ${sqldt()}
   );`;
 
