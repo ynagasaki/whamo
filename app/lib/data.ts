@@ -4,7 +4,14 @@ import { sqldt } from './util';
 
 export async function fetchOpenOptions(dt: Date = new Date()): Promise<Option[]> {
   const client = await getClient();
-  const result = await client.sql<Option>`SELECT * FROM options WHERE exp >= ${sqldt(dt)} AND closed_by IS NULL;`;
+  const result = await client.sql<Option>`SELECT
+    *
+  FROM
+    options
+  WHERE exp >= ${sqldt(dt)}
+    AND closed_by IS NULL
+    AND action = 'STO'
+  ORDER BY exp ASC;`;
   return result.rows;
 }
 

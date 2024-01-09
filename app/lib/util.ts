@@ -64,3 +64,7 @@ export function dday(target: Date): string {
   }
   return `today`;
 }
+
+export function numdef(param: number | undefined | null): param is number {
+  return param !== undefined && param !== null;
+}

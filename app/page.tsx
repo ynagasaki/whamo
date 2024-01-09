@@ -63,7 +63,7 @@ export default function Page() {
         "bg-purple-400 text-white": !showOptionForm,
         "bg-gray-400 text-white transform rotate-45": showOptionForm,
       })}>
-        <PlusIcon onClick={() => setShowOptionForm(!showOptionForm)}>New Option</PlusIcon>
+        <PlusIcon onClick={() => setShowOptionForm(!showOptionForm)}></PlusIcon>
       </div>
       <div className="p-4">
         <span className="text-gray-600">
@@ -110,7 +110,7 @@ function AllocatableOptionsList() {
       {
         data.options.map((option: AllocatableOption) => {
           return (
-            <AllocOptionCard id={`alloc-opt-${option.id}`} option={option} key={`AlloOptList-item-${option.id}`} />
+            <AllocOptionCard id={`alloc-opt-${option.id}`} option={option} key={`alloc-opt-${option.id}`} />
           );
         })
       }
@@ -133,7 +133,7 @@ function OptionsList() {
       {
         data.options.map((option: Option) => {
           return (
-            <div key={`OptionList-item-${option.id}`} className="relative flex bg-white rounded-md p-3 mb-3">
+            <div key={`option-${option.id}`} className="relative flex bg-white rounded-md p-3 mb-3">
               <div className="flex-1">
                 <span className="block text-gray-700">
                   <span className="text-blue-400">{option.otype}</span> {option.symbol} @ {option.strike}
@@ -173,7 +173,7 @@ function GoalsList() {
       {
         data.goals.map((goal: Goal) => {
           return (
-            <GoalCard id={`goal-${goal.id}`} key={`GoalsList-item-${goal.id}`} goal={goal}></GoalCard>
+            <GoalCard id={`goal-${goal.id}`} key={`goal-${goal.id}`} goal={goal}></GoalCard>
           );
         })
       }

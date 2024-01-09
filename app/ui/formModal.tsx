@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useState } from "react";
 import { createOption } from "@/app/lib/actions";
-import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
 export function InputFormModal() {
   const [activeTab, setActiveTab] = useState(0);
@@ -83,16 +83,16 @@ function OptionForm() {
         <label htmlFor="action_sto" className="block mt-3">Sold to Open</label>
         <div className="mt-3">
           <div className="inline-block mr-3">
-            <label htmlFor="price" className="block text-gray-400 text-xs mb-1">Price</label>
-            <input type="number" step="0.01" id="price" name="price" placeholder="1.00" className="shadow appearance-none border rounded w-32 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            <label htmlFor="price_sto" className="block text-gray-400 text-xs mb-1">Price</label>
+            <input type="number" step="0.01" id="price_sto" name="price_sto" placeholder="1.00" className="shadow appearance-none border rounded w-32 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
           </div>
           <div className="inline-block mr-3">
-            <label htmlFor="fee" className="block text-gray-400 text-xs mb-1">Fee</label>
-            <input type="number" step="0.01" id="fee" name="fee" placeholder="0.55" className="shadow appearance-none border rounded w-32 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            <label htmlFor="fee_sto" className="block text-gray-400 text-xs mb-1">Fee</label>
+            <input type="number" step="0.01" id="fee_sto" name="fee_sto" placeholder="0.55" className="shadow appearance-none border rounded w-32 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
           </div>
           <div className="inline-block mr-3">
-            <label htmlFor="traded_date" className="block text-gray-400 text-xs mb-1">Traded</label>
-            <input type="date" id="traded_date" name="traded_date" className="shadow appearance-none border rounded w-32 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            <label htmlFor="traded_date_sto" className="block text-gray-400 text-xs mb-1">Traded</label>
+            <input type="date" id="traded_date_sto" name="traded_date_sto" className="shadow appearance-none border rounded w-32 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
           </div>
         </div>
       </div>
