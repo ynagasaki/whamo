@@ -115,12 +115,16 @@ async function seedGoalContributions(client, data) {
 }
 
 async function main() {
-  console.log(process.env.SEED_OPTIONS_FILE);
-  const seedData = require(process.env.SEED_DATA_FILE);
+  let seedData = {};
+
+  if (process.env.SEED_DATA_FILE) {
+    seedData = require(process.env.SEED_DATA_FILE);
+  }
+
   const client = await db.connect();
-  await seedOptions(client, seedData.options);
-  await seedGoals(client, seedData.goals);
-  await seedGoalContributions(client, seedData.goal_contributions);
+  await seedOptions(client, seedData.options ?? []);
+  await seedGoals(client, seedData.goals ?? []);
+  await seedGoalContributions(client, seedData.goal_contributions ?? []);
   await client.end();
 }
 
