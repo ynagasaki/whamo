@@ -151,9 +151,11 @@ function OptionsList() {
                 <span className="block text-gray-400">{tenseExp(option)} {option.exp}</span>
               </div>
               <div className="flex-1 text-right">
-                <span className="text-green-200">$</span><span className="text-green-400">{fmtMoney(option.price - option.fee)}</span>
-                <br />
-                <span className="block text-purple-400 text-xl">{dday(new Date(option.exp))}</span>
+                <div className="text-xl">
+                  <span className="text-green-200">$</span>
+                  <span className="text-green-400">{fmtMoney(option.price * 100 - option.fee)}</span>
+                </div>
+                <span className="block text-purple-400">{dday(new Date(option.exp))}</span>
               </div>
               {/* <div className="absolute inset-x-0 bottom-0 cursor-pointer">
                 <ChevronDownIcon className={clsx("transform w-6 text-gray-300 ml-auto mr-auto",
