@@ -71,7 +71,7 @@ function OptionForm() {
         </div>
         <div className="inline-block mr-3">
           <label htmlFor="strike_price" className="block text-gray-400 text-xs mb-1">Strike</label>
-          <input type="number" id="strike_price" name="strike_price" placeholder="100" className="shadow appearance-none border rounded w-32 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+          <input type="number" step="0.01" id="strike_price" name="strike_price" placeholder="100" className="shadow appearance-none border rounded w-32 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
         </div>
         <div className="inline-block">
           <label htmlFor="expiration_date" className="block text-gray-400 text-xs mb-1">Expiration</label>
