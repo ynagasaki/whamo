@@ -29,7 +29,7 @@ export async function fetchOpenGoals(): Promise<Goal[]> {
     g.id
   HAVING
     SUM(IFNULL(gc.amt, 0)) < g.amt
-  ORDER BY g.name;`;
+  ORDER BY g.created;`;
   return result.rows;
 }
 
@@ -46,7 +46,7 @@ export async function fetchContributions(goalId: number): Promise<ContributionSu
   FROM goal_contribs gc
     INNER JOIN options o ON gc.option = o.id
   WHERE gc.goal = ${goalId}
-  ORDER BY o.exp DESC;`;
+  ORDER BY gc.created DESC;`;
   return result.rows;
 }
 
@@ -66,7 +66,7 @@ export async function fetchAllocatableOptions(dt: Date = new Date()): Promise<Al
     o.id
   HAVING
     SUM(IFNULL(gc.amt, 0)) < (o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0))
-  ORDER BY o.exp DESC;`;
+  ORDER BY o.exp ASC;`;
   return result.rows;
 }
 
