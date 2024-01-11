@@ -59,7 +59,7 @@ export default function Page() {
 
   return (
     <main className="bg-gray-100 min-h-screen flex flex-col">
-      <div className={clsx("absolute bottom-0 ml-auto mr-auto w-10 h-10 cursor-pointer left-0 right-0 bottom-3 rounded-full p-1 z-30", {
+      <div className={clsx("fixed bottom-0 ml-auto mr-auto w-10 h-10 cursor-pointer left-0 right-0 bottom-3 rounded-full p-1 z-30", {
         "bg-purple-400 text-white": !showOptionForm,
         "bg-gray-400 text-white transform rotate-45": showOptionForm,
       })}>

@@ -47,17 +47,20 @@ export async function postData(url: string, data: Record<string, string>): Promi
 }
 
 export function dday(target: Date): string {
-  const now = new Date().getTime();
+  const now = new Date(); // this is now in GMT
   const targetMs = target.getTime();
-  const diffMs = targetMs - now;
+  const diffMs = targetMs - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
   const diffS = diffMs / 1000;
   const diffMin = diffS / 60;
   const diffHr = diffMin / 60;
   const diffDay = diffHr / 24;
   const diffWk = diffDay / 7;
 
-  if (diffDay >= 7) {
+  if (diffDay >= 14) {
     return `${Math.ceil(diffWk)}w`;
+  }
+  if (diffDay >= 7) {
+    return `next week`;
   }
   if (diffHr >= 24) {
     return `${Math.ceil(diffDay)}d`;

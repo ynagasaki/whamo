@@ -74,7 +74,7 @@ export async function createGoal(data: FormData): Promise<void> {
   const entries = CreateGoalFormSchema.parse(Object.fromEntries(data.entries()));
   const client = await getClient();
 
-  client.sql`INSERT INTO goals (
+  await client.sql`INSERT INTO goals (
     id, name, amt, curr_amt, created
   ) VALUES (
     ${null},

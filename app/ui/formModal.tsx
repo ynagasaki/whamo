@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { mutate } from "swr";
 import { useState } from "react";
 import { createGoal, createOption } from "@/app/lib/actions";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
@@ -7,7 +8,7 @@ export function InputFormModal() {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <div className="absolute inset-x-0 bottom-8 bg-white ml-12 mr-12 p-6 shadow-md border rounded-lg text-gray-700 z-20">
+    <div className="fixed inset-x-0 bottom-8 bg-white ml-12 mr-12 p-6 shadow-md border rounded-lg text-gray-700 z-20">
       <div className="flex">
         <div className="w-1/4 pr-6">
           <div className={clsx("p-3 cursor-pointer", { "font-bold": activeTab === 0 })} onClick={() => setActiveTab(0)} >
@@ -29,7 +30,10 @@ export function InputFormModal() {
 
 function GoalForm() {
   return (
-    <form action={createGoal}>
+    <form action={async (formData: FormData) => {
+      await createGoal(formData);
+      mutate('/api/goals');
+    }}>
       <div>
         <div className="inline-block mr-3">
           <label htmlFor="goal_title" className="block text-gray-400 text-xs mb-1">Title</label>
@@ -51,7 +55,11 @@ function OptionForm() {
   const [showBtc, setShowBtc] = useState(false);
 
   return (
-    <form action={createOption}>
+    <form action={async (formData: FormData) => {
+      await createOption(formData);
+      mutate('/api/options');
+      mutate('/api/options/alloc');
+    }}>
       <div>
         <div className="inline-block mr-3">
           <label htmlFor="option_type" className="block text-gray-400 text-xs mb-1">Type</label>
