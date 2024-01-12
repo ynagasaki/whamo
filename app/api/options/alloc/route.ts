@@ -1,6 +1,9 @@
 import { fetchAllocatableOptions } from '@/app/lib/data';
 
-export async function GET(): Promise<Response> {
+export async function GET(request: Request): Promise<Response> {
+  // force SSR
+  console.log(`Forcing SSR: ${new URL(request.url).searchParams}`);
+
   const result = await fetchAllocatableOptions();
   return Response.json({ options: result });
 }
