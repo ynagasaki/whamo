@@ -21,6 +21,7 @@ export interface Goal {
   amt: number;
   curr_amt: number;
   created: string;
+  last_contrib_dt?: string;
 }
 
 export interface ContributionSummary {

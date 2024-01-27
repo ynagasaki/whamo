@@ -1,7 +1,12 @@
 import { Option } from './model';
+import dayjs from 'dayjs';
 
 export function sqldt(dt: Date = new Date()): string {
   return dt.toISOString().split('T')[0];
+}
+
+export function fmtDate(dtStr?: string): string {
+  return dtStr ? dayjs(dtStr).format('MMM D') : 'unknown';
 }
 
 export function fmtMoney(amt: number): string {

@@ -13,12 +13,10 @@ export default function RootLayout({
         <link rel="icon" href="favicon.png" />
       </head>
       <body>
-        <div className="p-4 bg-gray-200">
-          <div className='inline-block'>
+        <div className="border-b border-gray-200 bg-gray-100 p-4">
+          <div className="inline-block">
             <Link href="/">
-              <span className="text-gray-600">
-                whamo&nbsp;
-              </span>
+              <span className="text-gray-600">whamo&nbsp;</span>
               <span className="text-purple-400">:)</span>
             </Link>
           </div>

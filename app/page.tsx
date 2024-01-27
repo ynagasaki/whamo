@@ -18,6 +18,7 @@ import { InputFormModal } from '@/app/ui/formModal';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import { OptionSumCard } from '@/app/ui/cards/optionSumCard';
 import { GoalsClosedCard } from '@/app/ui/cards/goalsClosedCard';
+import { ClosedGoalCard } from './ui/goalCardClosed';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -60,7 +61,7 @@ export default function Page() {
   const [showOptionForm, setShowOptionForm] = useState(false);
 
   return (
-    <main className="flex min-h-screen flex-col bg-gray-100">
+    <main className="flex min-h-screen flex-col bg-gray-100 pb-8">
       <div
         className={clsx(
           'fixed bottom-0 bottom-3 left-0 right-0 z-30 ml-auto mr-auto h-10 w-10 cursor-pointer rounded-full p-1',
@@ -72,13 +73,13 @@ export default function Page() {
       >
         <PlusIcon onClick={() => setShowOptionForm(!showOptionForm)}></PlusIcon>
       </div>
-      <div className="flex flex-wrap">
-        <div className="w-1/2 p-4 sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
+      <div className="flex flex-wrap p-4">
+        <div className="w-1/2 px-2 sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
           <Suspense>
             <OptionSumCard></OptionSumCard>
           </Suspense>
         </div>
-        <div className="w-1/2 p-4 sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
+        <div className="w-1/2 px-2 sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
           <Suspense>
             <GoalsClosedCard></GoalsClosedCard>
           </Suspense>
@@ -89,7 +90,7 @@ export default function Page() {
           onDragEnd={dragEndHandler}
           collisionDetection={collisionDetector}
         >
-          <div className="z-10 w-1/2 pb-4 pl-4 pr-2">
+          <div className="z-10 w-1/2 pl-4 pr-2">
             {/*
               z-index:
                 1. elements appearing later have higher z
@@ -107,12 +108,17 @@ export default function Page() {
               </Suspense>
             </div>
           </div>
-          <div className="z-0 w-1/2 pb-4 pl-2 pr-4">
+          <div className="z-0 w-1/2 pl-2 pr-4">
             <Suspense>
               <GoalsList></GoalsList>
             </Suspense>
           </div>
         </DndContext>
+      </div>
+      <div className="px-4">
+        <Suspense>
+          <GoalsList status="c" lookbackPeriod={365}></GoalsList>
+        </Suspense>
       </div>
       {showOptionForm && <InputFormModal />}
     </main>
@@ -204,23 +210,51 @@ function OptionsList() {
   );
 }
 
-function GoalsList() {
-  const { data, error } = useSWR(`/api/goals`, fetcher);
+function GoalsList({
+  status,
+  lookbackPeriod,
+}: {
+  status?: 'c';
+  lookbackPeriod?: number;
+}) {
+  const params: string[] = [];
+
+  if (status) {
+    params.push(`status=${status}`);
+  }
+
+  if (lookbackPeriod) {
+    params.push(`lastPd=${lookbackPeriod}`);
+  }
+
+  const qs = params.length > 0 ? `?${params.join('&')}` : '';
+  const { data, error } = useSWR(`/api/goals${qs}`, fetcher);
 
   if (error) {
     return <div>Failed to load</div>;
   }
   if (!data) {
-    return (
-      <div className="mb-3 rounded-md border-2 bg-white p-3 text-gray-300">
-        Loading...
-      </div>
-    );
+    if (status === 'c') {
+      return (
+        <div className="rounded-md bg-gray-200 p-3 text-gray-400">
+          Loading...
+        </div>
+      );
+    } else {
+      return (
+        <div className="mb-3 rounded-md border-2 bg-white p-3 text-gray-300">
+          Loading...
+        </div>
+      );
+    }
   }
 
   return (
     <>
       {data.goals.map((goal: Goal) => {
+        if (status === 'c') {
+          return <ClosedGoalCard key={`goal-${goal.id}`} goal={goal} />;
+        }
         return (
           <GoalCard
             id={`goal-${goal.id}`}
