@@ -35,6 +35,26 @@ export async function fetchOpenGoals(): Promise<Goal[]> {
   return result.rows;
 }
 
+export async function fetchClosedGoals(cutoff: Date): Promise<Goal[]> {
+  const client = await getClient();
+  const result = await client.sql<Goal>`SELECT
+    g.id AS id,
+    g.name AS name,
+    g.amt AS amt,
+    g.created AS created,
+    SUM(IFNULL(gc.amt, 0)) AS curr_amt,
+    MAX(gc.created) AS last_contrib_dt
+  FROM goals g
+    LEFT JOIN goal_contribs gc ON gc.goal = g.id
+  GROUP BY
+    g.id
+  HAVING
+    SUM(IFNULL(gc.amt, 0)) >= g.amt AND
+    MAX(gc.created) >= ${sqldt(cutoff)}
+  ORDER BY last_contrib_dt DESC;`;
+  return result.rows;
+}
+
 export async function fetchContributions(
   goalId: number,
 ): Promise<ContributionSummary[]> {
