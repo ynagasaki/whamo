@@ -6,7 +6,7 @@ export function sqldt(dt: Date = new Date()): string {
 
 export function fmtMoney(amt: number): string {
   if (amt % 100 > 0) {
-    return `${Math.round(amt) / 100}`;
+    return `${Math.round(amt) / 100}${amt % 10 === 0 ? '0' : ''}`;
   }
   return `${amt / 100}.00`;
 }

@@ -15,7 +15,9 @@ import { AllocatableOption, Goal, Option } from '@/app/lib/model';
 import { dday, fetcher, fmtMoney, postData, tenseExp } from '@/app/lib/util';
 import { GoalCard } from '@/app/ui/goalCard';
 import { InputFormModal } from '@/app/ui/formModal';
-import { PlusIcon } from '@heroicons/react/20/solid';
+import { ChevronDownIcon, PlusIcon } from '@heroicons/react/20/solid';
+
+type BuyToCloseCallback = (option: Option) => void;
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -56,14 +58,25 @@ export default function Page() {
   };
 
   const [showOptionForm, setShowOptionForm] = useState(false);
+  const [optionFormPrefill, setOptionFormPrefill] = useState<Option | undefined>(undefined);
+
+  function onBuyToClose(option: Option): void {
+    setOptionFormPrefill(option);
+    setShowOptionForm(true);
+  }
+
+  function onClickInputFormIcon(shouldShow: boolean): void {
+    setOptionFormPrefill(undefined);
+    setShowOptionForm(shouldShow);
+  }
 
   return (
-    <main className="bg-gray-100 min-h-screen flex flex-col">
+    <main className="min-h-screen flex flex-col">
       <div className={clsx("fixed bottom-0 ml-auto mr-auto w-10 h-10 cursor-pointer left-0 right-0 bottom-3 rounded-full p-1 z-30", {
         "bg-purple-400 text-white": !showOptionForm,
         "bg-gray-400 text-white transform rotate-45": showOptionForm,
       })}>
-        <PlusIcon onClick={() => setShowOptionForm(!showOptionForm)}></PlusIcon>
+        <PlusIcon onClick={() => onClickInputFormIcon(!showOptionForm)}></PlusIcon>
       </div>
       <div className="p-4">
         <span className="text-gray-600">
@@ -87,7 +100,7 @@ export default function Page() {
             </div>
             <div className="relative z-0">
               <Suspense>
-                <OptionsList></OptionsList>
+                <OptionsList onBuyToClose={onBuyToClose}></OptionsList>
               </Suspense>
             </div>
           </div>
@@ -99,7 +112,7 @@ export default function Page() {
         </DndContext>
       </div >
       {
-        showOptionForm && <InputFormModal />
+        showOptionForm && <InputFormModal optionFormPrefill={optionFormPrefill} onSubmitted={() => onClickInputFormIcon(false)} />
       }
     </main >
   );
@@ -128,7 +141,7 @@ function AllocatableOptionsList() {
   );
 }
 
-function OptionsList() {
+function OptionsList({ onBuyToClose }: { onBuyToClose: BuyToCloseCallback }) {
   const { data, error } = useSWR(`/api/options`, fetcher);
 
   if (error) {
@@ -142,30 +155,7 @@ function OptionsList() {
     <>
       {
         data.options.map((option: Option) => {
-          return (
-            <div key={`option-${option.id}`} className="relative flex bg-white rounded-md p-3 mb-3">
-              <div className="flex-1">
-                <span className="block text-gray-700">
-                  <span className="text-blue-400">{option.otype}</span> {option.symbol} @ {option.strike}
-                </span>
-                <span className="block text-gray-400">{tenseExp(option)} {option.exp}</span>
-              </div>
-              <div className="flex-1 text-right">
-                <div className="text-xl">
-                  <span className="text-green-200">$</span>
-                  <span className="text-green-400">{fmtMoney(option.price * 100 - option.fee)}</span>
-                </div>
-                <span className="block text-purple-400">{dday(new Date(option.exp))}</span>
-              </div>
-              {/* <div className="absolute inset-x-0 bottom-0 cursor-pointer">
-                <ChevronDownIcon className={clsx("transform w-6 text-gray-300 ml-auto mr-auto",
-                  {
-                    "rotate-180": false,
-                  }
-                )} />
-              </div> */}
-            </div>
-          );
+          return <OpenOptionCard key={`open-opt-${option.id}`} option={option} onBuyToClose={onBuyToClose} />
         })
       }
     </>
@@ -209,6 +199,42 @@ function AllocOptionCard({ id, option }: { id: string, option: AllocatableOption
       </div>
       <div className="flex-1 text-right text-xl">
         <span className="text-green-200">$</span><span className="font-bold">{fmtMoney(option.remaining_amt)}</span>
+      </div>
+    </div>
+  );
+}
+
+function OpenOptionCard({ option, onBuyToClose }: { option: Option, onBuyToClose: BuyToCloseCallback }) {
+  const [showDetails, setShowDetails] = useState(false);
+
+  return (
+    <div key={`option-${option.id}`} className="relative bg-white rounded-md p-3 mb-3">
+      <div className="flex">
+        <div className="flex-1">
+          <span className="block">
+            <span className="text-blue-400">{option.otype}</span> {option.symbol} @ {option.strike}
+          </span>
+          <span className="block text-gray-400">{tenseExp(option)} {option.exp}</span>
+        </div>
+        <div className="flex-1 text-right">
+          <div className="text-xl">
+            <span className="text-green-200">$</span>
+            <span className="text-green-400">{fmtMoney(option.price * 100 - option.fee)}</span>
+          </div>
+          <span className="block text-purple-400">{dday(new Date(option.exp))}</span>
+        </div>
+      </div>
+      {showDetails && (
+        <div className="text-center pb-2">
+          <button className="p-2 border rounded-md" onClick={() => onBuyToClose(option)}>Bought to Close</button>
+        </div>
+      )}
+      <div className="absolute inset-x-0 bottom-0 cursor-pointer" onClick={() => setShowDetails(!showDetails)}>
+        <ChevronDownIcon className={clsx("transform w-6 text-gray-300 ml-auto mr-auto",
+          {
+            "rotate-180": showDetails,
+          }
+        )} />
       </div>
     </div>
   );

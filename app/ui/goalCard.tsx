@@ -16,7 +16,7 @@ export function GoalCard({ id, goal }: { id: string, goal: Goal }) {
     <div ref={setNodeRef} className={clsx("relative bg-white border-2 rounded-md p-3 mb-3", { "border-teal-400": isOver })}>
       <div className="flex">
         <div className="flex-1">
-          <span className="text-gray-700 block">{goal.name}</span>
+          <span className=" block">{goal.name}</span>
           <span className="text-gray-400 block">
             ${fmtMoney(goal.curr_amt)} of ${fmtMoney(goal.amt)}
           </span>
@@ -48,7 +48,7 @@ function GoalContributions({ goal }: { goal: Goal }) {
   }
 
   return (
-    <div className="divide-y divide-gray-100 border-t-2 mt-3 text-gray-700">
+    <div className="divide-y divide-gray-100 border-t-2 mt-3">
       {
         data.contributions.map((cs: ContributionSummary) => {
           return (

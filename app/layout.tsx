@@ -11,7 +11,7 @@ export default function RootLayout({
         <title>whamo!</title>
         <link rel="icon" href="favicon.png" />
       </head>
-      <body>{children}</body>
+      <body className="bg-gray-100 text-gray-700">{children}</body>
     </html>
   );
 }

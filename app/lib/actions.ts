@@ -10,13 +10,15 @@ const CreateOptionFormSchema = z.object({
   stock_symbol: z.string().regex(/[A-Za-z0-9]+/).transform((str) => str.toUpperCase()),
   strike_price: z.coerce.number(),
   expiration_date: z.coerce.date(),
-  price_sto: z.coerce.number(),
-  fee_sto: z.coerce.number(),
-  traded_date_sto: z.coerce.date(),
+  action_sto: z.coerce.boolean(),
+  price_sto: z.coerce.number().nullish(),
+  fee_sto: z.coerce.number().nullish(),
+  traded_date_sto: z.string().nullish().transform((str) => str ? new Date(str) : null),
   action_btc: z.coerce.boolean(),
   price_btc: z.coerce.number().nullish(),
   fee_btc: z.coerce.number().nullish(),
   traded_date_btc: z.string().nullish().transform((str) => str ? new Date(str) : null),
+  closing_option_id: z.coerce.number().nullish(),
 });
 
 const CreateGoalFormSchema = z.object({
@@ -50,22 +52,27 @@ export async function createOption(data: FormData): Promise<void> {
     btcId = (await client.sql<{ id: number }>`SELECT last_insert_rowid() AS id;`).rows[0].id;
   }
 
-  await client.sql`INSERT INTO options (
-    id, symbol, strike, otype, exp, price, fee, action, assigned, closed_by, traded, created
-  ) VALUES (
-    ${null},
-    ${entries.stock_symbol},
-    ${entries.strike_price},
-    ${entries.option_type},
-    ${sqldt(entries.expiration_date)},
-    ${toCents(entries.price_sto)},
-    ${toCents(entries.fee_sto)},
-    ${'STO'},
-    ${0},
-    ${btcId},
-    ${sqldt(entries.traded_date_sto)},
-    ${sqldt()}
-  );`;
+  if (entries.action_sto && numdef(entries.price_sto) && numdef(entries.fee_sto) && entries.traded_date_sto) {
+    console.log(`YOSHI: inserting STO`);
+    await client.sql`INSERT INTO options (
+      id, symbol, strike, otype, exp, price, fee, action, assigned, closed_by, traded, created
+    ) VALUES (
+      ${null},
+      ${entries.stock_symbol},
+      ${entries.strike_price},
+      ${entries.option_type},
+      ${sqldt(entries.expiration_date)},
+      ${toCents(entries.price_sto)},
+      ${toCents(entries.fee_sto)},
+      ${'STO'},
+      ${0},
+      ${btcId},
+      ${sqldt(entries.traded_date_sto)},
+      ${sqldt()}
+    );`;
+  } else if (entries.closing_option_id) {
+    await client.sql`UPDATE options SET closed_by=${btcId} WHERE id=${entries.closing_option_id};`
+  }
 
   revalidatePath('/');
 }
