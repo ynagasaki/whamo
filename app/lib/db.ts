@@ -6,6 +6,7 @@ dotenv.config({ path: 'config.env' });
 export interface Client {
   sql<T>(query: TemplateStringsArray, ...params: any[]): Promise<{ rows: T[] }>;
   end(): Promise<void>;
+  setup(): Promise<void>;
 }
 
 let client: Client | undefined = undefined;

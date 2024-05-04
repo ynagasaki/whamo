@@ -10,7 +10,7 @@ class Client {
   }
 
   sql(query, ...params) {
-    console.log(`sql`, query, params);
+    // console.log(`sql`, query, params);
     if (params.length === 0) {
       return this._run(query[0]);
     } else {
@@ -19,7 +19,7 @@ class Client {
   }
 
   _run(query) {
-    console.log(`_run query=${query}`);
+    // console.log(`_run query=${query}`);
 
     if (query.startsWith('SELECT')) {
       return new Promise((resolve, reject) => {
@@ -47,7 +47,7 @@ class Client {
   _prepare(query, params) {
     query = query.join('?');
 
-    console.log(`Running prepare: ${query}`, params);
+    // console.log(`Running prepare: ${query}`, params);
     return new Promise((resolve, reject) => {
       const stmt = this.db.prepare(query, (err) => {
         if (!err) {
@@ -80,11 +80,54 @@ class Client {
   end() {
     this.db.close();
   }
+
+  async setup() {
+    // Note: If the AUTOINCREMENT keyword appears after INTEGER PRIMARY KEY,
+    // that changes the automatic ROWID assignment algorithm to prevent the
+    // reuse of ROWIDs over the lifetime of the database. In other words, the
+    // purpose of AUTOINCREMENT is to prevent the reuse of ROWIDs from previously
+    // deleted rows.
+    //
+    // see https://www.sqlite.org/autoinc.html
+    await this.sql`CREATE TABLE options (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      symbol VARCHAR(32) NOT NULL,
+      strike FLOAT NOT NULL,
+      otype VARCHAR(4) CHECK(otype IN ('CALL', 'PUT')) NOT NULL,
+      exp DATE NOT NULL,
+      price INTEGER NOT NULL,
+      fee INTEGER NOT NULL,
+      action VARCHAR(4) CHECK(action IN ('STO', 'BTC')) NOT NULL,
+      assigned INTEGER CHECK(assigned IN (0, 1)) NOT NULL,
+      closed_by INTEGER,
+      traded DATETIME NOT NULL,
+      created DATETIME NOT NULL,
+      FOREIGN KEY(closed_by) REFERENCES options(id)
+    );`;
+
+    await this.sql`CREATE TABLE goals (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      amt INTEGER NOT NULL,
+      curr_amt INTEGER,
+      created DATETIME NOT NULL
+    );`;
+
+    await this.sql`CREATE TABLE goal_contribs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      goal INTEGER NOT NULL,
+      option INTEGER,
+      amt INTEGER NOT NULL,
+      created DATETIME NOT NULL,
+      FOREIGN KEY(goal) REFERENCES goals(id),
+      FOREIGN KEY(option) REFERENCES options(id)
+    );`;
+  }
 };
 
 const db = {
-  connect: () => {
-    const file = `${process.env.DATA_DIR}/data.sqlite`;
+  connect: (path) => {
+    const file = !path ? `${process.env.DATA_DIR}/data.sqlite` : path;
     console.log(`Connecting to ${file}`);
     return new Promise((resolve, reject) => {
       const database = new sqlite.Database(file, (err) => {
