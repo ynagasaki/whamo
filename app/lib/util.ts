@@ -1,4 +1,4 @@
-import { Option } from "./model";
+import { Option } from './model';
 
 export function sqldt(dt: Date = new Date()): string {
   return dt.toISOString().split('T')[0];
@@ -6,7 +6,10 @@ export function sqldt(dt: Date = new Date()): string {
 
 export function fmtMoney(amt: number): string {
   if (amt % 100 > 0) {
-    return `${Math.round(amt) / 100}`;
+    if (amt % 10 > 0) {
+      return `${amt / 100}`;
+    }
+    return `${amt / 100}0`;
   }
   return `${amt / 100}.00`;
 }
@@ -19,7 +22,10 @@ export function tenseExp(option: Option): string {
   return option.exp < sqldt(new Date()) ? 'expired' : 'expires';
 }
 
-export async function fetcher(input: RequestInfo | URL, init?: RequestInit): Promise<any> {
+export async function fetcher(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<any> {
   const response = await fetch(input, init);
   return response.json();
 }
@@ -30,17 +36,20 @@ export function assertNumber(s: string | undefined | null): asserts s {
   }
 }
 
-export async function postData(url: string, data: Record<string, string>): Promise<unknown> {
+export async function postData(
+  url: string,
+  data: Record<string, string>,
+): Promise<unknown> {
   const response = await fetch(url, {
-    method: "POST",
-    mode: "cors",
-    cache: "no-cache",
-    credentials: "same-origin",
+    method: 'POST',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'same-origin',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-    redirect: "follow",
-    referrerPolicy: "no-referrer",
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer',
     body: JSON.stringify(data),
   });
   return response.json();
@@ -49,7 +58,8 @@ export async function postData(url: string, data: Record<string, string>): Promi
 export function dday(target: Date): string {
   const now = new Date(); // this is now in GMT
   const targetMs = target.getTime();
-  const diffMs = targetMs - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const diffMs =
+    targetMs - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
   const diffS = diffMs / 1000;
   const diffMin = diffS / 60;
   const diffHr = diffMin / 60;

@@ -1,28 +1,38 @@
-import { describe, afterAll, beforeAll, beforeEach, jest, test } from '@jest/globals';
-import assert from "assert";
-import { db } from "@/db";
-import { GET } from "@/app/api/goals/route";
+import {
+  describe,
+  afterAll,
+  beforeAll,
+  beforeEach,
+  jest,
+  test,
+} from '@jest/globals';
+import assert from 'assert';
+import { db } from '@/db';
+import { GET } from '@/app/api/goals/route';
 import { mkdtemp, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
-import { Client, getClient } from "@/app/lib/db";
+import { Client, getClient } from '@/app/lib/db';
 import { Goal } from '@/app/lib/model';
 jest.mock('@/app/lib/db');
 
-describe("Goals API", () => {
+describe('Goals API', () => {
   let client: Client;
   let testDirRoot: string;
   let testFile: string;
 
   beforeAll(async () => {
     const prefix = join(tmpdir(), 'whamo-test-');
-    [testDirRoot, testFile] = await new Promise<[string, string]>((resolve, reject) => mkdtemp(prefix, (err, directory) => {
-      if (err) {
-        reject(err);
-      }
-      resolve([directory, join(directory, "goals-api.sqlite")]);
-    }));
+    [testDirRoot, testFile] = await new Promise<[string, string]>(
+      (resolve, reject) =>
+        mkdtemp(prefix, (err, directory) => {
+          if (err) {
+            reject(err);
+          }
+          resolve([directory, join(directory, 'goals-api.sqlite')]);
+        }),
+    );
 
     client = await db.connect(testFile);
     await client.setup();
@@ -33,7 +43,7 @@ describe("Goals API", () => {
   });
 
   beforeEach(async () => {
-    const mockGetClient = (<jest.Mock>getClient);
+    const mockGetClient = <jest.Mock>getClient;
     mockGetClient.mockClear();
     mockGetClient.mockReturnValue(client);
   });
@@ -50,7 +60,7 @@ describe("Goals API", () => {
     );`;
   }
 
-  test("should fetch goal with no contributions", async () => {
+  test('should fetch goal with no contributions', async () => {
     await addGoal({
       id: 1,
       name: 'goal_1',
@@ -59,7 +69,9 @@ describe("Goals API", () => {
       created: '2024-01-02',
     });
 
-    const response = await GET({ url: "http://localhost:3000/" } as unknown as Request);
+    const response = await GET({
+      url: 'http://localhost:3000/',
+    } as unknown as Request);
     const json = await response.json();
     assert.equal(!!json.goals, true);
     assert.equal(json.goals.length, 1);
@@ -72,7 +84,5 @@ describe("Goals API", () => {
     assert.equal(goal.created, '2024-01-02');
   });
 
-  test("should not fetch goal with completed contributions", async () => {
-
-  });
+  test('should not fetch goal with completed contributions', async () => {});
 });

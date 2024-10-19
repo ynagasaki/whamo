@@ -16,6 +16,7 @@ import { dday, fetcher, fmtMoney, postData, tenseExp } from '@/app/lib/util';
 import { GoalCard } from '@/app/ui/goalCard';
 import { InputFormModal } from '@/app/ui/formModal';
 import { PlusIcon } from '@heroicons/react/20/solid';
+import { OptionSumCard } from './ui/cards/optionSumCard';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -27,11 +28,11 @@ export default function Page() {
       return;
     }
 
-    const result = await postData(`/api/contribs`, {
+    const result = (await postData(`/api/contribs`, {
       goalId: `${goal.id}`,
       optionId: `${option.id}`,
       amt: `${option.remaining_amt * 100}`,
-    }) as { leftover: number };
+    })) as { leftover: number };
 
     console.log(`Contributed to goal with leftover=${result.leftover}`);
     mutate('/api/goals');
@@ -51,18 +52,23 @@ export default function Page() {
         left: collisionRect.left * xScale,
         width: collisionRect.width * xScale,
         height: collisionRect.height * yScale,
-      }
+      },
     });
   };
 
   const [showOptionForm, setShowOptionForm] = useState(false);
 
   return (
-    <main className="bg-gray-100 min-h-screen flex flex-col">
-      <div className={clsx("fixed bottom-0 ml-auto mr-auto w-10 h-10 cursor-pointer left-0 right-0 bottom-3 rounded-full p-1 z-30", {
-        "bg-purple-400 text-white": !showOptionForm,
-        "bg-gray-400 text-white transform rotate-45": showOptionForm,
-      })}>
+    <main className="flex min-h-screen flex-col bg-gray-100">
+      <div
+        className={clsx(
+          'fixed bottom-0 bottom-3 left-0 right-0 z-30 ml-auto mr-auto h-10 w-10 cursor-pointer rounded-full p-1',
+          {
+            'bg-purple-400 text-white': !showOptionForm,
+            'rotate-45 transform bg-gray-400 text-white': showOptionForm,
+          },
+        )}
+      >
         <PlusIcon onClick={() => setShowOptionForm(!showOptionForm)}></PlusIcon>
       </div>
       <div className="p-4">
@@ -72,8 +78,18 @@ export default function Page() {
         </span>
       </div>
       <div className="flex">
-        <DndContext onDragEnd={dragEndHandler} collisionDetection={collisionDetector}>
-          <div className="w-1/2 z-10 pr-2 pl-4 pb-4">
+        <div className="w-1/4 p-4">
+          <Suspense>
+            <OptionSumCard></OptionSumCard>
+          </Suspense>
+        </div>
+      </div>
+      <div className="flex">
+        <DndContext
+          onDragEnd={dragEndHandler}
+          collisionDetection={collisionDetector}
+        >
+          <div className="z-10 w-1/2 pb-4 pl-4 pr-2">
             {/*
               z-index:
                 1. elements appearing later have higher z
@@ -91,17 +107,15 @@ export default function Page() {
               </Suspense>
             </div>
           </div>
-          <div className="w-1/2 z-0 pl-2 pr-4 pb-4">
+          <div className="z-0 w-1/2 pb-4 pl-2 pr-4">
             <Suspense>
               <GoalsList></GoalsList>
             </Suspense>
           </div>
         </DndContext>
-      </div >
-      {
-        showOptionForm && <InputFormModal />
-      }
-    </main >
+      </div>
+      {showOptionForm && <InputFormModal />}
+    </main>
   );
 }
 
@@ -109,21 +123,23 @@ function AllocatableOptionsList() {
   const { data, error } = useSWR(`/api/options/alloc`, fetcher);
 
   if (error) {
-    return <div>Failed to load</div>
+    return <div>Failed to load</div>;
   }
   if (!data) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   return (
     <>
-      {
-        data.options.map((option: AllocatableOption) => {
-          return (
-            <AllocOptionCard id={`alloc-opt-${option.id}`} option={option} key={`alloc-opt-${option.id}`} />
-          );
-        })
-      }
+      {data.options.map((option: AllocatableOption) => {
+        return (
+          <AllocOptionCard
+            id={`alloc-opt-${option.id}`}
+            option={option}
+            key={`alloc-opt-${option.id}`}
+          />
+        );
+      })}
     </>
   );
 }
@@ -132,42 +148,50 @@ function OptionsList() {
   const { data, error } = useSWR(`/api/options`, fetcher);
 
   if (error) {
-    return <div>Failed to load</div>
+    return <div>Failed to load</div>;
   }
   if (!data) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   return (
     <>
-      {
-        data.options.map((option: Option) => {
-          return (
-            <div key={`option-${option.id}`} className="relative flex bg-white rounded-md p-3 mb-3">
-              <div className="flex-1">
-                <span className="block text-gray-700">
-                  <span className="text-blue-400">{option.otype}</span> {option.symbol} @ {option.strike}
+      {data.options.map((option: Option) => {
+        return (
+          <div
+            key={`option-${option.id}`}
+            className="relative mb-3 flex rounded-md bg-white p-3"
+          >
+            <div className="flex-1">
+              <span className="block text-gray-700">
+                <span className="text-blue-400">{option.otype}</span>{' '}
+                {option.symbol} @ {option.strike}
+              </span>
+              <span className="block text-gray-400">
+                {tenseExp(option)} {option.exp}
+              </span>
+            </div>
+            <div className="flex-1 text-right">
+              <div className="text-xl">
+                <span className="text-green-200">$</span>
+                <span className="text-green-400">
+                  {fmtMoney(option.price * 100 - option.fee)}
                 </span>
-                <span className="block text-gray-400">{tenseExp(option)} {option.exp}</span>
               </div>
-              <div className="flex-1 text-right">
-                <div className="text-xl">
-                  <span className="text-green-200">$</span>
-                  <span className="text-green-400">{fmtMoney(option.price * 100 - option.fee)}</span>
-                </div>
-                <span className="block text-purple-400">{dday(new Date(option.exp))}</span>
-              </div>
-              {/* <div className="absolute inset-x-0 bottom-0 cursor-pointer">
+              <span className="block text-purple-400">
+                {dday(new Date(option.exp))}
+              </span>
+            </div>
+            {/* <div className="absolute inset-x-0 bottom-0 cursor-pointer">
                 <ChevronDownIcon className={clsx("transform w-6 text-gray-300 ml-auto mr-auto",
                   {
                     "rotate-180": false,
                   }
                 )} />
               </div> */}
-            </div>
-          );
-        })
-      }
+          </div>
+        );
+      })}
     </>
   );
 }
@@ -176,21 +200,23 @@ function GoalsList() {
   const { data, error } = useSWR(`/api/goals`, fetcher);
 
   if (error) {
-    return <div>Failed to load</div>
+    return <div>Failed to load</div>;
   }
   if (!data) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   return (
     <>
-      {
-        data.goals.map((goal: Goal) => {
-          return (
-            <GoalCard id={`goal-${goal.id}`} key={`goal-${goal.id}`} goal={goal}></GoalCard>
-          );
-        })
-      }
+      {data.goals.map((goal: Goal) => {
+        return (
+          <GoalCard
+            id={`goal-${goal.id}`}
+            key={`goal-${goal.id}`}
+            goal={goal}
+          ></GoalCard>
+        );
+      })}
     </>
-  )
+  );
 }

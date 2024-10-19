@@ -23,7 +23,7 @@ async function seedOptions(client, data) {
       traded DATETIME NOT NULL,
       created DATETIME NOT NULL,
       FOREIGN KEY(closed_by) REFERENCES options(id)
-    );`
+    );`;
     console.log(`Created options table`);
 
     for (let i = 0; i < data.length; i++) {
@@ -60,7 +60,7 @@ async function seedGoals(client, data) {
       amt INTEGER NOT NULL,
       curr_amt INTEGER,
       created DATETIME NOT NULL
-    );`
+    );`;
     console.log(`Created goals table`);
 
     for (let i = 0; i < data.length; i++) {
@@ -92,7 +92,7 @@ async function seedGoalContributions(client, data) {
       created DATETIME NOT NULL,
       FOREIGN KEY(goal) REFERENCES goals(id),
       FOREIGN KEY(option) REFERENCES options(id)
-    );`
+    );`;
     console.log(`Created goals table`);
 
     for (let i = 0; i < data.length; i++) {

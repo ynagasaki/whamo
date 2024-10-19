@@ -7,7 +7,10 @@ import { revalidatePath } from 'next/cache';
 
 const CreateOptionFormSchema = z.object({
   option_type: z.enum(['CALL', 'PUT']),
-  stock_symbol: z.string().regex(/[A-Za-z0-9]+/).transform((str) => str.toUpperCase()),
+  stock_symbol: z
+    .string()
+    .regex(/[A-Za-z0-9]+/)
+    .transform((str) => str.toUpperCase()),
   strike_price: z.coerce.number(),
   expiration_date: z.coerce.date(),
   price_sto: z.coerce.number(),
@@ -16,7 +19,10 @@ const CreateOptionFormSchema = z.object({
   action_btc: z.coerce.boolean(),
   price_btc: z.coerce.number().nullish(),
   fee_btc: z.coerce.number().nullish(),
-  traded_date_btc: z.string().nullish().transform((str) => str ? new Date(str) : null),
+  traded_date_btc: z
+    .string()
+    .nullish()
+    .transform((str) => (str ? new Date(str) : null)),
 });
 
 const CreateGoalFormSchema = z.object({
@@ -25,11 +31,18 @@ const CreateGoalFormSchema = z.object({
 });
 
 export async function createOption(data: FormData): Promise<void> {
-  const entries = CreateOptionFormSchema.parse(Object.fromEntries(data.entries()));
+  const entries = CreateOptionFormSchema.parse(
+    Object.fromEntries(data.entries()),
+  );
   const client = await getClient();
   let btcId = null;
 
-  if (entries.action_btc && numdef(entries.price_btc) && numdef(entries.fee_btc) && entries.traded_date_btc) {
+  if (
+    entries.action_btc &&
+    numdef(entries.price_btc) &&
+    numdef(entries.fee_btc) &&
+    entries.traded_date_btc
+  ) {
     await client.sql`INSERT INTO options (
       id, symbol, strike, otype, exp, price, fee, action, assigned, closed_by, traded, created
     ) VALUES (
@@ -47,7 +60,9 @@ export async function createOption(data: FormData): Promise<void> {
       ${sqldt()}
     );`;
 
-    btcId = (await client.sql<{ id: number }>`SELECT last_insert_rowid() AS id;`).rows[0].id;
+    btcId = (
+      await client.sql<{ id: number }>`SELECT last_insert_rowid() AS id;`
+    ).rows[0].id;
   }
 
   await client.sql`INSERT INTO options (
@@ -71,7 +86,9 @@ export async function createOption(data: FormData): Promise<void> {
 }
 
 export async function createGoal(data: FormData): Promise<void> {
-  const entries = CreateGoalFormSchema.parse(Object.fromEntries(data.entries()));
+  const entries = CreateGoalFormSchema.parse(
+    Object.fromEntries(data.entries()),
+  );
   const client = await getClient();
 
   await client.sql`INSERT INTO goals (

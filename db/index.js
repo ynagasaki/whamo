@@ -1,4 +1,4 @@
-const sqlite = require("sqlite3");
+const sqlite = require('sqlite3');
 
 function getError(err) {
   return new Error(`sqlite_err: ${JSON.stringify(err)}`);
@@ -123,7 +123,7 @@ class Client {
       FOREIGN KEY(option) REFERENCES options(id)
     );`;
   }
-};
+}
 
 const db = {
   connect: (path) => {

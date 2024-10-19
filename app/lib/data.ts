@@ -2,7 +2,9 @@ import { getClient } from './db';
 import { ContributionSummary, Option, Goal, AllocatableOption } from './model';
 import { sqldt } from './util';
 
-export async function fetchOpenOptions(dt: Date = new Date()): Promise<Option[]> {
+export async function fetchOpenOptions(
+  dt: Date = new Date(),
+): Promise<Option[]> {
   const client = await getClient();
   const result = await client.sql<Option>`SELECT
     *
@@ -33,7 +35,9 @@ export async function fetchOpenGoals(): Promise<Goal[]> {
   return result.rows;
 }
 
-export async function fetchContributions(goalId: number): Promise<ContributionSummary[]> {
+export async function fetchContributions(
+  goalId: number,
+): Promise<ContributionSummary[]> {
   const client = await getClient();
   const result = await client.sql<ContributionSummary>`SELECT
     gc.id AS id,
@@ -50,7 +54,9 @@ export async function fetchContributions(goalId: number): Promise<ContributionSu
   return result.rows;
 }
 
-export async function fetchAllocatableOptions(dt: Date = new Date()): Promise<AllocatableOption[]> {
+export async function fetchAllocatableOptions(
+  dt: Date = new Date(),
+): Promise<AllocatableOption[]> {
   const client = await getClient();
   const result = await client.sql<AllocatableOption>`SELECT
     o.*,
@@ -73,14 +79,14 @@ export async function fetchAllocatableOptions(dt: Date = new Date()): Promise<Al
 export async function makeContribution({
   goalId,
   optionId,
-  amt
+  amt,
 }: {
-  goalId: number,
-  optionId: number,
-  amt: number
+  goalId: number;
+  optionId: number;
+  amt: number;
 }): Promise<{ leftover: number }> {
   const client = await getClient();
-  const result = await client.sql<{ goalAmt: number, currAmt: number }>`SELECT
+  const result = await client.sql<{ goalAmt: number; currAmt: number }>`SELECT
     g.amt AS goalAmt,
     SUM(IFNULL(gc.amt, 0)) AS currAmt
   FROM goals g
@@ -108,4 +114,11 @@ export async function makeContribution({
   );`;
 
   return { leftover };
+}
+
+export async function fetchAssignedOptionsValue(): Promise<number> {
+  const client = await getClient();
+  const result =
+    await client.sql`SELECT SUM(amt) AS result FROM goal_contribs;`;
+  return (result.rows as { result: number }[])[0].result;
 }

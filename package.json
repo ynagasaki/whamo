@@ -5,8 +5,8 @@
     "dev": "next dev",
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
-    "start": "next start",
     "seed": "node -r dotenv/config ./scripts/seed.js dotenv_config_path=./config.env",
+    "start": "next start",
     "test": "jest --config=jest.config.js --passWithNoTests --coverage --no-cache"
   },
   "dependencies": {
