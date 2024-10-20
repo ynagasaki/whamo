@@ -78,13 +78,13 @@ export default function Page() {
           <span className="text-purple-400">:)</span>
         </span>
       </div>
-      <div className="flex">
-        <div className="w-1/4 sm:w-1/2 p-4">
+      <div className="flex flex-wrap">
+        <div className="w-1/2 p-4 sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
           <Suspense>
             <OptionSumCard></OptionSumCard>
           </Suspense>
         </div>
-        <div className="w-1/4 sm:w-1/2 p-4">
+        <div className="w-1/2 p-4 sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
           <Suspense>
             <GoalsClosedCard></GoalsClosedCard>
           </Suspense>

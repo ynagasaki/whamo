@@ -13,7 +13,9 @@ export function OptionSumCard() {
 
   return (
     <div className="rounded-md bg-white p-3 text-center">
-      <span className="block text-3xl">${fmtMoney(data.result)}</span>
+      <span className="block text-xl sm:text-2xl">
+        ${fmtMoney(data.result)}
+      </span>
       <span className="block text-sm text-gray-400">Total Earned</span>
     </div>
   );

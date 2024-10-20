@@ -13,7 +13,7 @@ export function GoalsClosedCard() {
 
   return (
     <div className="rounded-md bg-white p-3 text-center">
-      <span className="block text-3xl">{data.result}</span>
+      <span className="block text-xl sm:text-2xl">{data.result}</span>
       <span className="block text-sm text-gray-400">Goals Completed</span>
     </div>
   );
