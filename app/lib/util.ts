@@ -5,13 +5,9 @@ export function sqldt(dt: Date = new Date()): string {
 }
 
 export function fmtMoney(amt: number): string {
-  if (amt % 100 > 0) {
-    if (amt % 10 > 0) {
-      return `${amt / 100}`;
-    }
-    return `${amt / 100}0`;
-  }
-  return `${amt / 100}.00`;
+  return (amt / 100)
+    .toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+    .substring(1);
 }
 
 export function toCents(amt: number): number {

@@ -10,13 +10,14 @@ import {
   DragEndEvent,
   rectIntersection,
 } from '@dnd-kit/core';
-import { AllocOptionCard } from './ui/allocateableOptionCard';
+import { AllocOptionCard } from '@/app/ui/allocateableOptionCard';
 import { AllocatableOption, Goal, Option } from '@/app/lib/model';
 import { dday, fetcher, fmtMoney, postData, tenseExp } from '@/app/lib/util';
 import { GoalCard } from '@/app/ui/goalCard';
 import { InputFormModal } from '@/app/ui/formModal';
 import { PlusIcon } from '@heroicons/react/20/solid';
-import { OptionSumCard } from './ui/cards/optionSumCard';
+import { OptionSumCard } from '@/app/ui/cards/optionSumCard';
+import { GoalsClosedCard } from '@/app/ui/cards/goalsClosedCard';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -81,6 +82,11 @@ export default function Page() {
         <div className="w-1/4 p-4">
           <Suspense>
             <OptionSumCard></OptionSumCard>
+          </Suspense>
+        </div>
+        <div className="w-1/4 p-4">
+          <Suspense>
+            <GoalsClosedCard></GoalsClosedCard>
           </Suspense>
         </div>
       </div>

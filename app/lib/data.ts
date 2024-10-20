@@ -118,7 +118,25 @@ export async function makeContribution({
 
 export async function fetchAssignedOptionsValue(): Promise<number> {
   const client = await getClient();
-  const result =
-    await client.sql`SELECT SUM(amt) AS result FROM goal_contribs;`;
-  return (result.rows as { result: number }[])[0].result;
+  const result = await client.sql<{
+    result: number;
+  }>`SELECT SUM(amt) AS result FROM goal_contribs;`;
+  return result.rows[0].result;
+}
+
+export async function fetchCompletedGoalsCount(): Promise<number> {
+  const client = await getClient();
+  const result = await client.sql<{ result: number }>`SELECT
+    COUNT(1) AS result
+  FROM (
+    SELECT
+      g.id
+    FROM goals g
+      LEFT JOIN goal_contribs gc ON gc.goal = g.id
+    GROUP BY
+      g.id
+    HAVING
+      SUM(IFNULL(gc.amt, 0)) >= g.amt
+  );`;
+  return result.rows[0].result;
 }
