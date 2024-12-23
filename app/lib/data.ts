@@ -116,6 +116,11 @@ export async function makeContribution({
   return { leftover };
 }
 
+export async function removeContribution(contribId: number): Promise<void> {
+  const client = await getClient();
+  await client.sql`DELETE FROM goal_contribs WHERE id=${contribId};`;
+}
+
 export async function fetchAssignedOptionsValue(): Promise<number> {
   const client = await getClient();
   const result = await client.sql<{

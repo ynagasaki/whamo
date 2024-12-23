@@ -1,4 +1,8 @@
-import { fetchContributions, makeContribution } from '@/app/lib/data';
+import {
+  fetchContributions,
+  makeContribution,
+  removeContribution,
+} from '@/app/lib/data';
 import { assertNumber } from '@/app/lib/util';
 
 export async function GET(request: Request): Promise<Response> {
@@ -26,4 +30,14 @@ export async function POST(request: Request): Promise<Response> {
   });
 
   return Response.json({ leftover: result.leftover });
+}
+
+export async function DELETE(request: Request): Promise<Response> {
+  const { searchParams } = new URL(request.url);
+  const contribId = searchParams.get('contrib');
+
+  assertNumber(contribId);
+
+  await removeContribution(Number.parseInt(contribId));
+  return Response.json({});
 }
