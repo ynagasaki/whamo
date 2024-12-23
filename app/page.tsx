@@ -132,7 +132,7 @@ function AllocatableOptionsList() {
     return <div>Failed to load</div>;
   }
   if (!data) {
-    return <div>Loading...</div>;
+    return <div className="mb-3 rounded-md bg-white p-3 text-gray-300">Loading...</div>;
   }
 
   return (
@@ -157,7 +157,7 @@ function OptionsList() {
     return <div>Failed to load</div>;
   }
   if (!data) {
-    return <div>Loading...</div>;
+    return <div className="mb-3 rounded-md bg-white p-3 text-gray-300">Loading...</div>;
   }
 
   return (
@@ -209,7 +209,7 @@ function GoalsList() {
     return <div>Failed to load</div>;
   }
   if (!data) {
-    return <div>Loading...</div>;
+    return <div className="mb-3 rounded-md border-2 bg-white p-3 text-gray-300">Loading...</div>;
   }
 
   return (
