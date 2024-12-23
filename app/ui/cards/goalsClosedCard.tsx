@@ -8,7 +8,11 @@ export function GoalsClosedCard() {
     return <div>Failed to load</div>;
   }
   if (!data) {
-    return <div className="rounded-md bg-white p-3 text-center text-gray-300">Loading...</div>;
+    return (
+      <div className="rounded-md bg-white p-3 text-center text-gray-300">
+        Loading...
+      </div>
+    );
   }
 
   return (
