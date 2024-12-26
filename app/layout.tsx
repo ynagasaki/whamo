@@ -1,4 +1,5 @@
 import '@/app/ui/global.css';
+import Link from 'next/link';
 
 export default function RootLayout({
   children,
@@ -11,7 +12,28 @@ export default function RootLayout({
         <title>whamo!</title>
         <link rel="icon" href="favicon.png" />
       </head>
-      <body>{children}</body>
+      <body>
+        <div className="p-4 bg-gray-200">
+          <div className='inline-block'>
+            <Link href="/">
+              <span className="text-gray-600">
+                whamo&nbsp;
+              </span>
+              <span className="text-purple-400">:)</span>
+            </Link>
+          </div>
+          {/*
+          <div className="inline-block mx-4 border-l border-gray-300">
+            <ul className="flex">
+              <li className="mr-6 px-4">
+                <Link href="/goals" className="text-blue-500 hover:text-blue-800">Goals</Link>
+              </li>
+            </ul>
+          </div>
+          */}
+        </div>
+        {children}
+      </body>
     </html>
   );
 }
