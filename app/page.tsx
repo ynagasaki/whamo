@@ -117,7 +117,7 @@ export default function Page() {
       </div>
       <div className="px-4">
         <Suspense>
-          <GoalsList status="c" lookbackPeriod={365}></GoalsList>
+          <GoalsList status="c" lookbackPeriod={600}></GoalsList>
         </Suspense>
       </div>
       {showOptionForm && <InputFormModal />}

@@ -6,7 +6,18 @@ export function sqldt(dt: Date = new Date()): string {
 }
 
 export function fmtDate(dtStr?: string): string {
-  return dtStr ? dayjs(dtStr).format('MMM D') : 'unknown';
+  if (!dtStr) {
+    return 'unknown';
+  }
+
+  const targetDate = dayjs(dtStr);
+  const currDate = dayjs();
+
+  if (targetDate.year() !== currDate.year()) {
+    return targetDate.format('MMM D, YYYY');
+  }
+
+  return targetDate.format('MMM D');
 }
 
 export function fmtMoney(amt: number): string {
