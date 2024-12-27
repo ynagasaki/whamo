@@ -16,7 +16,7 @@ export function ClosedGoalCard({ goal }: { goal: Goal }) {
         <span className="block text-gray-700">
           {fmtDate(goal.last_contrib_dt)}
         </span>
-        <span className="block text-gray-400">completed&nbsp;</span>
+        <span className="block text-gray-400">completed</span>
       </div>
     </div>
   );
