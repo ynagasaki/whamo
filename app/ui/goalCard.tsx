@@ -35,9 +35,10 @@ export function GoalCard({ id, goal }: { id: string; goal: Goal }) {
             {Math.round((goal.curr_amt / goal.amt) * 100)}%
           </span>
         </div>
-        <div className="w-full">
-          <span className="block text-gray-400">
-            ${fmtMoney(goal.curr_amt)} of ${fmtMoney(goal.amt)}
+        <div className="w-full text-gray-400">
+          <span className="inline-block">${fmtMoney(goal.curr_amt)}</span>
+          <span className="hidden md:inline-block">
+            &nbsp;of ${fmtMoney(goal.amt)}
           </span>
         </div>
       </div>
@@ -89,12 +90,12 @@ function GoalContributions({ goal }: { goal: Goal }) {
         return (
           <div
             key={`ContribSummary-Item-${cs.id}`}
-            className="flex pb-3 pt-3"
+            className="flex pb-1 pt-1 md:pb-3 md:pt-3"
             onMouseEnter={() => setHoveredRowId(cs.id)}
             onMouseLeave={() => setHoveredRowId(-1)}
           >
             <div className="w-1/2 md:w-2/3">
-              <span className="mr-1 text-xs font-bold tracking-tight text-blue-400 md:tracking-normal">
+              <span className="mr-1 block text-xs font-bold text-blue-400 md:inline-block">
                 {cs.option_type}
               </span>
               {cs.option_symbol}

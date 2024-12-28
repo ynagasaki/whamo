@@ -8,11 +8,11 @@ export function InputFormModal() {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <div className="fixed inset-x-0 bottom-8 z-20 ml-12 mr-12 rounded-lg border bg-white p-6 text-gray-700 shadow-md">
-      <div className="flex">
-        <div className="w-1/4 pr-6">
+    <div className="fixed inset-x-0 bottom-8 z-20 mx-4 rounded-lg border bg-white p-6 pt-3 text-gray-700 shadow-md md:mx-12">
+      <div className="flex flex-wrap">
+        <div className="w-full border-b pr-6 pt-0 md:w-1/4 md:border-0 md:pt-3">
           <div
-            className={clsx('cursor-pointer p-3', {
+            className={clsx('inline-block cursor-pointer p-3 md:block', {
               'font-bold': activeTab === 0,
             })}
             onClick={() => setActiveTab(0)}
@@ -20,19 +20,21 @@ export function InputFormModal() {
             Add Options
           </div>
           <div
-            className={clsx('cursor-pointer border-t p-3', {
-              'font-bold': activeTab === 1,
-            })}
+            className={clsx(
+              'inline-block cursor-pointer border-l p-3 md:block md:border-l-0 md:border-t',
+              {
+                'font-bold': activeTab === 1,
+              },
+            )}
             onClick={() => setActiveTab(1)}
           >
             Add Goals
           </div>
         </div>
-        <div className="w-3/4 justify-center">
+        <div className="w-full justify-center md:w-3/4">
           {activeTab === 0 && <OptionForm />}
           {activeTab === 1 && <GoalForm />}
         </div>
-        <div className="w-1/4"></div>
       </div>
     </div>
   );
@@ -47,7 +49,7 @@ function GoalForm() {
       }}
     >
       <div>
-        <div className="mr-3 inline-block">
+        <div className="mr-3 mt-3 inline-block">
           <label
             htmlFor="goal_title"
             className="mb-1 block text-xs text-gray-400"
@@ -62,7 +64,7 @@ function GoalForm() {
             className="focus:shadow-outline w-96 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
-        <div className="mr-3 inline-block">
+        <div className="mr-3 mt-3 inline-block">
           <label
             htmlFor="goal_amt"
             className="mb-1 block text-xs text-gray-400"
@@ -103,7 +105,7 @@ function OptionForm() {
       }}
     >
       <div>
-        <div className="mr-3 inline-block">
+        <div className="mr-3 mt-3 inline-block">
           <label
             htmlFor="option_type"
             className="mb-1 block text-xs text-gray-400"
@@ -124,7 +126,7 @@ function OptionForm() {
             </div>
           </div>
         </div>
-        <div className="mr-3 inline-block">
+        <div className="mr-3 mt-3 inline-block">
           <label
             htmlFor="stock_symbol"
             className="mb-1 block text-xs text-gray-400"
@@ -139,7 +141,7 @@ function OptionForm() {
             className="focus:shadow-outline w-32 appearance-none rounded border px-3 py-2 uppercase leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
-        <div className="mr-3 inline-block">
+        <div className="mr-3 mt-3 inline-block">
           <label
             htmlFor="strike_price"
             className="mb-1 block text-xs text-gray-400"
@@ -155,7 +157,7 @@ function OptionForm() {
             className="focus:shadow-outline w-32 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
-        <div className="inline-block">
+        <div className="mt-3 inline-block">
           <label
             htmlFor="expiration_date"
             className="mb-1 block text-xs text-gray-400"
