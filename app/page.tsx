@@ -12,7 +12,14 @@ import {
 } from '@dnd-kit/core';
 import { AllocOptionCard } from '@/app/ui/allocateableOptionCard';
 import { AllocatableOption, Goal, Option } from '@/app/lib/model';
-import { dday, fetcher, fmtMoney, postData, tenseExp } from '@/app/lib/util';
+import {
+  dday,
+  fetcher,
+  fmtDate,
+  fmtMoney,
+  postData,
+  tenseExp,
+} from '@/app/lib/util';
 import { GoalCard } from '@/app/ui/goalCard';
 import { InputFormModal } from '@/app/ui/formModal';
 import { PlusIcon } from '@heroicons/react/20/solid';
@@ -174,25 +181,34 @@ function OptionsList() {
         return (
           <div
             key={`option-${option.id}`}
-            className="relative mb-3 flex rounded-md bg-white p-3"
+            className="relative mb-3 flex flex-wrap rounded-md bg-white p-3"
           >
-            <div className="flex-1">
+            <div className="w-2/3">
               <span className="block text-gray-700">
-                <span className="text-blue-400">{option.otype}</span>{' '}
-                {option.symbol} @ {option.strike}
-              </span>
-              <span className="block text-gray-400">
-                {tenseExp(option)} {option.exp}
+                <div className="mr-1 block text-xs font-bold tracking-tight text-blue-400 md:inline-block md:tracking-normal">
+                  {option.otype}
+                </div>
+                <div className="block md:inline-block">
+                  {option.symbol}
+                  <span className="text-gray-400">@{option.strike}&nbsp;</span>
+                </div>
               </span>
             </div>
-            <div className="flex-1 text-right">
-              <div className="text-xl">
+            <div className="w-1/3 text-right">
+              <div className="md:text-xl">
                 <span className="text-green-200">$</span>
                 <span className="text-green-400">
                   {fmtMoney(option.price * 100 - option.fee)}
                 </span>
               </div>
-              <span className="block text-purple-400">
+            </div>
+            <div className="w-full md:w-2/3">
+              <span className="text-gray-400">
+                {tenseExp(option)} {fmtDate(option.exp)}
+              </span>
+            </div>
+            <div className="hidden w-1/3 text-right md:block">
+              <span className="text-purple-400">
                 {dday(new Date(option.exp))}
               </span>
             </div>

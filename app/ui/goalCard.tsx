@@ -5,9 +5,10 @@ import useSWR, { mutate } from 'swr';
 import { useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { ContributionSummary, Goal } from '@/app/lib/model';
-import { fetcher, fmtMoney, postData } from '@/app/lib/util';
+import { fetcher, fmtDate, fmtMoney, postData } from '@/app/lib/util';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { LinkSlashIcon } from '@heroicons/react/16/solid';
+import dayjs from 'dayjs';
 
 export function GoalCard({ id, goal }: { id: string; goal: Goal }) {
   const { isOver, setNodeRef } = useDroppable({ id, data: { goal } });
@@ -20,16 +21,23 @@ export function GoalCard({ id, goal }: { id: string; goal: Goal }) {
         'border-teal-400': isOver,
       })}
     >
-      <div className="flex">
-        <div className="flex-1">
-          <span className="block text-gray-700">{goal.name}</span>
-          <span className="block text-gray-400">
-            ${fmtMoney(goal.curr_amt)} of ${fmtMoney(goal.amt)}
-          </span>
-        </div>
-        <div className="flex-1 text-right">
+      <div className="flex flex-wrap">
+        <div className="block w-full text-center md:hidden">
           <span className="block text-xl text-purple-400">
             {Math.round((goal.curr_amt / goal.amt) * 100)}%
+          </span>
+        </div>
+        <div className="sm:w-full md:w-2/3">
+          <span className="block text-gray-700">{goal.name}</span>
+        </div>
+        <div className="hidden text-right md:block md:w-1/3">
+          <span className="block text-xl text-purple-400">
+            {Math.round((goal.curr_amt / goal.amt) * 100)}%
+          </span>
+        </div>
+        <div className="w-full">
+          <span className="block text-gray-400">
+            ${fmtMoney(goal.curr_amt)} of ${fmtMoney(goal.amt)}
           </span>
         </div>
       </div>
@@ -85,12 +93,17 @@ function GoalContributions({ goal }: { goal: Goal }) {
             onMouseEnter={() => setHoveredRowId(cs.id)}
             onMouseLeave={() => setHoveredRowId(-1)}
           >
-            <div className="flex-2">
-              <span className="text-blue-400">{cs.option_type}</span>
-              &nbsp;{cs.option_symbol} @ {cs.option_strike}
-              &nbsp;<span className="text-gray-400">({cs.option_exp})</span>
+            <div className="w-1/2 md:w-2/3">
+              <span className="mr-1 text-xs font-bold tracking-tight text-blue-400 md:tracking-normal">
+                {cs.option_type}
+              </span>
+              {cs.option_symbol}
+              <span className="mr-1 text-gray-400">@{cs.option_strike}</span>
+              <span className="hidden text-gray-400 md:inline-block">
+                ({fmtDate(cs.option_exp)})
+              </span>
             </div>
-            <div className="flex-1 text-right">
+            <div className="w-1/2 text-right md:w-1/3">
               <span className="text-gray-400">$</span>
               {fmtMoney(cs.amt)}
               <button>

@@ -1,7 +1,7 @@
 'use client';
 
 import { AllocatableOption } from '@/app/lib/model';
-import { fmtMoney, tenseExp } from '@/app/lib/util';
+import { fmtDate, fmtMoney, tenseExp } from '@/app/lib/util';
 import { useDraggable } from '@dnd-kit/core';
 
 export function AllocOptionCard({
@@ -26,19 +26,26 @@ export function AllocOptionCard({
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className="mb-3 flex rounded-md bg-green-400 p-3 text-white shadow"
+      className="mb-3 flex flex-wrap rounded-md bg-green-400 p-3 text-white shadow"
       style={style}
     >
-      <div className="flex-1">
-        <span className="text-green-600">{option.otype}</span> {option.symbol} @{' '}
-        {option.strike}
-        <span className="block text-green-200">
-          {tenseExp(option)} {option.exp}
-        </span>
+      <div className="w-1/2">
+        <div className="mr-1 block text-xs font-bold tracking-tight text-green-700 md:inline-block md:tracking-normal">
+          {option.otype}
+        </div>
+        <div className="block md:inline-block">
+          {option.symbol}
+          <span className="text-green-200">@{option.strike}</span>
+        </div>
       </div>
-      <div className="flex-1 text-right text-xl">
+      <div className="w-1/2 text-right md:text-xl">
         <span className="text-green-200">$</span>
         <span className="font-bold">{fmtMoney(option.remaining_amt)}</span>
+      </div>
+      <div className="w-full">
+        <span className="block text-green-200">
+          {tenseExp(option)} {fmtDate(option.exp)}
+        </span>
       </div>
     </div>
   );
