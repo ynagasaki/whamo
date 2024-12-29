@@ -81,7 +81,7 @@ export default function Page() {
         <PlusIcon onClick={() => setShowOptionForm(!showOptionForm)}></PlusIcon>
       </div>
       <div className="flex flex-wrap p-4">
-        <div className="w-1/2 px-2 sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
+        <div className="w-1/2 pr-2 sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
           <Suspense>
             <OptionSumCard></OptionSumCard>
           </Suspense>
