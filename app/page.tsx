@@ -68,7 +68,7 @@ export default function Page() {
   const [showOptionForm, setShowOptionForm] = useState(false);
 
   return (
-    <main className="flex min-h-screen flex-col bg-gray-100 pb-8">
+    <main className="mx-auto flex min-h-screen max-w-4xl flex-col bg-gray-100 pb-8">
       <div
         className={clsx(
           'fixed bottom-0 bottom-3 left-0 right-0 z-30 ml-auto mr-auto h-10 w-10 cursor-pointer rounded-full p-1',

@@ -12,8 +12,8 @@ export default function RootLayout({
         <title>whamo!</title>
         <link rel="icon" href="favicon.png" />
       </head>
-      <body>
-        <div className="border-b border-gray-200 bg-gray-100 p-4">
+      <body className="bg-gray-100">
+        <div className="mx-auto max-w-4xl border-b border-gray-200 p-4">
           <div className="inline-block">
             <Link href="/">
               <span className="text-gray-600">whamo&nbsp;</span>

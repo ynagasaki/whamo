@@ -61,7 +61,7 @@ function GoalForm() {
             id="goal_title"
             name="goal_title"
             placeholder="Buy a hamburger..."
-            className="focus:shadow-outline w-96 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
+            className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
         <div className="mr-3 mt-3 inline-block">
@@ -184,8 +184,8 @@ function OptionForm() {
         <label htmlFor="action_sto" className="mt-3 block">
           Sold to Open
         </label>
-        <div className="mt-3">
-          <div className="mr-3 inline-block">
+        <div>
+          <div className="mr-3 mt-3 inline-block">
             <label
               htmlFor="price_sto"
               className="mb-1 block text-xs text-gray-400"
@@ -201,7 +201,7 @@ function OptionForm() {
               className="focus:shadow-outline w-32 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
             />
           </div>
-          <div className="mr-3 inline-block">
+          <div className="mr-3 mt-3 inline-block">
             <label
               htmlFor="fee_sto"
               className="mb-1 block text-xs text-gray-400"
@@ -217,7 +217,7 @@ function OptionForm() {
               className="focus:shadow-outline w-32 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
             />
           </div>
-          <div className="mr-3 inline-block">
+          <div className="mr-3 mt-3 inline-block">
             <label
               htmlFor="traded_date_sto"
               className="mb-1 block text-xs text-gray-400"
@@ -244,8 +244,8 @@ function OptionForm() {
         <label htmlFor="action_btc" className="mt-3 block">
           Bought to Close
         </label>
-        <div className={clsx('mt-3 pb-3', { hidden: !showBtc })}>
-          <div className="mr-3 inline-block">
+        <div className={clsx('pb-3', { hidden: !showBtc })}>
+          <div className="mr-3 mt-3 inline-block">
             <label
               htmlFor="price_btc"
               className="mb-1 block text-xs text-gray-400"
@@ -261,7 +261,7 @@ function OptionForm() {
               className="focus:shadow-outline w-32 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
             />
           </div>
-          <div className="mr-3 inline-block">
+          <div className="mr-3 mt-3 inline-block">
             <label
               htmlFor="fee_btc"
               className="mb-1 block text-xs text-gray-400"
@@ -277,7 +277,7 @@ function OptionForm() {
               className="focus:shadow-outline w-32 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
             />
           </div>
-          <div className="mr-3 inline-block">
+          <div className="mr-3 mt-3 inline-block">
             <label
               htmlFor="traded_date_btc"
               className="mb-1 block text-xs text-gray-400"
