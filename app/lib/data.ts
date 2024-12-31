@@ -17,6 +17,23 @@ export async function fetchOpenOptions(
   return result.rows;
 }
 
+export async function fetchGoal(id: number): Promise<Goal> {
+  const client = await getClient();
+  const result = await client.sql<Goal>`SELECT
+    g.id AS id,
+    g.name AS name,
+    g.amt AS amt,
+    g.created AS created,
+    SUM(IFNULL(gc.amt, 0)) AS curr_amt
+  FROM goals g
+    LEFT JOIN goal_contribs gc ON gc.goal = g.id
+  WHERE
+    g.id = ${id}
+  GROUP BY
+    g.id;`;
+  return result.rows[0];
+}
+
 export async function fetchOpenGoals(): Promise<Goal[]> {
   const client = await getClient();
   const result = await client.sql<Goal>`SELECT
@@ -66,7 +83,8 @@ export async function fetchContributions(
     o.strike AS option_strike,
     o.otype AS option_type,
     o.exp AS option_exp,
-    gc.amt AS amt
+    gc.amt AS amt,
+    gc.created AS created
   FROM goal_contribs gc
     INNER JOIN options o ON gc.option = o.id
   WHERE gc.goal = ${goalId}

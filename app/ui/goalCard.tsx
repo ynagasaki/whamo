@@ -8,7 +8,7 @@ import { ContributionSummary, Goal } from '@/app/lib/model';
 import { fetcher, fmtDate, fmtMoney, postData } from '@/app/lib/util';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { LinkSlashIcon } from '@heroicons/react/16/solid';
-import dayjs from 'dayjs';
+import Link from 'next/link';
 
 export function GoalCard({ id, goal }: { id: string; goal: Goal }) {
   const { isOver, setNodeRef } = useDroppable({ id, data: { goal } });
@@ -28,7 +28,9 @@ export function GoalCard({ id, goal }: { id: string; goal: Goal }) {
           </span>
         </div>
         <div className="sm:w-full md:w-2/3">
-          <span className="block text-gray-700">{goal.name}</span>
+          <span className="block text-gray-700">
+            <Link href={`/goals/${goal.id}/view`}>{goal.name}</Link>
+          </span>
         </div>
         <div className="hidden text-right md:block md:w-1/3">
           <span className="block text-xl text-purple-400">
