@@ -12,11 +12,9 @@ export function ClosedGoalCard({ goal }: { goal: Goal }) {
           ${fmtMoney(goal.curr_amt)} saved
         </span>
       </div>
-      <div className="w-1/4 md:w-1/2 text-right">
-        <div className="hidden md:inline-block mr-3">
-          <span className="block text-gray-700">
-            {fmtDate(goal.created)}
-          </span>
+      <div className="w-1/4 text-right md:w-1/2">
+        <div className="mr-3 hidden md:inline-block">
+          <span className="block text-gray-700">{fmtDate(goal.created)}</span>
           <span className="block text-gray-400">created</span>
         </div>
         <div className="inline-block">

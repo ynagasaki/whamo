@@ -6,7 +6,10 @@ import { useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { ContributionSummary, Goal } from '@/app/lib/model';
 import { fetcher, fmtDate, fmtMoney, postData } from '@/app/lib/util';
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import {
+  ChevronDownIcon,
+  ExclamationCircleIcon,
+} from '@heroicons/react/20/solid';
 import { LinkSlashIcon } from '@heroicons/react/16/solid';
 import dayjs from 'dayjs';
 
@@ -78,7 +81,12 @@ function GoalContributions({ goal }: { goal: Goal }) {
   const [hoveredRowId, setHoveredRowId] = useState(-1);
 
   if (error) {
-    return <div>Failed to load</div>;
+    return (
+      <div className="text-gray-300">
+        <ExclamationCircleIcon className="inline-block h-5 w-5" /> Failed to
+        load
+      </div>
+    );
   }
   if (!data) {
     return <div className="text-gray-300">Loading...</div>;

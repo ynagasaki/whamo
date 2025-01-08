@@ -22,7 +22,7 @@ import {
 } from '@/app/lib/util';
 import { GoalCard } from '@/app/ui/goalCard';
 import { InputFormModal } from '@/app/ui/formModal';
-import { PlusIcon } from '@heroicons/react/20/solid';
+import { ExclamationCircleIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { OptionSumCard } from '@/app/ui/cards/optionSumCard';
 import { GoalsClosedCard } from '@/app/ui/cards/goalsClosedCard';
 import { ClosedGoalCard } from './ui/goalCardClosed';
@@ -136,7 +136,12 @@ function AllocatableOptionsList() {
   const { data, error } = useSWR(`/api/options/alloc`, fetcher);
 
   if (error) {
-    return <div>Failed to load</div>;
+    return (
+      <div className="mb-3 rounded-md bg-white p-3 text-gray-300">
+        <ExclamationCircleIcon className="inline-block h-5 w-5" /> Failed to
+        load
+      </div>
+    );
   }
   if (!data) {
     return (
@@ -165,7 +170,12 @@ function OptionsList() {
   const { data, error } = useSWR(`/api/options`, fetcher);
 
   if (error) {
-    return <div>Failed to load</div>;
+    return (
+      <div className="mb-3 rounded-md bg-white p-3 text-gray-300">
+        <ExclamationCircleIcon className="inline-block h-5 w-5" /> Failed to
+        load
+      </div>
+    );
   }
   if (!data) {
     return (
@@ -247,12 +257,17 @@ function GoalsList({
   const { data, error } = useSWR(`/api/goals${qs}`, fetcher);
 
   if (error) {
-    return <div>Failed to load</div>;
+    return (
+      <div className="mb-3 rounded-md bg-gray-200 p-3 text-gray-400">
+        <ExclamationCircleIcon className="inline-block h-5 w-5" /> Failed to
+        load
+      </div>
+    );
   }
   if (!data) {
     if (status === 'c') {
       return (
-        <div className="rounded-md bg-gray-200 p-3 text-gray-400">
+        <div className="mb-3 rounded-md bg-gray-200 p-3 text-gray-400">
           Loading...
         </div>
       );

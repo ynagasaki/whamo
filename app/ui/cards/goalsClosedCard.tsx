@@ -1,11 +1,17 @@
 import useSWR from 'swr';
 import { fetcher } from '@/app/lib/util';
+import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
 
 export function GoalsClosedCard() {
   const { data, error } = useSWR(`/api/goals/closed`, fetcher);
 
   if (error) {
-    return <div>Failed to load</div>;
+    return (
+      <div className="rounded-md bg-white p-3 text-center text-gray-300">
+        <ExclamationCircleIcon className="inline-block h-5 w-5" /> Failed to
+        load
+      </div>
+    );
   }
   if (!data) {
     return (
