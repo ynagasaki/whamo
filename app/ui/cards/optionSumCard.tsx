@@ -21,12 +21,32 @@ export function OptionSumCard() {
     );
   }
 
+  const result = data.result as { period: string; value: number }[];
+  const total = result.reduce((prev, curr) => prev + curr.value, 0);
+
   return (
-    <div className="rounded-md bg-white p-3 text-center">
-      <span className="block text-xl sm:text-2xl">
-        ${fmtMoney(data.result)}
-      </span>
-      <span className="block text-sm text-gray-400">Total Earned</span>
+    <div className="rounded-md bg-white p-3">
+      <div className="text-center">
+        <span className="block text-xl sm:text-2xl">${fmtMoney(total)}</span>
+        <span className="block text-sm text-gray-400">Total Earned</span>
+      </div>
+      <div className="text-sm">
+        <>
+          {result.map((entry) => {
+            return (
+              <div
+                key={`opt-val-summary-${entry.period}`}
+                className="mt-2 border-t pt-2"
+              >
+                <div className="inline-block w-1/3">{entry.period}</div>
+                <div className="inline-block w-2/3 text-right">
+                  ${fmtMoney(entry.value)}
+                </div>
+              </div>
+            );
+          })}
+        </>
+      </div>
     </div>
   );
 }

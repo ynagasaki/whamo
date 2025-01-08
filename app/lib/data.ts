@@ -141,12 +141,23 @@ export async function removeContribution(contribId: number): Promise<void> {
   await client.sql`DELETE FROM goal_contribs WHERE id=${contribId};`;
 }
 
-export async function fetchAssignedOptionsValue(): Promise<number> {
+export async function fetchClosedOptionsValue(): Promise<
+  { period: string; value: number }[]
+> {
   const client = await getClient();
-  const result = await client.sql<{
-    result: number;
-  }>`SELECT SUM(amt) AS result FROM goal_contribs;`;
-  return result.rows[0].result;
+  const result = await client.sql<{ period: string; value: number }>`SELECT
+    SUBSTR(o.exp, 1, 4) AS period,
+    SUM(o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) AS value
+  FROM
+    options o
+    LEFT JOIN options o2 ON o.closed_by = o2.id
+  WHERE
+    (o.exp < ${sqldt(new Date())} OR o.closed_by IS NOT NULL)
+    AND o.action IS NOT 'BTC'
+  GROUP BY
+    period
+  ORDER BY period DESC;`;
+  return result.rows;
 }
 
 export async function fetchCompletedGoalsCount(): Promise<number> {
