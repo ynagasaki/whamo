@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { getClient } from './db';
 import { numdef, sqldt, toCents } from './util';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 const CreateOptionFormSchema = z.object({
   option_type: z.enum(['CALL', 'PUT']),
@@ -28,6 +29,10 @@ const CreateOptionFormSchema = z.object({
 const CreateGoalFormSchema = z.object({
   goal_title: z.string(),
   goal_amt: z.coerce.number(),
+});
+
+const UpdateGoalFormSchema = CreateGoalFormSchema.extend({
+  goal_id: z.coerce.number(),
 });
 
 export async function createOption(data: FormData): Promise<void> {
@@ -102,4 +107,19 @@ export async function createGoal(data: FormData): Promise<void> {
   );`;
 
   revalidatePath('/');
+}
+
+export async function updateGoal(data: FormData): Promise<void> {
+  const entries = UpdateGoalFormSchema.parse(
+    Object.fromEntries(data.entries()),
+  );
+  const client = await getClient();
+
+  await client.sql`UPDATE goals SET
+    name=${entries.goal_title},
+    amt=${toCents(entries.goal_amt)}
+  WHERE
+    id=${entries.goal_id};`;
+
+  redirect(`/goals/${entries.goal_id}/view`);
 }

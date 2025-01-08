@@ -212,13 +212,6 @@ function OptionsList() {
                 {dday(new Date(option.exp))}
               </span>
             </div>
-            {/* <div className="absolute inset-x-0 bottom-0 cursor-pointer">
-                <ChevronDownIcon className={clsx("transform w-6 text-gray-300 ml-auto mr-auto",
-                  {
-                    "rotate-180": false,
-                  }
-                )} />
-              </div> */}
           </div>
         );
       })}
