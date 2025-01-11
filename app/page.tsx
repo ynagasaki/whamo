@@ -26,6 +26,7 @@ import { ExclamationCircleIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { OptionSumCard } from '@/app/ui/cards/optionSumCard';
 import { GoalsClosedCard } from '@/app/ui/cards/goalsClosedCard';
 import { ClosedGoalCard } from './ui/goalCardClosed';
+import { TopSymbolsCard } from './ui/cards/topSymbolsCard';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -81,18 +82,23 @@ export default function Page() {
         <PlusIcon onClick={() => setShowOptionForm(!showOptionForm)}></PlusIcon>
       </div>
       <div className="flex flex-wrap p-4">
-        <div className="w-1/2 pr-2 sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
+        <div className="w-1/2 pr-2 lg:w-1/4">
           <Suspense>
             <OptionSumCard></OptionSumCard>
           </Suspense>
         </div>
-        <div className="w-1/2 px-2 sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
+        <div className="w-1/2 px-2 pr-0 lg:w-1/4 lg:pr-2">
           <Suspense>
             <GoalsClosedCard></GoalsClosedCard>
           </Suspense>
         </div>
+        <div className="w-1/2 px-2 pl-0 pt-2 lg:w-1/4 lg:pl-2 lg:pt-0">
+          <Suspense>
+            <TopSymbolsCard></TopSymbolsCard>
+          </Suspense>
+        </div>
       </div>
-      <div className="flex">
+      <div className="mb-2 flex">
         <DndContext
           onDragEnd={dragEndHandler}
           collisionDetection={collisionDetector}
@@ -137,7 +143,7 @@ function AllocatableOptionsList() {
 
   if (error) {
     return (
-      <div className="mb-3 rounded-md bg-white p-3 text-gray-300">
+      <div className="mb-2 rounded-md bg-white p-3 text-gray-300">
         <ExclamationCircleIcon className="inline-block h-5 w-5" /> Failed to
         load
       </div>
@@ -145,7 +151,7 @@ function AllocatableOptionsList() {
   }
   if (!data) {
     return (
-      <div className="mb-3 rounded-md bg-white p-3 text-gray-300">
+      <div className="mb-2 rounded-md bg-white p-3 text-gray-300">
         Loading...
       </div>
     );
@@ -171,7 +177,7 @@ function OptionsList() {
 
   if (error) {
     return (
-      <div className="mb-3 rounded-md bg-white p-3 text-gray-300">
+      <div className="mb-2 rounded-md bg-white p-3 text-gray-300">
         <ExclamationCircleIcon className="inline-block h-5 w-5" /> Failed to
         load
       </div>
@@ -179,7 +185,7 @@ function OptionsList() {
   }
   if (!data) {
     return (
-      <div className="mb-3 rounded-md bg-white p-3 text-gray-300">
+      <div className="mb-2 rounded-md bg-white p-3 text-gray-300">
         Loading...
       </div>
     );
@@ -191,7 +197,7 @@ function OptionsList() {
         return (
           <div
             key={`option-${option.id}`}
-            className="relative mb-3 flex flex-wrap rounded-md bg-white p-3"
+            className="relative mb-2 flex flex-wrap rounded-md bg-white p-3"
           >
             <div className="w-2/3">
               <span className="block text-gray-700">
@@ -258,7 +264,7 @@ function GoalsList({
 
   if (error) {
     return (
-      <div className="mb-3 rounded-md bg-gray-200 p-3 text-gray-400">
+      <div className="mb-2 rounded-md bg-gray-200 p-3 text-gray-400">
         <ExclamationCircleIcon className="inline-block h-5 w-5" /> Failed to
         load
       </div>
@@ -267,13 +273,13 @@ function GoalsList({
   if (!data) {
     if (status === 'c') {
       return (
-        <div className="mb-3 rounded-md bg-gray-200 p-3 text-gray-400">
+        <div className="mb-2 rounded-md bg-gray-200 p-3 text-gray-400">
           Loading...
         </div>
       );
     } else {
       return (
-        <div className="mb-3 rounded-md border-2 bg-white p-3 text-gray-300">
+        <div className="mb-2 rounded-md border-2 bg-white p-3 text-gray-300">
           Loading...
         </div>
       );

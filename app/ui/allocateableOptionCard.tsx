@@ -26,7 +26,7 @@ export function AllocOptionCard({
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className="mb-3 flex flex-wrap rounded-md bg-green-400 p-3 text-white shadow"
+      className="mb-2 flex flex-wrap rounded-md bg-green-400 p-3 text-white shadow"
       style={style}
     >
       <div className="w-1/2">

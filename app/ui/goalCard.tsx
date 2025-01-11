@@ -11,7 +11,6 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/20/solid';
 import { LinkSlashIcon } from '@heroicons/react/16/solid';
-import dayjs from 'dayjs';
 
 export function GoalCard({ id, goal }: { id: string; goal: Goal }) {
   const { isOver, setNodeRef } = useDroppable({ id, data: { goal } });
@@ -20,7 +19,7 @@ export function GoalCard({ id, goal }: { id: string; goal: Goal }) {
   return (
     <div
       ref={setNodeRef}
-      className={clsx('relative mb-3 rounded-md border-2 bg-white p-3', {
+      className={clsx('relative mb-2 rounded-md border-2 bg-white p-3', {
         'border-teal-400': isOver,
       })}
     >
@@ -46,16 +45,18 @@ export function GoalCard({ id, goal }: { id: string; goal: Goal }) {
         </div>
       </div>
       {showDetails && <GoalContributions goal={goal} />}
-      <div
-        className="absolute inset-x-0 bottom-0 cursor-pointer"
-        onClick={() => setShowDetails(!showDetails)}
-      >
-        <ChevronDownIcon
-          className={clsx('ml-auto mr-auto w-6 transform text-gray-300', {
-            'rotate-180': showDetails,
-          })}
-        />
-      </div>
+      {goal.curr_amt > 0 && (
+        <div
+          className="absolute inset-x-0 bottom-0 cursor-pointer"
+          onClick={() => setShowDetails(!showDetails)}
+        >
+          <ChevronDownIcon
+            className={clsx('ml-auto mr-auto w-6 transform text-gray-300', {
+              'rotate-180': showDetails,
+            })}
+          />
+        </div>
+      )}
     </div>
   );
 }

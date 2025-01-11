@@ -5,7 +5,7 @@ import { fmtMoney, fmtDate } from '@/app/lib/util';
 
 export function ClosedGoalCard({ goal }: { goal: Goal }) {
   return (
-    <div className="relative flex rounded-md border-b-2 border-gray-100 bg-gray-200 p-3">
+    <div className="relative mb-1 flex rounded-md bg-gray-200 p-3">
       <div className="w-3/4 md:w-1/2">
         <span className="block text-gray-700">{goal.name}&nbsp;</span>
         <span className="block text-gray-400">

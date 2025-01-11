@@ -141,12 +141,12 @@ export async function removeContribution(contribId: number): Promise<void> {
   await client.sql`DELETE FROM goal_contribs WHERE id=${contribId};`;
 }
 
-export async function fetchClosedOptionsValue(): Promise<
-  { period: string; value: number }[]
+export async function fetchClosedOptionsValueByYear(): Promise<
+  { category: string; value: number }[]
 > {
   const client = await getClient();
-  const result = await client.sql<{ period: string; value: number }>`SELECT
-    SUBSTR(o.exp, 1, 4) AS period,
+  const result = await client.sql<{ category: string; value: number }>`SELECT
+    SUBSTR(o.exp, 1, 4) AS category,
     SUM(o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) AS value
   FROM
     options o
@@ -155,8 +155,30 @@ export async function fetchClosedOptionsValue(): Promise<
     (o.exp < ${sqldt(new Date())} OR o.closed_by IS NOT NULL)
     AND o.action IS NOT 'BTC'
   GROUP BY
-    period
-  ORDER BY period DESC;`;
+    category
+  ORDER BY category DESC;`;
+  return result.rows;
+}
+
+export async function fetchClosedOptionsValueBySymbol(): Promise<
+  { category: string; value: number }[]
+> {
+  const client = await getClient();
+  const result = await client.sql<{
+    category: string;
+    value: number;
+  }>`SELECT * FROM (SELECT
+    o.symbol AS category,
+    SUM(o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) AS value
+  FROM
+    options o
+    LEFT JOIN options o2 ON o.closed_by = o2.id
+  WHERE
+    (o.exp < ${sqldt(new Date())} OR o.closed_by IS NOT NULL)
+    AND o.action IS NOT 'BTC'
+  GROUP BY
+    category
+  ORDER BY value DESC) LIMIT 3;`;
   return result.rows;
 }
 
