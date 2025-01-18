@@ -20,7 +20,6 @@ class Client {
 
   _run(query) {
     // console.log(`_run query=${query}`);
-
     if (query.startsWith('SELECT')) {
       return new Promise((resolve, reject) => {
         this.db.all(query, (err, rows) => {
@@ -89,7 +88,7 @@ class Client {
     // deleted rows.
     //
     // see https://www.sqlite.org/autoinc.html
-    await this.sql`CREATE TABLE options (
+    await this.sql`CREATE TABLE IF NOT EXISTS options (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       symbol VARCHAR(32) NOT NULL,
       strike FLOAT NOT NULL,
@@ -105,7 +104,7 @@ class Client {
       FOREIGN KEY(closed_by) REFERENCES options(id)
     );`;
 
-    await this.sql`CREATE TABLE goals (
+    await this.sql`CREATE TABLE IF NOT EXISTS goals (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       amt INTEGER NOT NULL,
@@ -113,7 +112,7 @@ class Client {
       created DATETIME NOT NULL
     );`;
 
-    await this.sql`CREATE TABLE goal_contribs (
+    await this.sql`CREATE TABLE IF NOT EXISTS goal_contribs (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       goal INTEGER NOT NULL,
       option INTEGER,
@@ -122,6 +121,19 @@ class Client {
       FOREIGN KEY(goal) REFERENCES goals(id),
       FOREIGN KEY(option) REFERENCES options(id)
     );`;
+
+    await this.sql`CREATE TABLE IF NOT EXISTS tags (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name VARCHAR(64) NOT NULL,
+      color VARCHAR(64) NOT NULL
+    );`;
+
+    try {
+      await this
+        .sql`ALTER TABLE goals ADD COLUMN category INTEGER REFERENCES tags(id);`;
+    } catch (err) {
+      // swallow
+    }
   }
 }
 
