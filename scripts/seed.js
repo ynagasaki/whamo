@@ -2,30 +2,6 @@ const { db } = require('../db');
 
 async function seedOptions(client, data) {
   try {
-    // Note: If the AUTOINCREMENT keyword appears after INTEGER PRIMARY KEY,
-    // that changes the automatic ROWID assignment algorithm to prevent the
-    // reuse of ROWIDs over the lifetime of the database. In other words, the
-    // purpose of AUTOINCREMENT is to prevent the reuse of ROWIDs from previously
-    // deleted rows.
-    //
-    // see https://www.sqlite.org/autoinc.html
-    await client.sql`CREATE TABLE options (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      symbol VARCHAR(32) NOT NULL,
-      strike FLOAT NOT NULL,
-      otype VARCHAR(4) CHECK(otype IN ('CALL', 'PUT')) NOT NULL,
-      exp DATE NOT NULL,
-      price INTEGER NOT NULL,
-      fee INTEGER NOT NULL,
-      action VARCHAR(4) CHECK(action IN ('STO', 'BTC')) NOT NULL,
-      assigned INTEGER CHECK(assigned IN (0, 1)) NOT NULL,
-      closed_by INTEGER,
-      traded DATETIME NOT NULL,
-      created DATETIME NOT NULL,
-      FOREIGN KEY(closed_by) REFERENCES options(id)
-    );`;
-    console.log(`Created options table`);
-
     for (let i = 0; i < data.length; i++) {
       const entry = data[i];
       await client.sql`INSERT INTO options (
@@ -54,15 +30,6 @@ async function seedOptions(client, data) {
 
 async function seedGoals(client, data) {
   try {
-    await client.sql`CREATE TABLE goals (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      amt INTEGER NOT NULL,
-      curr_amt INTEGER,
-      created DATETIME NOT NULL
-    );`;
-    console.log(`Created goals table`);
-
     for (let i = 0; i < data.length; i++) {
       const entry = data[i];
       await client.sql`INSERT INTO goals (
@@ -84,17 +51,6 @@ async function seedGoals(client, data) {
 
 async function seedGoalContributions(client, data) {
   try {
-    await client.sql`CREATE TABLE goal_contribs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      goal INTEGER NOT NULL,
-      option INTEGER,
-      amt INTEGER NOT NULL,
-      created DATETIME NOT NULL,
-      FOREIGN KEY(goal) REFERENCES goals(id),
-      FOREIGN KEY(option) REFERENCES options(id)
-    );`;
-    console.log(`Created goals table`);
-
     for (let i = 0; i < data.length; i++) {
       const entry = data[i];
       await client.sql`INSERT INTO goal_contribs (
@@ -114,6 +70,25 @@ async function seedGoalContributions(client, data) {
   }
 }
 
+async function seedTags(client, data) {
+  try {
+    for (let i = 0; i < data.length; i++) {
+      const entry = data[i];
+      await client.sql`INSERT INTO tags (
+        id, name, color
+      ) VALUES (
+        ${entry.id},
+        ${entry.name},
+        ${entry.color}
+      );`;
+    }
+    console.log(`Added tags`);
+  } catch (ex) {
+    console.error(`Failed to seed tags`, ex);
+    throw ex;
+  }
+}
+
 async function main() {
   let seedData = {};
 
@@ -122,9 +97,11 @@ async function main() {
   }
 
   const client = await db.connect();
+  await client.setup();
   await seedOptions(client, seedData.options ?? []);
   await seedGoals(client, seedData.goals ?? []);
   await seedGoalContributions(client, seedData.goal_contributions ?? []);
+  await seedTags(client, seedData.tags ?? []);
   await client.end();
 }
 
