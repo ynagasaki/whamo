@@ -75,11 +75,9 @@ async function seedTags(client, data) {
     for (let i = 0; i < data.length; i++) {
       const entry = data[i];
       await client.sql`INSERT INTO tags (
-        id, name, color
+        id
       ) VALUES (
-        ${entry.id},
-        ${entry.name},
-        ${entry.color}
+        ${entry.id}
       );`;
     }
     console.log(`Added tags`);
