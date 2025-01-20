@@ -122,18 +122,16 @@ class Client {
       FOREIGN KEY(option) REFERENCES options(id)
     );`;
 
+    // For now, tag data is defined in app code. But we still need
+    // to be able to reference tag IDs in the goals table.
     await this.sql`CREATE TABLE IF NOT EXISTS tags (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name VARCHAR(64) NOT NULL,
-      color VARCHAR(64) NOT NULL
+      id INTEGER PRIMARY KEY AUTOINCREMENT
     );`;
 
     try {
       await this
         .sql`ALTER TABLE goals ADD COLUMN category INTEGER REFERENCES tags(id);`;
-    } catch (err) {
-      // swallow
-    }
+    } catch (err) {}
   }
 }
 

@@ -5,12 +5,13 @@ import useSWR, { mutate } from 'swr';
 import { useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { ContributionSummary, Goal } from '@/app/lib/model';
-import { fetcher, fmtDate, fmtMoney, postData } from '@/app/lib/util';
+import { fetcher, fmtDate, fmtMoney } from '@/app/lib/util';
 import {
   ChevronDownIcon,
   ExclamationCircleIcon,
 } from '@heroicons/react/20/solid';
 import { LinkSlashIcon } from '@heroicons/react/16/solid';
+import { Taggy } from './taggy';
 
 export function GoalCard({ id, goal }: { id: string; goal: Goal }) {
   const { isOver, setNodeRef } = useDroppable({ id, data: { goal } });
@@ -25,7 +26,7 @@ export function GoalCard({ id, goal }: { id: string; goal: Goal }) {
     >
       <div className="flex flex-wrap">
         <div className="block w-full text-center md:hidden">
-          <span className="block text-xl text-purple-400">
+          <span className="inline-block text-xl text-purple-400">
             {Math.round((goal.curr_amt / goal.amt) * 100)}%
           </span>
         </div>
@@ -33,15 +34,20 @@ export function GoalCard({ id, goal }: { id: string; goal: Goal }) {
           <span className="block text-gray-700">{goal.name}</span>
         </div>
         <div className="hidden text-right md:block md:w-1/3">
-          <span className="block text-xl text-purple-400">
+          <span className="inline-block text-xl text-purple-400">
             {Math.round((goal.curr_amt / goal.amt) * 100)}%
           </span>
         </div>
-        <div className="w-full text-gray-400">
-          <span className="inline-block">${fmtMoney(goal.curr_amt)}</span>
-          <span className="hidden md:inline-block">
-            &nbsp;of ${fmtMoney(goal.amt)}
-          </span>
+        <div className="flex w-full text-gray-400">
+          <div className="w-2/3">
+            <span className="inline-block">${fmtMoney(goal.curr_amt)}</span>
+            <span className="hidden md:inline-block">
+              &nbsp;of ${fmtMoney(goal.amt)}
+            </span>
+          </div>
+          <div className="w-1/3 text-right">
+            {goal.category && <Taggy tagId={goal.category} />}
+          </div>
         </div>
       </div>
       {showDetails && <GoalContributions goal={goal} />}

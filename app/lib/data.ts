@@ -24,7 +24,8 @@ export async function fetchOpenGoals(): Promise<Goal[]> {
     g.name AS name,
     g.amt AS amt,
     g.created AS created,
-    SUM(IFNULL(gc.amt, 0)) AS curr_amt
+    SUM(IFNULL(gc.amt, 0)) AS curr_amt,
+    g.category AS category
   FROM goals g
     LEFT JOIN goal_contribs gc ON gc.goal = g.id
   GROUP BY
@@ -43,7 +44,8 @@ export async function fetchClosedGoals(cutoff: Date): Promise<Goal[]> {
     g.amt AS amt,
     g.created AS created,
     SUM(IFNULL(gc.amt, 0)) AS curr_amt,
-    MAX(gc.created) AS last_contrib_dt
+    MAX(gc.created) AS last_contrib_dt,
+    g.category AS category
   FROM goals g
     LEFT JOIN goal_contribs gc ON gc.goal = g.id
   GROUP BY

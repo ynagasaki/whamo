@@ -22,6 +22,7 @@ export interface Goal {
   curr_amt: number;
   created: string;
   last_contrib_dt?: string;
+  category?: number;
 }
 
 export interface ContributionSummary {
