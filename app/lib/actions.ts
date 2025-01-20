@@ -28,6 +28,7 @@ const CreateOptionFormSchema = z.object({
 const CreateGoalFormSchema = z.object({
   goal_title: z.string(),
   goal_amt: z.coerce.number(),
+  goal_category: z.coerce.number(),
 });
 
 export async function createOption(data: FormData): Promise<void> {
@@ -92,10 +93,11 @@ export async function createGoal(data: FormData): Promise<void> {
   const client = await getClient();
 
   await client.sql`INSERT INTO goals (
-    id, name, amt, curr_amt, created
+    id, name, category, amt, curr_amt, created
   ) VALUES (
     ${null},
     ${entries.goal_title},
+    ${entries.goal_category === -1 ? null : entries.goal_category},
     ${toCents(entries.goal_amt)},
     ${0},
     ${sqldt()}

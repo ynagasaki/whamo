@@ -3,6 +3,7 @@ import { mutate } from 'swr';
 import { useState } from 'react';
 import { createGoal, createOption } from '@/app/lib/actions';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import { Taggy } from './taggy';
 
 export function InputFormModal() {
   const [activeTab, setActiveTab] = useState(0);
@@ -41,6 +42,8 @@ export function InputFormModal() {
 }
 
 function GoalForm() {
+  const [selectedTag, setSelectedTag] = useState(-1);
+
   return (
     <form
       action={async (formData: FormData) => {
@@ -48,8 +51,8 @@ function GoalForm() {
         mutate('/api/goals');
       }}
     >
-      <div>
-        <div className="mr-3 mt-3 inline-block">
+      <div className="">
+        <div className="mr-3 mt-3 inline-block align-top">
           <label
             htmlFor="goal_title"
             className="mb-1 block text-xs text-gray-400"
@@ -64,7 +67,7 @@ function GoalForm() {
             className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
-        <div className="mr-3 mt-3 inline-block">
+        <div className="mr-3 mt-3 inline-block align-top">
           <label
             htmlFor="goal_amt"
             className="mb-1 block text-xs text-gray-400"
@@ -79,6 +82,62 @@ function GoalForm() {
             placeholder="100.00"
             className="focus:shadow-outline w-40 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
+        </div>
+        <div className="mr-3 mt-3 inline-block align-top">
+          <label
+            htmlFor="goal_category"
+            className="mb-1 block text-xs text-gray-400"
+          >
+            Category
+          </label>
+          <div className="">
+            <div
+              className={clsx('mr-1 inline-block cursor-pointer leading-none', {
+                'rounded-full border-2 border-indigo-600': selectedTag === 1,
+              })}
+              onClick={() => setSelectedTag(1)}
+            >
+              <Taggy tagId={1} forceBorder forceFullSize />
+            </div>
+            <div
+              className={clsx('mr-1 inline-block cursor-pointer leading-none', {
+                'rounded-full border-2 border-indigo-600': selectedTag === 2,
+              })}
+              onClick={() => setSelectedTag(2)}
+            >
+              <Taggy tagId={2} forceBorder forceFullSize />
+            </div>
+            <div
+              className={clsx('mr-1 inline-block cursor-pointer leading-none', {
+                'rounded-full border-2 border-indigo-600': selectedTag === 3,
+              })}
+              onClick={() => setSelectedTag(3)}
+            >
+              <Taggy tagId={3} forceBorder forceFullSize />
+            </div>
+            <div
+              className={clsx('mr-1 inline-block cursor-pointer leading-none', {
+                'rounded-full border-2 border-indigo-600': selectedTag === 4,
+              })}
+              onClick={() => setSelectedTag(4)}
+            >
+              <Taggy tagId={4} forceBorder forceFullSize />
+            </div>
+            <div
+              className={clsx('mr-1 inline-block cursor-pointer leading-none', {
+                'rounded-full border-2 border-indigo-600': selectedTag === -1,
+              })}
+              onClick={() => setSelectedTag(-1)}
+            >
+              <Taggy tagId={-1} forceBorder forceFullSize />
+            </div>
+            <input
+              type="hidden"
+              id="goal_category"
+              name="goal_category"
+              value={selectedTag}
+            />
+          </div>
         </div>
       </div>
       <div className="mt-6 border-t pt-3 text-right">
