@@ -27,6 +27,7 @@ import { OptionSumCard } from '@/app/ui/cards/optionSumCard';
 import { GoalsClosedCard } from '@/app/ui/cards/goalsClosedCard';
 import { ClosedGoalCard } from './ui/goalCardClosed';
 import { TopSymbolsCard } from './ui/cards/topSymbolsCard';
+import { TopTagsCard } from './ui/cards/topTagsCard';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -95,6 +96,11 @@ export default function Page() {
         <div className="w-1/2 px-2 pl-0 pt-2 md:w-1/4 md:pl-2 md:pt-0">
           <Suspense>
             <TopSymbolsCard></TopSymbolsCard>
+          </Suspense>
+        </div>
+        <div className="w-1/2 pl-2 pt-2 md:w-1/4 md:pt-0">
+          <Suspense>
+            <TopTagsCard></TopTagsCard>
           </Suspense>
         </div>
       </div>

@@ -97,12 +97,12 @@ export function Taggy({
   tagId,
   isDark,
   forceBorder,
-  forceFullSize,
+  displayMode = 'default',
 }: {
   tagId: number;
   isDark?: boolean;
   forceBorder?: boolean;
-  forceFullSize?: boolean;
+  displayMode: 'full' | 'compact' | 'hero' | 'default';
 }) {
   let tagData = !isDark ? tagsData.get(tagId) : tagsDataDark.get(tagId);
   let forceBorderFinal = forceBorder || tagId === -1;
@@ -111,35 +111,84 @@ export function Taggy({
     return <span className="hidden">Unrecognized tag ID={tagId}</span>;
   }
 
-  return (
-    <div className="inline-block">
-      {!forceFullSize && (
+  if (displayMode === 'compact') {
+    return (
+      <div className="inline-block">
         <div
           className={`
           inline-block
-          md:hidden ${tagData.color}
+          ${tagData.color}
           h-3
           w-3
           rounded-full
           border
           ${tagData.borderColor}`}
         ></div>
-      )}
-      <div
-        className={`
-        ${forceFullSize ? 'inline-block' : 'hidden md:inline-block'}
-        ${tagData.color}
-        rounded-full
-        text-xs
-        ${tagData.textColor}
-        ${forceBorderFinal ? 'border' : ''}
-        ${forceBorderFinal ? tagData.borderColor : ''}
-        px-2
-        py-1
-        leading-none`}
-      >
+      </div>
+    );
+  } else if (displayMode === 'full') {
+    return (
+      <div className="inline-block">
+        <div
+          className={`
+          ${tagData.color}
+          rounded-full
+          text-xs
+          ${tagData.textColor}
+          ${forceBorderFinal ? 'border' : ''}
+          ${forceBorderFinal ? tagData.borderColor : ''}
+          px-2
+          py-1
+          leading-none`}
+        >
+          {tagData.name}
+        </div>
+      </div>
+    );
+  } else if (displayMode === 'hero') {
+    return (
+      <div className="inline-block text-xl sm:text-2xl">
+        <span
+          className={`inline-block ${tagData.color} mx-1 h-4 w-4 rounded-full`}
+        ></span>
         {tagData.name}
       </div>
+    );
+  }
+
+  return (
+    <div className="inline-block">
+      {
+        <div
+          className={`
+          inline-block
+          md:hidden
+          ${tagData.color}
+          h-3
+          w-3
+          rounded-full
+          border
+          ${tagData.borderColor}`}
+        ></div>
+      }
+      {
+        <div
+          className={`
+          hidden
+          md:inline-block
+          ${tagData.color}
+          rounded-full
+          text-xs
+          ${tagData.textColor}
+          ${forceBorderFinal ? 'border' : ''}
+          ${forceBorderFinal ? tagData.borderColor : ''}
+          px-2
+          py-1
+          leading-none`}
+        >
+          {tagData.name}
+        </div>
+      }
     </div>
     // <div className={`inline-block border border-gray-200 rounded-full px-1 leading-none`}>
     //   <span className={`inline-block align-middle bg-teal-400 rounded-full mr-1 w-2 h-2`}></span>

@@ -31,7 +31,7 @@ export function GoalsClosedCard() {
         <span className="block text-xl sm:text-2xl">{totalClosed}</span>
         <span className="block text-sm text-gray-400">Goals Completed</span>
       </div>
-      <div className="text-sm">
+      <div className="hidden text-sm">
         <>
           {result
             .filter((entry) => entry.goal_category !== -1)
@@ -43,7 +43,7 @@ export function GoalsClosedCard() {
                   className="mt-2 border-t pt-2"
                 >
                   <div className="inline-block w-1/3">
-                    <Taggy tagId={entry.goal_category} forceFullSize />
+                    <Taggy tagId={entry.goal_category} displayMode="full" />
                   </div>
                   <div className="inline-block w-2/3 text-right">
                     {entry.tally}

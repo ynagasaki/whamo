@@ -104,7 +104,7 @@ function GoalForm() {
                   )}
                   onClick={() => setSelectedTag(tagId)}
                 >
-                  <Taggy tagId={tagId} forceBorder forceFullSize />
+                  <Taggy tagId={tagId} forceBorder displayMode="full" />
                 </div>
               );
             })}

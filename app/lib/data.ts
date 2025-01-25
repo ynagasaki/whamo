@@ -212,3 +212,33 @@ export async function fetchCompletedGoalsCount(): Promise<
   DESC;`;
   return result.rows;
 }
+
+export async function fetchCompletedGoalsValueByCategory(): Promise<
+  { goal_category: number; value: number }[]
+> {
+  const client = await getClient();
+  const result = await client.sql<{
+    goal_category: number;
+    value: number;
+  }>`SELECT
+    inner.cat AS goal_category,
+    SUM(inner.amt) AS value
+  FROM (
+    SELECT
+      g.id AS id,
+      IFNULL(g.category, -1) AS cat,
+      SUM(IFNULL(gc.amt, 0)) AS amt
+    FROM goals g
+      LEFT JOIN goal_contribs gc ON gc.goal = g.id
+    GROUP BY
+      g.id
+    HAVING
+      SUM(IFNULL(gc.amt, 0)) >= g.amt
+    ) AS inner
+  GROUP BY
+    inner.cat
+  ORDER BY
+    value
+  DESC;`;
+  return result.rows;
+}
