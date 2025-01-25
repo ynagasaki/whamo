@@ -235,6 +235,8 @@ export async function fetchCompletedGoalsValueByCategory(): Promise<
     ) AS inner
   GROUP BY
     inner.cat
+  HAVING
+    SUM(inner.amt) > 0
   ORDER BY
     value
   DESC;`;
