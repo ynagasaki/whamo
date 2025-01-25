@@ -232,8 +232,6 @@ export async function fetchCompletedGoalsValueByCategory(): Promise<
       LEFT JOIN goal_contribs gc ON gc.goal = g.id
     GROUP BY
       g.id
-    HAVING
-      SUM(IFNULL(gc.amt, 0)) >= g.amt
     ) AS inner
   GROUP BY
     inner.cat

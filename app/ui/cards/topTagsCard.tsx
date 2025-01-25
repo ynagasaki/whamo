@@ -37,7 +37,7 @@ export function TopTagsCard() {
       </div>
       <div className="text-sm">
         <>
-          {resultsWithTags.map((entry) => {
+          {resultsWithTags.slice(0, 3).map((entry) => {
             return (
               <div
                 key={`tag-value-summary-${entry.goal_category}`}

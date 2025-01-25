@@ -33,7 +33,7 @@ export function TopSymbolsCard() {
       </div>
       <div className="text-sm">
         <>
-          {result.map((entry) => {
+          {result.slice(0, 3).map((entry) => {
             return (
               <div
                 key={`opt-val-summary-${entry.category}`}
