@@ -91,46 +91,23 @@ function GoalForm() {
             Category
           </label>
           <div className="">
-            <div
-              className={clsx('mr-1 inline-block cursor-pointer leading-none', {
-                'rounded-full border-2 border-indigo-600': selectedTag === 1,
-              })}
-              onClick={() => setSelectedTag(1)}
-            >
-              <Taggy tagId={1} forceBorder forceFullSize />
-            </div>
-            <div
-              className={clsx('mr-1 inline-block cursor-pointer leading-none', {
-                'rounded-full border-2 border-indigo-600': selectedTag === 2,
-              })}
-              onClick={() => setSelectedTag(2)}
-            >
-              <Taggy tagId={2} forceBorder forceFullSize />
-            </div>
-            <div
-              className={clsx('mr-1 inline-block cursor-pointer leading-none', {
-                'rounded-full border-2 border-indigo-600': selectedTag === 3,
-              })}
-              onClick={() => setSelectedTag(3)}
-            >
-              <Taggy tagId={3} forceBorder forceFullSize />
-            </div>
-            <div
-              className={clsx('mr-1 inline-block cursor-pointer leading-none', {
-                'rounded-full border-2 border-indigo-600': selectedTag === 4,
-              })}
-              onClick={() => setSelectedTag(4)}
-            >
-              <Taggy tagId={4} forceBorder forceFullSize />
-            </div>
-            <div
-              className={clsx('mr-1 inline-block cursor-pointer leading-none', {
-                'rounded-full border-2 border-indigo-600': selectedTag === -1,
-              })}
-              onClick={() => setSelectedTag(-1)}
-            >
-              <Taggy tagId={-1} forceBorder forceFullSize />
-            </div>
+            {[-1, 1, 2, 3, 4].map((tagId) => {
+              return (
+                <div
+                  key={`taggy-option-${tagId}`}
+                  className={clsx(
+                    'mr-1 inline-block cursor-pointer leading-none',
+                    {
+                      'rounded-full border-2 border-indigo-600':
+                        selectedTag === tagId,
+                    },
+                  )}
+                  onClick={() => setSelectedTag(tagId)}
+                >
+                  <Taggy tagId={tagId} forceBorder forceFullSize />
+                </div>
+              );
+            })}
             <input
               type="hidden"
               id="goal_category"

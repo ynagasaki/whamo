@@ -184,19 +184,31 @@ export async function fetchClosedOptionsValueBySymbol(): Promise<
   return result.rows;
 }
 
-export async function fetchCompletedGoalsCount(): Promise<number> {
+export async function fetchCompletedGoalsCount(): Promise<
+  { goal_category: number; tally: number }[]
+> {
   const client = await getClient();
-  const result = await client.sql<{ result: number }>`SELECT
-    COUNT(1) AS result
+  const result = await client.sql<{
+    goal_category: number;
+    tally: number;
+  }>`SELECT
+    inner.cat AS goal_category,
+    COUNT(1) AS tally
   FROM (
     SELECT
-      g.id
+      g.id AS id,
+      IFNULL(g.category, -1) AS cat
     FROM goals g
       LEFT JOIN goal_contribs gc ON gc.goal = g.id
     GROUP BY
       g.id
     HAVING
       SUM(IFNULL(gc.amt, 0)) >= g.amt
-  );`;
-  return result.rows[0].result;
+    ) AS inner
+  GROUP BY
+    inner.cat
+  ORDER BY
+    tally
+  DESC;`;
+  return result.rows;
 }

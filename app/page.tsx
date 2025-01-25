@@ -82,17 +82,17 @@ export default function Page() {
         <PlusIcon onClick={() => setShowOptionForm(!showOptionForm)}></PlusIcon>
       </div>
       <div className="flex flex-wrap p-4">
-        <div className="w-1/2 pr-2 lg:w-1/4">
+        <div className="w-1/2 pr-2 md:w-1/4">
           <Suspense>
             <OptionSumCard></OptionSumCard>
           </Suspense>
         </div>
-        <div className="w-1/2 px-2 pr-0 lg:w-1/4 lg:pr-2">
+        <div className="w-1/2 px-2 pr-0 md:w-1/4 md:pr-2">
           <Suspense>
             <GoalsClosedCard></GoalsClosedCard>
           </Suspense>
         </div>
-        <div className="w-1/2 px-2 pl-0 pt-2 lg:w-1/4 lg:pl-2 lg:pt-0">
+        <div className="w-1/2 px-2 pl-0 pt-2 md:w-1/4 md:pl-2 md:pt-0">
           <Suspense>
             <TopSymbolsCard></TopSymbolsCard>
           </Suspense>

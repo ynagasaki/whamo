@@ -5,5 +5,5 @@ export async function GET(request: Request): Promise<Response> {
   console.log(`Forcing SSR: ${new URL(request.url).searchParams}`);
 
   const result = await fetchCompletedGoalsCount();
-  return Response.json({ result });
+  return Response.json({ goals: result });
 }

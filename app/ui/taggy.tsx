@@ -61,7 +61,7 @@ const tagsDataDark = new Map<number, Tag>([
       name: 'splurge',
       color: 'bg-teal-200',
       textColor: 'text-teal-600',
-      borderColor: 'border-teal-600',
+      borderColor: 'border-teal-400',
     },
   ],
   [
@@ -70,7 +70,7 @@ const tagsDataDark = new Map<number, Tag>([
       name: 'invest',
       color: 'bg-violet-200',
       textColor: 'text-violet-600',
-      borderColor: 'border-violet-600',
+      borderColor: 'border-violet-400',
     },
   ],
   [
@@ -79,7 +79,7 @@ const tagsDataDark = new Map<number, Tag>([
       name: 'fun',
       color: 'bg-yellow-200',
       textColor: 'text-yellow-600',
-      borderColor: 'border-yellow-600',
+      borderColor: 'border-yellow-400',
     },
   ],
   [
@@ -88,7 +88,7 @@ const tagsDataDark = new Map<number, Tag>([
       name: 'repay',
       color: 'bg-pink-200',
       textColor: 'text-pink-500',
-      borderColor: 'border-pink-600',
+      borderColor: 'border-pink-400',
     },
   ],
 ]);
@@ -105,6 +105,7 @@ export function Taggy({
   forceFullSize?: boolean;
 }) {
   let tagData = !isDark ? tagsData.get(tagId) : tagsDataDark.get(tagId);
+  let forceBorderFinal = forceBorder || tagId === -1;
 
   if (!tagData) {
     return <span className="hidden">Unrecognized tag ID={tagId}</span>;
@@ -117,8 +118,8 @@ export function Taggy({
           className={`
           inline-block
           md:hidden ${tagData.color}
-          h-4
-          w-4
+          h-3
+          w-3
           rounded-full
           border
           ${tagData.borderColor}`}
@@ -131,8 +132,8 @@ export function Taggy({
         rounded-full
         text-xs
         ${tagData.textColor}
-        ${forceBorder ? 'border' : ''}
-        ${forceBorder ? tagData.borderColor : ''}
+        ${forceBorderFinal ? 'border' : ''}
+        ${forceBorderFinal ? tagData.borderColor : ''}
         px-2
         py-1
         leading-none`}
