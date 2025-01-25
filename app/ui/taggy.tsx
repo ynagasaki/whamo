@@ -97,12 +97,12 @@ export function Taggy({
   tagId,
   isDark,
   forceBorder,
-  displayMode = 'default',
+  displayMode,
 }: {
   tagId: number;
   isDark?: boolean;
   forceBorder?: boolean;
-  displayMode: 'full' | 'compact' | 'hero' | 'default';
+  displayMode?: 'full' | 'compact' | 'hero';
 }) {
   let tagData = !isDark ? tagsData.get(tagId) : tagsDataDark.get(tagId);
   let forceBorderFinal = forceBorder || tagId === -1;
