@@ -47,8 +47,12 @@ function GoalForm() {
   return (
     <form
       action={async (formData: FormData) => {
-        await createGoal(formData);
-        mutate('/api/goals');
+        try {
+          await createGoal(formData);
+          mutate('/api/goals');
+        } catch (err) {
+          // TODO: show error message
+        }
       }}
     >
       <div className="">
@@ -120,7 +124,7 @@ function GoalForm() {
       <div className="mt-6 border-t pt-3 text-right">
         <button
           type="submit"
-          className="w-24 rounded border-2 border-blue-400 p-1 font-bold text-blue-400"
+          className="w-24 rounded border-2 border-blue-400 p-1 font-bold text-blue-400 hover:bg-blue-100"
         >
           Add
         </button>
@@ -135,9 +139,13 @@ function OptionForm() {
   return (
     <form
       action={async (formData: FormData) => {
-        await createOption(formData);
-        mutate('/api/options');
-        mutate('/api/options/alloc');
+        try {
+          await createOption(formData);
+          mutate('/api/options');
+          mutate('/api/options/alloc');
+        } catch (err) {
+          // TODO: show invalid erorr message
+        }
       }}
     >
       <div>
@@ -332,7 +340,7 @@ function OptionForm() {
       <div className="mt-3 border-t pt-3 text-right">
         <button
           type="submit"
-          className="w-24 rounded border-2 border-purple-400 p-1 font-bold text-purple-400"
+          className="w-24 rounded border-2 border-purple-400 p-1 font-bold text-purple-400 hover:bg-purple-100"
         >
           Add
         </button>
