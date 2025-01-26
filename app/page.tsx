@@ -75,8 +75,8 @@ export default function Page() {
         className={clsx(
           'fixed bottom-0 bottom-3 left-0 right-0 z-30 ml-auto mr-auto h-10 w-10 cursor-pointer rounded-full p-1',
           {
-            'bg-purple-400 text-white': !showOptionForm,
-            'rotate-45 transform bg-gray-400 text-white': showOptionForm,
+            'bg-purple-400 text-white hover:bg-purple-300': !showOptionForm,
+            'rotate-45 transform bg-gray-400 text-white hover:bg-gray-300': showOptionForm,
           },
         )}
       >
