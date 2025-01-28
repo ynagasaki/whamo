@@ -91,6 +91,14 @@ export async function createOption(data: FormData): Promise<void> {
   revalidatePath('/');
 }
 
+export async function upsertGoal(data: FormData): Promise<void> {
+  if (data.has('edit_goal_id')) {
+    await updateGoal(data);
+  } else {
+    await createGoal(data);
+  }
+}
+
 export async function createGoal(data: FormData): Promise<void> {
   const entries = CreateGoalFormSchema.parse(
     Object.fromEntries(data.entries()),

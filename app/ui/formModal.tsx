@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { mutate } from 'swr';
 import { useState } from 'react';
-import { createGoal, createOption, updateGoal } from '@/app/lib/actions';
+import { createOption, upsertGoal } from '@/app/lib/actions';
 import { Goal } from '@/app/lib/model';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Taggy } from './taggy';
@@ -78,11 +78,7 @@ function GoalForm({
     <form
       action={async (formData: FormData) => {
         try {
-          if (formData.get('edit_goal_id') === undefined) {
-            await createGoal(formData);
-          } else {
-            await updateGoal(formData);
-          }
+          await upsertGoal(formData);
           mutate('/api/goals');
           postSubmitCallback?.();
         } catch (err) {
