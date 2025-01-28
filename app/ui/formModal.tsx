@@ -1,57 +1,93 @@
 import clsx from 'clsx';
 import { mutate } from 'swr';
 import { useState } from 'react';
-import { createGoal, createOption } from '@/app/lib/actions';
+import { createGoal, createOption, updateGoal } from '@/app/lib/actions';
+import { Goal } from '@/app/lib/model';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Taggy } from './taggy';
 
-export function InputFormModal() {
-  const [activeTab, setActiveTab] = useState(0);
+export function InputFormModal({
+  editGoalData,
+  postSubmitCallback,
+}: {
+  editGoalData?: Goal;
+  postSubmitCallback?: () => void;
+}) {
+  const [activeTab, setActiveTab] = useState(!editGoalData ? 0 : 1);
 
   return (
     <div className="fixed inset-x-0 bottom-8 z-20 mx-4 rounded-lg border bg-white p-6 pt-3 text-gray-700 shadow-md md:mx-12">
       <div className="flex flex-wrap">
         <div className="w-full border-b pr-6 pt-0 md:w-1/4 md:border-0 md:pt-3">
-          <div
-            className={clsx('inline-block cursor-pointer p-3 md:block', {
-              'font-bold': activeTab === 0,
-            })}
-            onClick={() => setActiveTab(0)}
-          >
-            Add Options
-          </div>
-          <div
-            className={clsx(
-              'inline-block cursor-pointer border-l p-3 md:block md:border-l-0 md:border-t',
-              {
-                'font-bold': activeTab === 1,
-              },
-            )}
-            onClick={() => setActiveTab(1)}
-          >
-            Add Goals
-          </div>
+          {!editGoalData && (
+            <div
+              className={clsx('inline-block cursor-pointer p-3 md:block', {
+                'font-bold': activeTab === 0,
+              })}
+              onClick={() => setActiveTab(0)}
+            >
+              Add Options
+            </div>
+          )}
+          {!editGoalData && (
+            <div
+              className={clsx(
+                'inline-block cursor-pointer border-l p-3 md:block md:border-l-0 md:border-t',
+                {
+                  'font-bold': activeTab === 1,
+                },
+              )}
+              onClick={() => setActiveTab(1)}
+            >
+              Add Goals
+            </div>
+          )}
+          {!!editGoalData && (
+            <div className="inline-block cursor-pointer p-3 font-bold md:block">
+              Edit Goal
+            </div>
+          )}
         </div>
         <div className="w-full justify-center md:w-3/4">
-          {activeTab === 0 && <OptionForm />}
-          {activeTab === 1 && <GoalForm />}
+          {activeTab === 0 && (
+            <OptionForm postSubmitCallback={postSubmitCallback} />
+          )}
+          {activeTab === 1 && (
+            <GoalForm
+              editGoalData={editGoalData}
+              postSubmitCallback={postSubmitCallback}
+            />
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function GoalForm() {
-  const [selectedTag, setSelectedTag] = useState(-1);
+function GoalForm({
+  editGoalData,
+  postSubmitCallback,
+}: {
+  editGoalData?: Goal;
+  postSubmitCallback?: () => void;
+}) {
+  const defaultSelectedTag = editGoalData?.category ?? -1;
+  const [selectedTag, setSelectedTag] = useState(defaultSelectedTag);
 
   return (
     <form
       action={async (formData: FormData) => {
         try {
-          await createGoal(formData);
+          if (formData.get('edit_goal_id') === undefined) {
+            await createGoal(formData);
+          } else {
+            await updateGoal(formData);
+          }
           mutate('/api/goals');
+          postSubmitCallback?.();
         } catch (err) {
           // TODO: show error message
+          console.log('whamo-error: ', err);
         }
       }}
     >
@@ -68,6 +104,7 @@ function GoalForm() {
             id="goal_title"
             name="goal_title"
             placeholder="Buy a hamburger..."
+            defaultValue={editGoalData?.name}
             className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
@@ -84,6 +121,7 @@ function GoalForm() {
             id="goal_amt"
             name="goal_amt"
             placeholder="100.00"
+            defaultValue={editGoalData ? editGoalData.amt / 100 : undefined}
             className="focus:shadow-outline w-40 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
@@ -118,6 +156,14 @@ function GoalForm() {
               name="goal_category"
               value={selectedTag}
             />
+            {editGoalData && (
+              <input
+                type="hidden"
+                id="edit_goal_id"
+                name="edit_goal_id"
+                value={editGoalData.id}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -126,14 +172,18 @@ function GoalForm() {
           type="submit"
           className="w-24 rounded border-2 border-blue-400 p-1 font-bold text-blue-400 hover:bg-blue-100"
         >
-          Add
+          {!editGoalData ? 'Add' : 'Save'}
         </button>
       </div>
     </form>
   );
 }
 
-function OptionForm() {
+function OptionForm({
+  postSubmitCallback,
+}: {
+  postSubmitCallback?: () => void;
+}) {
   const [showBtc, setShowBtc] = useState(false);
 
   return (
@@ -143,6 +193,7 @@ function OptionForm() {
           await createOption(formData);
           mutate('/api/options');
           mutate('/api/options/alloc');
+          postSubmitCallback?.();
         } catch (err) {
           // TODO: show invalid erorr message
         }

@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { getClient } from './db';
 import { numdef, sqldt, toCents } from './util';
 import { revalidatePath } from 'next/cache';
+import { fetchGoalCurrentAmount } from './data';
 
 const CreateOptionFormSchema = z.object({
   option_type: z.enum(['CALL', 'PUT']),
@@ -29,6 +30,10 @@ const CreateGoalFormSchema = z.object({
   goal_title: z.string(),
   goal_amt: z.coerce.number(),
   goal_category: z.coerce.number(),
+});
+
+const UpdateGoalFormSchema = CreateGoalFormSchema.extend({
+  edit_goal_id: z.coerce.number(),
 });
 
 export async function createOption(data: FormData): Promise<void> {
@@ -102,6 +107,30 @@ export async function createGoal(data: FormData): Promise<void> {
     ${0},
     ${sqldt()}
   );`;
+
+  revalidatePath('/');
+}
+
+export async function updateGoal(data: FormData): Promise<void> {
+  const entries = UpdateGoalFormSchema.parse(
+    Object.fromEntries(data.entries()),
+  );
+  const goalAmt = toCents(entries.goal_amt);
+  const currAmt = await fetchGoalCurrentAmount(entries.edit_goal_id);
+
+  if (currAmt > goalAmt - 52) {
+    // TODO: have this return status object with particular message
+    throw new Error('current_exceeds_goal');
+  }
+
+  const client = await getClient();
+
+  await client.sql`UPDATE goals SET
+    name=${entries.goal_title},
+    category=${entries.goal_category === -1 ? null : entries.goal_category},
+    amt=${goalAmt}
+  WHERE
+    id=${entries.edit_goal_id};`;
 
   revalidatePath('/');
 }

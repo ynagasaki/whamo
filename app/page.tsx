@@ -68,6 +68,7 @@ export default function Page() {
   };
 
   const [showOptionForm, setShowOptionForm] = useState(false);
+  const [editGoalData, setEditGoalData] = useState<Goal | undefined>(undefined);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-4xl flex-col bg-gray-100 pb-8">
@@ -76,11 +77,17 @@ export default function Page() {
           'fixed bottom-0 bottom-3 left-0 right-0 z-30 ml-auto mr-auto h-10 w-10 cursor-pointer rounded-full p-1',
           {
             'bg-purple-400 text-white hover:bg-purple-300': !showOptionForm,
-            'rotate-45 transform bg-gray-400 text-white hover:bg-gray-300': showOptionForm,
+            'rotate-45 transform bg-gray-400 text-white hover:bg-gray-300':
+              showOptionForm,
           },
         )}
       >
-        <PlusIcon onClick={() => setShowOptionForm(!showOptionForm)}></PlusIcon>
+        <PlusIcon
+          onClick={() => {
+            setEditGoalData(undefined);
+            setShowOptionForm(!showOptionForm);
+          }}
+        ></PlusIcon>
       </div>
       <div className="flex flex-wrap p-4">
         <div className="w-1/2 pr-2 md:w-1/4">
@@ -129,17 +136,33 @@ export default function Page() {
           </div>
           <div className="z-0 w-1/2 pl-2 pr-4">
             <Suspense>
-              <GoalsList></GoalsList>
+              <GoalsList
+                editGoalCallback={(goal: Goal) => {
+                  if (showOptionForm) {
+                    // just close the form without reopening; make
+                    // user click again to reopen it
+                    setShowOptionForm(false);
+                    return;
+                  }
+                  setEditGoalData(goal);
+                  setShowOptionForm(true);
+                }}
+              />
             </Suspense>
           </div>
         </DndContext>
       </div>
       <div className="px-4">
         <Suspense>
-          <GoalsList status="c" lookbackPeriod={600}></GoalsList>
+          <ClosedGoalsList status="c" lookbackPeriod={600} />
         </Suspense>
       </div>
-      {showOptionForm && <InputFormModal />}
+      {showOptionForm && (
+        <InputFormModal
+          editGoalData={editGoalData}
+          postSubmitCallback={() => setShowOptionForm(false)}
+        />
+      )}
     </main>
   );
 }
@@ -249,21 +272,52 @@ function OptionsList() {
 }
 
 function GoalsList({
+  editGoalCallback,
+}: {
+  editGoalCallback: (goal: Goal) => void;
+}) {
+  const { data, error } = useSWR(`/api/goals`, fetcher);
+
+  if (error) {
+    return (
+      <div className="mb-2 rounded-md bg-gray-200 p-3 text-gray-400">
+        <ExclamationCircleIcon className="inline-block h-5 w-5" /> Failed to
+        load
+      </div>
+    );
+  }
+  if (!data) {
+    return (
+      <div className="mb-2 rounded-md border-2 bg-white p-3 text-gray-300">
+        Loading...
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {data.goals.map((goal: Goal) => {
+        return (
+          <GoalCard
+            id={`goal-${goal.id}`}
+            key={`goal-${goal.id}`}
+            goal={goal}
+            editGoalCallback={editGoalCallback}
+          ></GoalCard>
+        );
+      })}
+    </>
+  );
+}
+
+function ClosedGoalsList({
   status,
   lookbackPeriod,
 }: {
-  status?: 'c';
-  lookbackPeriod?: number;
+  status: 'c';
+  lookbackPeriod: number;
 }) {
-  const params: string[] = [];
-
-  if (status) {
-    params.push(`status=${status}`);
-  }
-
-  if (lookbackPeriod) {
-    params.push(`lastPd=${lookbackPeriod}`);
-  }
+  const params: string[] = [`status=${status}`, `lastPd=${lookbackPeriod}`];
 
   const qs = params.length > 0 ? `?${params.join('&')}` : '';
   const { data, error } = useSWR(`/api/goals${qs}`, fetcher);
@@ -277,34 +331,17 @@ function GoalsList({
     );
   }
   if (!data) {
-    if (status === 'c') {
-      return (
-        <div className="mb-2 rounded-md bg-gray-200 p-3 text-gray-400">
-          Loading...
-        </div>
-      );
-    } else {
-      return (
-        <div className="mb-2 rounded-md border-2 bg-white p-3 text-gray-300">
-          Loading...
-        </div>
-      );
-    }
+    return (
+      <div className="mb-2 rounded-md bg-gray-200 p-3 text-gray-400">
+        Loading...
+      </div>
+    );
   }
 
   return (
     <>
       {data.goals.map((goal: Goal) => {
-        if (status === 'c') {
-          return <ClosedGoalCard key={`goal-${goal.id}`} goal={goal} />;
-        }
-        return (
-          <GoalCard
-            id={`goal-${goal.id}`}
-            key={`goal-${goal.id}`}
-            goal={goal}
-          ></GoalCard>
-        );
+        return <ClosedGoalCard key={`goal-${goal.id}`} goal={goal} />;
       })}
     </>
   );
