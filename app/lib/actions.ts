@@ -5,6 +5,7 @@ import { getClient } from './db';
 import { numdef, sqldt, toCents } from './util';
 import { revalidatePath } from 'next/cache';
 import { fetchGoalCurrentAmount } from './data';
+import { ActionStatus } from './model';
 
 const CreateOptionFormSchema = z.object({
   option_type: z.enum(['CALL', 'PUT']),
@@ -35,6 +36,10 @@ const CreateGoalFormSchema = z.object({
 const UpdateGoalFormSchema = CreateGoalFormSchema.extend({
   edit_goal_id: z.coerce.number(),
 });
+
+type CreateGoalFormInput = z.infer<typeof CreateGoalFormSchema>;
+
+class ValidationError extends Error {}
 
 export async function createOption(data: FormData): Promise<void> {
   const entries = CreateOptionFormSchema.parse(
@@ -91,18 +96,27 @@ export async function createOption(data: FormData): Promise<void> {
   revalidatePath('/');
 }
 
-export async function upsertGoal(data: FormData): Promise<void> {
+export async function upsertGoal(data: FormData): Promise<ActionStatus> {
   if (data.has('edit_goal_id')) {
-    await updateGoal(data);
+    return await updateGoal(data);
   } else {
-    await createGoal(data);
+    return await createGoal(data);
   }
 }
 
-export async function createGoal(data: FormData): Promise<void> {
-  const entries = CreateGoalFormSchema.parse(
-    Object.fromEntries(data.entries()),
-  );
+export async function createGoal(data: FormData): Promise<ActionStatus> {
+  var entries: CreateGoalFormInput;
+
+  try {
+    entries = CreateGoalFormSchema.parse(Object.fromEntries(data.entries()));
+    validateGoalInput(entries);
+  } catch (err) {
+    return {
+      status: 'error',
+      message: (err as Error).message ?? 'Failed to validate input.',
+    };
+  }
+
   const client = await getClient();
 
   await client.sql`INSERT INTO goals (
@@ -110,35 +124,66 @@ export async function createGoal(data: FormData): Promise<void> {
   ) VALUES (
     ${null},
     ${entries.goal_title},
-    ${entries.goal_category === -1 ? null : entries.goal_category},
+    ${
+      [1, 2, 3, 4].includes(entries.goal_category)
+        ? entries.goal_category
+        : null
+    },
     ${toCents(entries.goal_amt)},
     ${0},
     ${sqldt()}
   );`;
 
   revalidatePath('/');
+
+  return { status: 'ok' };
 }
 
-export async function updateGoal(data: FormData): Promise<void> {
-  const entries = UpdateGoalFormSchema.parse(
-    Object.fromEntries(data.entries()),
-  );
+export async function updateGoal(data: FormData): Promise<ActionStatus> {
+  var entries: z.infer<typeof UpdateGoalFormSchema>;
+
+  try {
+    entries = UpdateGoalFormSchema.parse(Object.fromEntries(data.entries()));
+    validateGoalInput(entries);
+  } catch (err) {
+    return {
+      status: 'error',
+      message: (err as Error).message ?? 'Failed to validate input.',
+    };
+  }
+
   const goalAmt = toCents(entries.goal_amt);
   const currAmt = await fetchGoalCurrentAmount(entries.edit_goal_id);
 
-  if (currAmt > goalAmt - 52) {
-    // TODO: have this return status object with particular message
-    throw new Error('current_exceeds_goal');
+  if (currAmt > goalAmt) {
+    return {
+      status: 'error',
+      message: 'Current amount cannot exceed goal amount.',
+    };
   }
 
   const client = await getClient();
 
   await client.sql`UPDATE goals SET
     name=${entries.goal_title},
-    category=${entries.goal_category === -1 ? null : entries.goal_category},
+    category=${
+      [1, 2, 3, 4].includes(entries.goal_category)
+        ? entries.goal_category
+        : null
+    },
     amt=${goalAmt}
   WHERE
     id=${entries.edit_goal_id};`;
 
   revalidatePath('/');
+
+  return { status: 'ok' };
+}
+
+function validateGoalInput(entries: CreateGoalFormInput): void {
+  if (entries.goal_title.trim().length === 0) {
+    throw new ValidationError('Goal name cannot be blank.');
+  } else if (entries.goal_amt <= 0) {
+    throw new ValidationError('Target amount must be positive.');
+  }
 }

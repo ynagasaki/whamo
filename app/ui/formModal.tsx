@@ -3,7 +3,10 @@ import { mutate } from 'swr';
 import { useState } from 'react';
 import { createOption, upsertGoal } from '@/app/lib/actions';
 import { Goal } from '@/app/lib/model';
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import {
+  ChevronDownIcon,
+  ExclamationCircleIcon,
+} from '@heroicons/react/20/solid';
 import { Taggy } from './taggy';
 
 export function InputFormModal({
@@ -73,17 +76,17 @@ function GoalForm({
 }) {
   const defaultSelectedTag = editGoalData?.category ?? -1;
   const [selectedTag, setSelectedTag] = useState(defaultSelectedTag);
+  const [errorMessage, setErrorMessage] = useState('');
 
   return (
     <form
       action={async (formData: FormData) => {
-        try {
-          await upsertGoal(formData);
+        const result = await upsertGoal(formData);
+        if (result.status === 'ok') {
           mutate('/api/goals');
           postSubmitCallback?.();
-        } catch (err) {
-          // TODO: show error message
-          console.log('whamo-error: ', err);
+        } else {
+          setErrorMessage(result.message ?? '');
         }
       }}
     >
@@ -163,13 +166,23 @@ function GoalForm({
           </div>
         </div>
       </div>
-      <div className="mt-6 border-t pt-3 text-right">
-        <button
-          type="submit"
-          className="w-24 rounded border-2 border-blue-400 p-1 font-bold text-blue-400 hover:bg-blue-100"
-        >
-          {!editGoalData ? 'Add' : 'Save'}
-        </button>
+      <div className="mt-6 flex border-t pt-3">
+        <div className="w-3/4">
+          {errorMessage && (
+            <div>
+              <ExclamationCircleIcon className="inline-block h-5 w-5 text-red-400" />
+              <span className="border-b border-red-300">{errorMessage}</span>
+            </div>
+          )}
+        </div>
+        <div className="w-1/4 text-right">
+          <button
+            type="submit"
+            className="w-24 rounded border-2 border-blue-400 p-1 font-bold text-blue-400 hover:bg-blue-100"
+          >
+            {!editGoalData ? 'Add' : 'Save'}
+          </button>
+        </div>
       </div>
     </form>
   );
