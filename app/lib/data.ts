@@ -17,6 +17,17 @@ export async function fetchOpenOptions(
   return result.rows;
 }
 
+export async function fetchGoalCurrentAmount(id: number): Promise<number> {
+  const client = await getClient();
+  const result = await client.sql<{ curr_amt: number }>`SELECT
+    SUM(IFNULL(gc.amt, 0)) AS curr_amt
+  FROM
+    goal_contribs AS gc
+  WHERE
+    gc.goal = ${id};`;
+  return result.rows[0].curr_amt;
+}
+
 export async function fetchOpenGoals(): Promise<Goal[]> {
   const client = await getClient();
   const result = await client.sql<Goal>`SELECT

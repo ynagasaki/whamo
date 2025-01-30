@@ -13,7 +13,15 @@ import {
 import { LinkSlashIcon } from '@heroicons/react/16/solid';
 import { Taggy } from './taggy';
 
-export function GoalCard({ id, goal }: { id: string; goal: Goal }) {
+export function GoalCard({
+  id,
+  goal,
+  editGoalCallback,
+}: {
+  id: string;
+  goal: Goal;
+  editGoalCallback: (goal: Goal) => void;
+}) {
   const { isOver, setNodeRef } = useDroppable({ id, data: { goal } });
   const [showDetails, setShowDetails] = useState(false);
 
@@ -31,7 +39,12 @@ export function GoalCard({ id, goal }: { id: string; goal: Goal }) {
           </span>
         </div>
         <div className="sm:w-full md:w-2/3">
-          <span className="block text-gray-700">{goal.name}</span>
+          <span
+            className="border-dotted border-gray-300 text-gray-700 hover:cursor-pointer hover:border-b-2"
+            onClick={() => editGoalCallback(goal)}
+          >
+            {goal.name}
+          </span>
         </div>
         <div className="hidden text-right md:block md:w-1/3">
           <span className="inline-block text-xl text-purple-400">
@@ -105,31 +118,36 @@ function GoalContributions({ goal }: { goal: Goal }) {
         return (
           <div
             key={`ContribSummary-Item-${cs.id}`}
-            className="flex pb-1 pt-1 md:pb-3 md:pt-3"
+            className="flex pb-2 pt-2"
             onMouseEnter={() => setHoveredRowId(cs.id)}
             onMouseLeave={() => setHoveredRowId(-1)}
           >
-            <div className="w-1/2 md:w-2/3">
+            <div className="w-1/2">
               <span className="mr-1 block text-xs font-bold text-blue-400 md:inline-block">
                 {cs.option_type}
               </span>
               {cs.option_symbol}
               <span className="mr-1 text-gray-400">@{cs.option_strike}</span>
-              <span className="hidden text-gray-400 md:inline-block">
-                ({fmtDate(cs.option_exp)})
+              <span className="hidden text-gray-400 md:block">
+                expires {fmtDate(cs.option_exp)}
               </span>
             </div>
-            <div className="w-1/2 text-right md:w-1/3">
-              <span className="text-gray-400">$</span>
-              {fmtMoney(cs.amt)}
-              <button>
+            <div className="w-1/2 text-right">
+              <div>
+                <span className="text-gray-400">$</span>
+                {fmtMoney(cs.amt)}
+              </div>
+              <div className="leading-none">
                 <LinkSlashIcon
                   onClick={() => unlinkContribution(goal.id, cs.id)}
-                  className={clsx('ml-2 w-4 text-red-400', {
-                    hidden: hoveredRowId !== cs.id,
-                  })}
+                  className={clsx(
+                    'inline-block h-4 w-4 cursor-pointer text-red-400',
+                    {
+                      hidden: hoveredRowId !== cs.id,
+                    },
+                  )}
                 ></LinkSlashIcon>
-              </button>
+              </div>
             </div>
           </div>
         );

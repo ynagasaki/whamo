@@ -39,3 +39,8 @@ export interface ContributionSummary {
 export interface AllocatableOption extends Option {
   remaining_amt: number;
 }
+
+export interface ActionStatus {
+  status: 'ok' | 'error';
+  message?: string;
+}
