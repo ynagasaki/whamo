@@ -167,18 +167,20 @@ function GoalForm({
         </div>
       </div>
       <div className="mt-6 flex border-t pt-3">
-        <div className="w-3/4">
+        <div className="w-2/3 md:w-3/4">
           {errorMessage && (
             <div>
               <ExclamationCircleIcon className="inline-block h-5 w-5 text-red-400" />
-              <span className="border-b border-red-300">{errorMessage}</span>
+              <span className="border-b border-red-300 text-sm md:text-base">
+                {errorMessage}
+              </span>
             </div>
           )}
         </div>
-        <div className="w-1/4 text-right">
+        <div className="w-1/3 text-right md:w-1/4">
           <button
             type="submit"
-            className="w-24 rounded border-2 border-blue-400 p-1 font-bold text-blue-400 hover:bg-blue-100"
+            className="w-20 rounded border-2 border-blue-400 p-1 font-bold text-blue-400 hover:bg-blue-100 md:w-24"
           >
             {!editGoalData ? 'Add' : 'Save'}
           </button>
@@ -400,7 +402,7 @@ function OptionForm({
       <div className="mt-3 border-t pt-3 text-right">
         <button
           type="submit"
-          className="w-24 rounded border-2 border-purple-400 p-1 font-bold text-purple-400 hover:bg-purple-100"
+          className="w-20 rounded border-2 border-purple-400 p-1 font-bold text-purple-400 hover:bg-purple-100 md:w-24"
         >
           Add
         </button>
