@@ -133,7 +133,7 @@ function GoalContributions({ goal }: { goal: Goal }) {
               </span>
             </div>
             <div className="w-1/2 text-right">
-              <div>
+              <div className="leading-snug md:leading-normal">
                 <span className="text-gray-400">$</span>
                 {fmtMoney(cs.amt)}
               </div>

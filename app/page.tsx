@@ -154,7 +154,7 @@ export default function Page() {
       </div>
       <div className="px-4">
         <Suspense>
-          <ClosedGoalsList status="c" lookbackPeriod={600} />
+          <ClosedGoalsList status="c" lookbackPeriod={365} />
         </Suspense>
       </div>
       {showOptionForm && (
