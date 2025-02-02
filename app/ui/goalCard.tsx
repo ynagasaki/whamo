@@ -12,6 +12,7 @@ import {
 } from '@heroicons/react/20/solid';
 import { LinkSlashIcon } from '@heroicons/react/16/solid';
 import { Taggy } from './taggy';
+import { CardProgressBar } from './widgets/cardProgressBar';
 
 export function GoalCard({
   id,
@@ -24,6 +25,7 @@ export function GoalCard({
 }) {
   const { isOver, setNodeRef } = useDroppable({ id, data: { goal } });
   const [showDetails, setShowDetails] = useState(false);
+  const pct = Math.round((goal.curr_amt / goal.amt) * 100);
 
   return (
     <div
@@ -32,11 +34,10 @@ export function GoalCard({
         'border-teal-400': isOver,
       })}
     >
+      <CardProgressBar pct={pct} idPrefix={`goal-${goal.id}`} />
       <div className="flex flex-wrap">
         <div className="block w-full text-center md:hidden">
-          <span className="inline-block text-xl text-purple-400">
-            {Math.round((goal.curr_amt / goal.amt) * 100)}%
-          </span>
+          <span className="inline-block text-xl text-purple-400">{pct}%</span>
         </div>
         <div className="sm:w-full md:w-2/3">
           <span
