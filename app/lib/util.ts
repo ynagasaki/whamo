@@ -69,9 +69,7 @@ export async function postData(
 
 export function dday(target: Date): string {
   const now = new Date(); // this is now in GMT
-  const targetMs = target.getTime();
-  const diffMs =
-    targetMs - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const diffMs = msBtwn(now, target);
   const diffS = diffMs / 1000;
   const diffMin = diffS / 60;
   const diffHr = diffMin / 60;
@@ -92,4 +90,18 @@ export function dday(target: Date): string {
 
 export function numdef(param: number | undefined | null): param is number {
   return param !== undefined && param !== null;
+}
+
+export function ddayPct(start: Date, end: Date) {
+  const now = new Date(); // this is now in GMT
+  const period = msBtwn(start, end);
+  const progress = msBtwn(start, now);
+  return Math.round((progress / period) * 100);
+}
+
+function msBtwn(start: Date, end: Date): number {
+  return (
+    end.getTime() -
+    Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())
+  );
 }

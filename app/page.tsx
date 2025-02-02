@@ -12,14 +12,7 @@ import {
 } from '@dnd-kit/core';
 import { AllocOptionCard } from '@/app/ui/allocateableOptionCard';
 import { AllocatableOption, Goal, Option } from '@/app/lib/model';
-import {
-  dday,
-  fetcher,
-  fmtDate,
-  fmtMoney,
-  postData,
-  tenseExp,
-} from '@/app/lib/util';
+import { fetcher, postData } from '@/app/lib/util';
 import { GoalCard } from '@/app/ui/goalCard';
 import { InputFormModal } from '@/app/ui/formModal';
 import { ExclamationCircleIcon, PlusIcon } from '@heroicons/react/20/solid';
@@ -28,6 +21,7 @@ import { GoalsClosedCard } from '@/app/ui/cards/goalsClosedCard';
 import { ClosedGoalCard } from './ui/goalCardClosed';
 import { TopSymbolsCard } from './ui/cards/topSymbolsCard';
 import { TopTagsCard } from './ui/cards/topTagsCard';
+import { OptionCard } from './ui/optionCard';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -154,7 +148,7 @@ export default function Page() {
       </div>
       <div className="px-4">
         <Suspense>
-          <ClosedGoalsList status="c" lookbackPeriod={600} />
+          <ClosedGoalsList status="c" lookbackPeriod={365} />
         </Suspense>
       </div>
       {showOptionForm && (
@@ -223,49 +217,7 @@ function OptionsList() {
   return (
     <>
       {data.options.map((option: Option) => {
-        return (
-          <div
-            key={`option-${option.id}`}
-            className="relative mb-2 flex flex-wrap rounded-md bg-white p-3"
-          >
-            <div className="w-2/3">
-              <span className="block text-gray-700">
-                <div className="mr-1 block text-xs font-bold tracking-tight text-blue-400 md:inline-block md:tracking-normal">
-                  {option.otype}
-                </div>
-                <div className="block md:inline-block">
-                  {option.symbol}
-                  <span className="text-gray-400">@{option.strike}&nbsp;</span>
-                </div>
-              </span>
-            </div>
-            <div className="w-1/3 text-right">
-              <div className="md:text-xl">
-                <span className="text-green-200">$</span>
-                <span className="text-green-400">
-                  {fmtMoney(option.price * 100 - option.fee)}
-                </span>
-              </div>
-            </div>
-            <div className="w-full md:w-2/3">
-              <span className="text-gray-400">
-                {tenseExp(option)} {fmtDate(option.exp)}
-              </span>
-            </div>
-            <div className="hidden w-1/3 text-right md:block">
-              <span className="text-purple-400">
-                {dday(new Date(option.exp))}
-              </span>
-            </div>
-            {/* <div className="absolute inset-x-0 bottom-0 cursor-pointer">
-                <ChevronDownIcon className={clsx("transform w-6 text-gray-300 ml-auto mr-auto",
-                  {
-                    "rotate-180": false,
-                  }
-                )} />
-              </div> */}
-          </div>
-        );
+        return <OptionCard key={`option-${option.id}`} option={option} />;
       })}
     </>
   );

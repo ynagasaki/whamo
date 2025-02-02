@@ -12,6 +12,7 @@ import {
 } from '@heroicons/react/20/solid';
 import { LinkSlashIcon } from '@heroicons/react/16/solid';
 import { Taggy } from './taggy';
+import { CardProgressBar } from './widgets/cardProgressBar';
 
 export function GoalCard({
   id,
@@ -24,6 +25,7 @@ export function GoalCard({
 }) {
   const { isOver, setNodeRef } = useDroppable({ id, data: { goal } });
   const [showDetails, setShowDetails] = useState(false);
+  const pct = Math.round((goal.curr_amt / goal.amt) * 100);
 
   return (
     <div
@@ -32,10 +34,11 @@ export function GoalCard({
         'border-teal-400': isOver,
       })}
     >
+      <CardProgressBar pct={pct} idPrefix={`goal-${goal.id}`} />
       <div className="flex flex-wrap">
         <div className="block w-full text-center md:hidden">
           <span className="inline-block text-xl text-purple-400">
-            {Math.round((goal.curr_amt / goal.amt) * 100)}%
+            ${fmtMoney(goal.curr_amt)}
           </span>
         </div>
         <div className="sm:w-full md:w-2/3">
@@ -47,16 +50,14 @@ export function GoalCard({
           </span>
         </div>
         <div className="hidden text-right md:block md:w-1/3">
-          <span className="inline-block text-xl text-purple-400">
-            {Math.round((goal.curr_amt / goal.amt) * 100)}%
-          </span>
+          <span className="inline-block text-xl text-purple-400">{pct}%</span>
         </div>
         <div className="flex w-full text-gray-400">
           <div className="w-2/3">
-            <span className="inline-block">${fmtMoney(goal.curr_amt)}</span>
             <span className="hidden md:inline-block">
-              &nbsp;of ${fmtMoney(goal.amt)}
+              ${fmtMoney(goal.curr_amt)}&nbsp;
             </span>
+            <span className="inline-block">of ${fmtMoney(goal.amt)}</span>
           </div>
           <div className="w-1/3 text-right">
             {goal.category && <Taggy tagId={goal.category} />}
@@ -133,7 +134,7 @@ function GoalContributions({ goal }: { goal: Goal }) {
               </span>
             </div>
             <div className="w-1/2 text-right">
-              <div>
+              <div className="leading-snug md:leading-normal">
                 <span className="text-gray-400">$</span>
                 {fmtMoney(cs.amt)}
               </div>
