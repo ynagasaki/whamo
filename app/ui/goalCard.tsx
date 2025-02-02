@@ -37,7 +37,9 @@ export function GoalCard({
       <CardProgressBar pct={pct} idPrefix={`goal-${goal.id}`} />
       <div className="flex flex-wrap">
         <div className="block w-full text-center md:hidden">
-          <span className="inline-block text-xl text-purple-400">{pct}%</span>
+          <span className="inline-block text-xl text-purple-400">
+            ${fmtMoney(goal.curr_amt)}
+          </span>
         </div>
         <div className="sm:w-full md:w-2/3">
           <span
@@ -48,16 +50,14 @@ export function GoalCard({
           </span>
         </div>
         <div className="hidden text-right md:block md:w-1/3">
-          <span className="inline-block text-xl text-purple-400">
-            {Math.round((goal.curr_amt / goal.amt) * 100)}%
-          </span>
+          <span className="inline-block text-xl text-purple-400">{pct}%</span>
         </div>
         <div className="flex w-full text-gray-400">
           <div className="w-2/3">
-            <span className="inline-block">${fmtMoney(goal.curr_amt)}</span>
             <span className="hidden md:inline-block">
-              &nbsp;of ${fmtMoney(goal.amt)}
+              ${fmtMoney(goal.curr_amt)}&nbsp;
             </span>
+            <span className="inline-block">of ${fmtMoney(goal.amt)}</span>
           </div>
           <div className="w-1/3 text-right">
             {goal.category && <Taggy tagId={goal.category} />}
