@@ -5,7 +5,7 @@ import useSWR, { mutate } from 'swr';
 import { useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { ContributionSummary, Goal } from '@/app/lib/model';
-import { fetcher, fmtDate, fmtMoney } from '@/app/lib/util';
+import { fetcher, fmtDate, fmtMoney, tenseExp } from '@/app/lib/util';
 import {
   ChevronDownIcon,
   ExclamationCircleIcon,
@@ -37,7 +37,7 @@ export function GoalCard({
       <CardProgressBar pct={pct} idPrefix={`goal-${goal.id}`} />
       <div className="flex flex-wrap">
         <div className="block w-full text-center md:hidden">
-          <span className="inline-block md:text-xl text-purple-400">
+          <span className="inline-block text-purple-400 md:text-xl">
             ${fmtMoney(goal.curr_amt)}
           </span>
         </div>
@@ -130,7 +130,7 @@ function GoalContributions({ goal }: { goal: Goal }) {
               {cs.option_symbol}
               <span className="mr-1 text-gray-400">@{cs.option_strike}</span>
               <span className="hidden text-gray-400 md:block">
-                expires {fmtDate(cs.option_exp)}
+                expired {fmtDate(cs.option_exp)}
               </span>
             </div>
             <div className="w-1/2 text-right">

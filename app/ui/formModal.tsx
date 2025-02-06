@@ -24,9 +24,12 @@ export function InputFormModal({
         <div className="w-full border-b pr-6 pt-0 md:w-1/4 md:border-0 md:pt-3">
           {!editGoalData && (
             <div
-              className={clsx('inline-block cursor-pointer p-3 md:block', {
-                'font-bold': activeTab === 0,
-              })}
+              className={clsx(
+                'inline-block cursor-pointer p-2 pl-0 pr-3 md:block md:p-3',
+                {
+                  'font-bold': activeTab === 0,
+                },
+              )}
               onClick={() => setActiveTab(0)}
             >
               Add Options
@@ -35,7 +38,7 @@ export function InputFormModal({
           {!editGoalData && (
             <div
               className={clsx(
-                'inline-block cursor-pointer border-l p-3 md:block md:border-l-0 md:border-t',
+                'inline-block cursor-pointer p-2 pl-3 md:block md:border-t md:p-3',
                 {
                   'font-bold': activeTab === 1,
                 },
@@ -46,7 +49,7 @@ export function InputFormModal({
             </div>
           )}
           {!!editGoalData && (
-            <div className="inline-block cursor-pointer p-3 font-bold md:block">
+            <div className="inline-block cursor-pointer p-2 font-bold md:block md:p-3">
               Edit Goal
             </div>
           )}
@@ -91,7 +94,7 @@ function GoalForm({
       }}
     >
       <div className="">
-        <div className="mr-3 mt-3 inline-block align-top">
+        <div className="mr-3 mt-2 inline-block align-top md:mt-3">
           <label
             htmlFor="goal_title"
             className="mb-1 block text-xs text-gray-400"
@@ -107,7 +110,7 @@ function GoalForm({
             className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
-        <div className="mr-3 mt-3 inline-block align-top">
+        <div className="mr-3 mt-2 inline-block align-top md:mt-3">
           <label
             htmlFor="goal_amt"
             className="mb-1 block text-xs text-gray-400"
@@ -124,7 +127,7 @@ function GoalForm({
             className="focus:shadow-outline w-40 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
-        <div className="mr-3 mt-3 inline-block align-top">
+        <div className="mr-3 mt-2 inline-block align-top md:mt-3">
           <label
             htmlFor="goal_category"
             className="mb-1 block text-xs text-gray-400"
@@ -166,10 +169,10 @@ function GoalForm({
           </div>
         </div>
       </div>
-      <div className="mt-6 flex border-t pt-3">
+      <div className="mt-3 flex border-t pt-3 md:mt-6">
         <div className="w-2/3 md:w-3/4">
           {errorMessage && (
-            <div>
+            <div className="leading-none">
               <ExclamationCircleIcon className="inline-block h-5 w-5 text-red-400" />
               <span className="border-b border-red-300 text-sm md:text-base">
                 {errorMessage}
@@ -211,7 +214,7 @@ function OptionForm({
       }}
     >
       <div>
-        <div className="mr-3 mt-3 inline-block">
+        <div className="mr-3 mt-2 inline-block md:mt-3">
           <label
             htmlFor="option_type"
             className="mb-1 block text-xs text-gray-400"
@@ -232,7 +235,7 @@ function OptionForm({
             </div>
           </div>
         </div>
-        <div className="mr-3 mt-3 inline-block">
+        <div className="mr-3 mt-2 inline-block md:mt-3">
           <label
             htmlFor="stock_symbol"
             className="mb-1 block text-xs text-gray-400"
@@ -247,7 +250,7 @@ function OptionForm({
             className="focus:shadow-outline w-32 appearance-none rounded border px-3 py-2 uppercase leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
-        <div className="mr-3 mt-3 inline-block">
+        <div className="mr-3 mt-2 inline-block md:mt-3">
           <label
             htmlFor="strike_price"
             className="mb-1 block text-xs text-gray-400"
@@ -263,7 +266,7 @@ function OptionForm({
             className="focus:shadow-outline w-32 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
-        <div className="mt-3 inline-block">
+        <div className="mt-2 inline-block md:mt-3">
           <label
             htmlFor="expiration_date"
             className="mb-1 block text-xs text-gray-400"
@@ -278,20 +281,20 @@ function OptionForm({
           />
         </div>
       </div>
-      <div className="relative mt-6 border-t">
+      <div className="relative mt-3 border-t md:mt-6">
         <input
           type="checkbox"
           id="action_sto"
           name="action_sto"
           checked
           disabled
-          className="absolute right-0 top-4 cursor-not-allowed rounded border-gray-400 opacity-50"
+          className="absolute right-0 top-3 cursor-not-allowed rounded border-gray-400 opacity-50 md:top-4"
         />
-        <label htmlFor="action_sto" className="mt-3 block">
+        <label htmlFor="action_sto" className="mt-2 block md:mt-3">
           Sold to Open
         </label>
         <div>
-          <div className="mr-3 mt-3 inline-block">
+          <div className="mr-3 mt-2 inline-block md:mt-3">
             <label
               htmlFor="price_sto"
               className="mb-1 block text-xs text-gray-400"
@@ -307,7 +310,7 @@ function OptionForm({
               className="focus:shadow-outline w-32 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
             />
           </div>
-          <div className="mr-3 mt-3 inline-block">
+          <div className="mr-3 mt-2 inline-block md:mt-3">
             <label
               htmlFor="fee_sto"
               className="mb-1 block text-xs text-gray-400"
@@ -323,7 +326,7 @@ function OptionForm({
               className="focus:shadow-outline w-32 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
             />
           </div>
-          <div className="mr-3 mt-3 inline-block">
+          <div className="mr-3 mt-2 inline-block md:mt-3">
             <label
               htmlFor="traded_date_sto"
               className="mb-1 block text-xs text-gray-400"
@@ -339,19 +342,19 @@ function OptionForm({
           </div>
         </div>
       </div>
-      <div className="relative mt-6 border-t">
+      <div className="relative mt-3 border-t md:mt-6">
         <input
           type="checkbox"
           id="action_btc"
           name="action_btc"
           onChange={(e) => setShowBtc(e.target.checked)}
-          className="absolute right-0 top-4 rounded border-gray-400"
+          className="absolute right-0 top-3 rounded border-gray-400 md:top-4"
         />
-        <label htmlFor="action_btc" className="mt-3 block">
+        <label htmlFor="action_btc" className="mt-2 block md:mt-3">
           Bought to Close
         </label>
-        <div className={clsx('pb-3', { hidden: !showBtc })}>
-          <div className="mr-3 mt-3 inline-block">
+        <div className={clsx('pb-2 md:pb-3', { hidden: !showBtc })}>
+          <div className="mr-3 mt-2 inline-block md:mt-3">
             <label
               htmlFor="price_btc"
               className="mb-1 block text-xs text-gray-400"
@@ -367,7 +370,7 @@ function OptionForm({
               className="focus:shadow-outline w-32 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
             />
           </div>
-          <div className="mr-3 mt-3 inline-block">
+          <div className="mr-3 mt-2 inline-block md:mt-3">
             <label
               htmlFor="fee_btc"
               className="mb-1 block text-xs text-gray-400"
@@ -383,7 +386,7 @@ function OptionForm({
               className="focus:shadow-outline w-32 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
             />
           </div>
-          <div className="mr-3 mt-3 inline-block">
+          <div className="mr-3 mt-2 inline-block md:mt-3">
             <label
               htmlFor="traded_date_btc"
               className="mb-1 block text-xs text-gray-400"
@@ -399,7 +402,7 @@ function OptionForm({
           </div>
         </div>
       </div>
-      <div className="mt-3 border-t pt-3 text-right">
+      <div className="mt-2 border-t pt-3 text-right md:mt-3">
         <button
           type="submit"
           className="w-20 rounded border-2 border-purple-400 p-1 font-bold text-purple-400 hover:bg-purple-100 md:w-24"
