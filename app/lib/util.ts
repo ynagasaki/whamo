@@ -93,9 +93,9 @@ export function numdef(param: number | undefined | null): param is number {
 }
 
 export function ddayPct(start: Date, end: Date) {
-  const now = new Date(); // this is now in GMT
-  const period = msBtwn(start, end);
-  const progress = msBtwn(start, now);
+  const now = dayjs(dtEST(new Date()));
+  const period = dayjs(end).diff(dayjs(start), 'seconds');
+  const progress = now.diff(dayjs(start), 'seconds');
   return Math.round((progress / period) * 100);
 }
 
@@ -104,4 +104,8 @@ function msBtwn(start: Date, end: Date): number {
     end.getTime() -
     Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())
   );
+}
+
+export function dtEST(dt: Date): Date {
+  return dayjs(dt).add(-5, 'hours').toDate();
 }

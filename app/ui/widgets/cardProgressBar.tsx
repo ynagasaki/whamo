@@ -22,7 +22,7 @@ export function CardProgressBar({
         width="100%"
         height={`${h + 10}`}
         fill={'#d6bcfa'}
-        rx="0.3rem"
+        rx="4"
         mask={`url(#${maskId})`}
       />
     </svg>

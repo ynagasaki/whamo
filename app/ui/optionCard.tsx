@@ -1,12 +1,18 @@
+import dayjs from 'dayjs';
 import { Option } from '../lib/model';
 import { dday, ddayPct, fmtDate, fmtMoney, tenseExp } from '../lib/util';
 import { CardProgressBar } from './widgets/cardProgressBar';
 
 export function OptionCard({ option }: { option: Option }) {
-  const pct = ddayPct(new Date(option.traded), new Date(option.exp));
+  const expMarketClose = dayjs(new Date(option.exp)).add(
+    16 * 60 + 30,
+    'minutes',
+  ); // set to 4:30 PM
+  const pct = ddayPct(new Date(option.traded), expMarketClose.toDate());
+
   return (
     <div className="relative mb-2 flex flex-wrap rounded-md bg-white p-3">
-      <CardProgressBar idPrefix={`opt-${option.id}`} pct={pct} />
+      <CardProgressBar idPrefix={`opt-${option.id}`} pct={Math.min(pct, 100)} />
       <div className="w-2/3">
         <span className="block text-gray-700">
           <div className="mr-1 block text-xs font-bold tracking-tight text-blue-400 md:inline-block md:tracking-normal">

@@ -49,7 +49,7 @@ export function InputFormModal({
             </div>
           )}
           {!!editGoalData && (
-            <div className="inline-block cursor-pointer p-2 font-bold md:block md:p-3">
+            <div className="inline-block cursor-pointer p-2 pl-0 font-bold md:block md:p-3">
               Edit Goal
             </div>
           )}
@@ -172,7 +172,7 @@ function GoalForm({
       <div className="mt-3 flex border-t pt-3 md:mt-6">
         <div className="w-2/3 md:w-3/4">
           {errorMessage && (
-            <div className="leading-none">
+            <div className="leading-tight">
               <ExclamationCircleIcon className="inline-block h-5 w-5 text-red-400" />
               <span className="border-b border-red-300 text-sm md:text-base">
                 {errorMessage}
