@@ -130,7 +130,7 @@ function GoalContributions({ goal }: { goal: Goal }) {
               {cs.option_symbol}
               <span className="mr-1 text-gray-400">@{cs.option_strike}</span>
               <span className="hidden text-gray-400 md:block">
-                expired {fmtDate(cs.option_exp)}
+                closed {fmtDate(cs.option_exp)}
               </span>
             </div>
             <div className="w-1/2 text-right">
