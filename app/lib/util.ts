@@ -76,8 +76,8 @@ export function dday(target: Date): string {
   const diffDay = diffHr / 24;
   const diffWk = diffDay / 7;
 
-  if (diffDay >= 16) {
-    // 16 to account for weekend
+  if (diffDay >= 12) {
+    // 12 to account for weekend
     return `${Math.ceil(diffWk)}w`;
   }
   if (diffDay >= 7) {
