@@ -4,7 +4,10 @@ import { dday, ddayPct, fmtDate, fmtMoney, tenseExp } from '../lib/util';
 import { CardProgressBar } from './widgets/cardProgressBar';
 
 export function OptionCard({ option }: { option: Option }) {
-  const expMarketStart = dayjs(new Date(option.traded)).add(9 * 60 + 30, 'minutes'); // set to 9:30 AM
+  const expMarketStart = dayjs(new Date(option.traded)).add(
+    9 * 60 + 30,
+    'minutes',
+  ); // set to 9:30 AM
   const expMarketClose = dayjs(new Date(option.exp)).add(
     16 * 60 + 30,
     'minutes',

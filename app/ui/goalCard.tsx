@@ -129,12 +129,12 @@ function GoalContributions({ goal }: { goal: Goal }) {
               </span>
               {cs.option_symbol}
               <span className="mr-1 text-gray-400">@{cs.option_strike}</span>
-              <span className="hidden text-gray-400 md:block">
+              <span className="hidden leading-snug text-gray-400 md:block">
                 closed {fmtDate(cs.option_exp)}
               </span>
             </div>
             <div className="w-1/2 text-right">
-              <div className="leading-snug md:leading-normal">
+              <div className="leading-snug">
                 <span className="text-gray-400">$</span>
                 {fmtMoney(cs.amt)}
               </div>

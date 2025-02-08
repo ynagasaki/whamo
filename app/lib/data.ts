@@ -253,3 +253,41 @@ export async function fetchCompletedGoalsValueByCategory(): Promise<
   DESC;`;
   return result.rows;
 }
+
+export async function fetchOptionsInRange(
+  start: Date,
+  end: Date,
+): Promise<Option[]> {
+  const client = await getClient();
+  const result = await client.sql<Option>`SELECT
+    o.id AS id,
+    o.strike AS strike,
+    o.symbol AS symbol,
+    o.otype AS otype,
+    IFNULL(o2.traded, o.exp) AS exp,
+    o.price AS price,
+    o.fee AS fee,
+    o.action AS action,
+    o.assigned AS assigned,
+    o.traded AS traded,
+    o.closed_by AS closed_by,
+    o.created AS created
+  FROM options o
+    LEFT JOIN options o2 ON o.closed_by = o2.id
+  WHERE
+    (
+      (o.traded BETWEEN ${sqldt(start)} AND ${sqldt(end)})
+      OR
+      (IFNULL(o2.traded, o.exp) BETWEEN ${sqldt(start)} AND ${sqldt(end)})
+      OR
+      (o.traded <= ${sqldt(start)} AND IFNULL(o2.traded, o.exp) >= ${sqldt(
+        end,
+      )})
+    )
+    AND o.action <> 'BTC'
+  ORDER BY
+    traded, exp
+  DESC;`;
+
+  return result.rows;
+}
