@@ -27,7 +27,9 @@ export function EarnRateCard() {
         <span className="block text-xl sm:text-2xl">
           ${fmtMoney(data.runRate)}
         </span>
-        <span className="block text-sm text-gray-400">Earning this month</span>
+        <span className="block text-sm text-gray-400">
+          Projected this month
+        </span>
       </div>
     </div>
   );
