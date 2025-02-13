@@ -93,6 +93,7 @@ export async function fetchAllocatableOptions(
   const client = await getClient();
   const result = await client.sql<AllocatableOption>`SELECT
     o.*,
+    IFNULL(o2.traded, o.exp) AS exp,
     ((o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) - SUM(IFNULL(gc.amt, 0))) AS remaining_amt
   FROM
     options o
@@ -281,8 +282,8 @@ export async function fetchOptionsInRange(
       (IFNULL(o2.traded, o.exp) BETWEEN ${sqldt(start)} AND ${sqldt(end)})
       OR
       (o.traded <= ${sqldt(start)} AND IFNULL(o2.traded, o.exp) >= ${sqldt(
-        end,
-      )})
+    end,
+  )})
     )
     AND o.action <> 'BTC'
   ORDER BY

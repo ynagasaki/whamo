@@ -9,9 +9,9 @@ export function OptionCard({ option }: { option: Option }) {
     'minutes',
   ); // set to 9:30 AM
   const expMarketClose = dayjs(new Date(option.exp)).add(
-    16 * 60 + 30,
+    16 * 60,
     'minutes',
-  ); // set to 4:30 PM
+  ); // set to 4:00 PM
   const pct = ddayPct(expMarketStart.toDate(), expMarketClose.toDate());
 
   return (

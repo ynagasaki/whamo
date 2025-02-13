@@ -1,7 +1,7 @@
 'use client';
 
 import { AllocatableOption } from '@/app/lib/model';
-import { fmtDate, fmtMoney, tenseExp } from '@/app/lib/util';
+import { fmtDate, fmtMoney } from '@/app/lib/util';
 import { useDraggable } from '@dnd-kit/core';
 
 export function AllocOptionCard({
@@ -17,8 +17,8 @@ export function AllocOptionCard({
   });
   const style = transform
     ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-      }
+      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+    }
     : undefined;
 
   return (
@@ -44,7 +44,7 @@ export function AllocOptionCard({
       </div>
       <div className="w-full">
         <span className="block text-green-200">
-          {tenseExp(option)} {fmtDate(option.exp)}
+          {option.closed_by ? 'closed' : 'expired'} {fmtDate(option.exp)}
         </span>
       </div>
     </div>

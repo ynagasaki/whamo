@@ -11,7 +11,7 @@ export interface Option {
   action: 'STO' | 'BTC';
   assigned: boolean;
   traded: string;
-  closed_by: number;
+  closed_by?: number;
   created: string;
 }
 
