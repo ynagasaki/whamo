@@ -282,8 +282,8 @@ export async function fetchOptionsInRange(
       (IFNULL(o2.traded, o.exp) BETWEEN ${sqldt(start)} AND ${sqldt(end)})
       OR
       (o.traded <= ${sqldt(start)} AND IFNULL(o2.traded, o.exp) >= ${sqldt(
-    end,
-  )})
+        end,
+      )})
     )
     AND o.action <> 'BTC'
   ORDER BY

@@ -8,10 +8,7 @@ export function OptionCard({ option }: { option: Option }) {
     9 * 60 + 30,
     'minutes',
   ); // set to 9:30 AM
-  const expMarketClose = dayjs(new Date(option.exp)).add(
-    16 * 60,
-    'minutes',
-  ); // set to 4:00 PM
+  const expMarketClose = dayjs(new Date(option.exp)).add(16 * 60, 'minutes'); // set to 4:00 PM
   const pct = ddayPct(expMarketStart.toDate(), expMarketClose.toDate());
 
   return (
@@ -29,7 +26,7 @@ export function OptionCard({ option }: { option: Option }) {
         </span>
       </div>
       <div className="w-1/3 text-right">
-        <div className="md:text-xl">
+        <div className="absolute right-0 top-0 mr-3 mt-3 md:relative md:m-0 md:text-xl">
           <span className="text-green-200">$</span>
           <span className="text-green-400">
             {fmtMoney(option.price * 100 - option.fee)}

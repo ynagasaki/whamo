@@ -17,8 +17,8 @@ export function AllocOptionCard({
   });
   const style = transform
     ? {
-      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-    }
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+      }
     : undefined;
 
   return (
@@ -26,7 +26,7 @@ export function AllocOptionCard({
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className="mb-2 flex flex-wrap rounded-md bg-green-400 p-3 text-white shadow"
+      className="relative mb-2 flex flex-wrap rounded-md bg-green-400 p-3 text-white shadow"
       style={style}
     >
       <div className="w-1/2">
@@ -38,9 +38,11 @@ export function AllocOptionCard({
           <span className="text-green-200">@{option.strike}</span>
         </div>
       </div>
-      <div className="w-1/2 text-right md:text-xl">
-        <span className="text-green-200">$</span>
-        <span className="font-bold">{fmtMoney(option.remaining_amt)}</span>
+      <div className="w-1/2 text-right">
+        <div className="absolute right-0 top-0 mr-3 mt-3 md:relative md:m-0 md:text-xl">
+          <span className="text-green-200">$</span>
+          <span className="font-bold">{fmtMoney(option.remaining_amt)}</span>
+        </div>
       </div>
       <div className="w-full">
         <span className="block text-green-200">
