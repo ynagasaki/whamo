@@ -92,7 +92,7 @@ export default function Page() {
         </div>
         <div className="w-1/2 px-2 pr-0 md:w-1/4 md:pr-2">
           <Suspense>
-            <GoalsClosedCard></GoalsClosedCard>
+            <EarnRateCard />
           </Suspense>
         </div>
         <div className="w-1/2 px-2 pl-0 pt-2 md:w-1/4 md:pl-2 md:pt-0">
@@ -105,11 +105,11 @@ export default function Page() {
             <TopTagsCard></TopTagsCard>
           </Suspense>
         </div>
-        <div className="w-1/2 pr-2 pt-2 md:w-1/4">
+        {/* <div className="w-1/2 pr-2 pt-2 md:w-1/4">
           <Suspense>
-            <EarnRateCard />
+            <GoalsClosedCard />
           </Suspense>
-        </div>
+        </div> */}
       </div>
       <div className="mb-2 flex">
         <DndContext

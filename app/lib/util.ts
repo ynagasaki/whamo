@@ -93,6 +93,14 @@ export function numdef(param: number | undefined | null): param is number {
   return param !== undefined && param !== null;
 }
 
+export function asInt(param: string | null | undefined, fallback: number) {
+  const result = Number.parseInt(param ?? `${fallback}`);
+  if (Number.isNaN(result)) {
+    return fallback;
+  }
+  return result;
+}
+
 export function ddayPct(start: Date, end: Date) {
   const now = dayjs(dtEST(new Date()));
   const period = dayjs(end).diff(dayjs(start), 'seconds');
@@ -109,4 +117,12 @@ function msBtwn(start: Date, end: Date): number {
 
 export function dtEST(dt: Date): Date {
   return dayjs(dt).add(-5, 'hours').toDate();
+}
+
+/** number of days between two dates, inclusive of those days */
+export function dayRangeInc(d1: dayjs.Dayjs, d2: dayjs.Dayjs): number {
+  if (d1.isAfter(d2)) {
+    return Math.ceil(d1.endOf('day').diff(d2.startOf('day'), 'days', true));
+  }
+  return Math.ceil(d2.endOf('day').diff(d1.startOf('day'), 'days', true));
 }
