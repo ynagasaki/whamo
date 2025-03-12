@@ -64,6 +64,9 @@ export default function Page() {
 
   const [showOptionForm, setShowOptionForm] = useState(false);
   const [editGoalData, setEditGoalData] = useState<Goal | undefined>(undefined);
+  const [editOptionData, setEditOptionData] = useState<Option | undefined>(
+    undefined,
+  );
 
   return (
     <main className="mx-auto flex min-h-screen max-w-4xl flex-col bg-gray-100 pb-8">
@@ -80,6 +83,7 @@ export default function Page() {
         <PlusIcon
           onClick={() => {
             setEditGoalData(undefined);
+            setEditOptionData(undefined);
             setShowOptionForm(!showOptionForm);
           }}
         ></PlusIcon>
@@ -130,7 +134,17 @@ export default function Page() {
             </div>
             <div className="relative z-0">
               <Suspense>
-                <OptionsList></OptionsList>
+                <OptionsList
+                  editOptionCallback={(option: Option) => {
+                    if (showOptionForm) {
+                      setShowOptionForm(false);
+                      return;
+                    }
+                    setEditGoalData(undefined);
+                    setEditOptionData(option);
+                    setShowOptionForm(true);
+                  }}
+                ></OptionsList>
               </Suspense>
             </div>
           </div>
@@ -145,6 +159,7 @@ export default function Page() {
                     return;
                   }
                   setEditGoalData(goal);
+                  setEditOptionData(undefined);
                   setShowOptionForm(true);
                 }}
               />
@@ -160,6 +175,7 @@ export default function Page() {
       {showOptionForm && (
         <InputFormModal
           editGoalData={editGoalData}
+          editOptionData={editOptionData}
           postSubmitCallback={() => setShowOptionForm(false)}
         />
       )}
@@ -201,7 +217,11 @@ function AllocatableOptionsList() {
   );
 }
 
-function OptionsList() {
+function OptionsList({
+  editOptionCallback,
+}: {
+  editOptionCallback: (option: Option) => void;
+}) {
   const { data, error } = useSWR(`/api/options`, fetcher);
 
   if (error) {
@@ -223,7 +243,13 @@ function OptionsList() {
   return (
     <>
       {data.options.map((option: Option) => {
-        return <OptionCard key={`option-${option.id}`} option={option} />;
+        return (
+          <OptionCard
+            key={`option-${option.id}`}
+            editOptionCallback={editOptionCallback}
+            option={option}
+          />
+        );
       })}
     </>
   );

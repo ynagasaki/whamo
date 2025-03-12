@@ -7,13 +7,13 @@ import { Taggy } from './taggy';
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
 
 export function GoalForm({
-  editGoalData,
+  editData,
   postSubmitCallback,
 }: {
-  editGoalData?: Goal;
+  editData?: Goal;
   postSubmitCallback?: () => void;
 }) {
-  const defaultSelectedTag = editGoalData?.category ?? -1;
+  const defaultSelectedTag = editData?.category ?? -1;
   const [selectedTag, setSelectedTag] = useState(defaultSelectedTag);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -42,7 +42,7 @@ export function GoalForm({
             id="goal_title"
             name="goal_title"
             placeholder="Buy a hamburger..."
-            defaultValue={editGoalData?.name}
+            defaultValue={editData?.name}
             className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
@@ -59,7 +59,7 @@ export function GoalForm({
             id="goal_amt"
             name="goal_amt"
             placeholder="100.00"
-            defaultValue={editGoalData ? editGoalData.amt / 100 : undefined}
+            defaultValue={editData ? editData.amt / 100 : undefined}
             className="focus:shadow-outline w-40 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
@@ -94,12 +94,12 @@ export function GoalForm({
               name="goal_category"
               value={selectedTag}
             />
-            {editGoalData && (
+            {editData && (
               <input
                 type="hidden"
                 id="edit_goal_id"
                 name="edit_goal_id"
-                value={editGoalData.id}
+                value={editData.id}
               />
             )}
           </div>
@@ -121,7 +121,7 @@ export function GoalForm({
             type="submit"
             className="w-20 rounded border-2 border-blue-400 p-1 font-bold text-blue-400 hover:bg-blue-100 md:w-24"
           >
-            {!editGoalData ? 'Add' : 'Save'}
+            {!editData ? 'Add' : 'Save'}
           </button>
         </div>
       </div>

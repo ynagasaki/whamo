@@ -2,11 +2,14 @@ import { useState } from 'react';
 import { mutate } from 'swr';
 import { createOption } from '@/app/lib/actions';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import { Option } from '@/app/lib/model';
 import clsx from 'clsx';
 
 export function OptionForm({
+  editData,
   postSubmitCallback,
 }: {
+  editData?: Option;
   postSubmitCallback?: () => void;
 }) {
   const [showBtc, setShowBtc] = useState(false);
