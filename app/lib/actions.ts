@@ -1,31 +1,61 @@
 'use server';
 
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 import { getClient } from './db';
-import { numdef, sqldt, toCents } from './util';
+import { sqldt, toCents } from './util';
 import { revalidatePath } from 'next/cache';
 import { fetchGoalCurrentAmount } from './data';
 import { ActionStatus } from './model';
 
-const CreateOptionFormSchema = z.object({
-  option_type: z.enum(['CALL', 'PUT']),
-  stock_symbol: z
-    .string()
-    .regex(/[A-Za-z0-9]+/)
-    .transform((str) => str.toUpperCase()),
-  strike_price: z.coerce.number(),
-  expiration_date: z.coerce.date(),
-  price_sto: z.coerce.number(),
-  fee_sto: z.coerce.number(),
-  traded_date_sto: z.coerce.date(),
-  action_btc: z.coerce.boolean(),
-  price_btc: z.coerce.number().nullish(),
-  fee_btc: z.coerce.number().nullish(),
-  traded_date_btc: z
-    .string()
-    .nullish()
-    .transform((str) => (str ? new Date(str) : null)),
-});
+function getErrorMap(message: string): { errorMap: () => { message: string } } {
+  return {
+    errorMap: () => {
+      return { message };
+    },
+  };
+}
+
+const CreateOptionFormSchemas = {
+  FormDataSchema: z.object({
+    action_btc: z.coerce.number().transform((v) => !!v),
+    action_sto: z.coerce.number().transform((v) => !!v),
+    closed_option_id: z.coerce.number().nullish(),
+  }),
+  OptionDataSchema: z.object({
+    option_type: z.enum(['CALL', 'PUT']),
+    stock_symbol: z
+      .string()
+      .max(7, 'Invalid stock symbol.')
+      .regex(/^[A-Za-z0-9]+(\.[A-Za-z0-9]+)?$/, 'Invalid stock symbol format.')
+      .transform((str) => str.toUpperCase()),
+    strike_price: z.coerce
+      .number(getErrorMap('Invalid strike price.'))
+      .gt(0, 'Strike must be positive.'),
+    expiration_date: z.coerce.date(getErrorMap('Invalid expiration date.')),
+  }),
+  SellOpenDataSchema: z.object({
+    price_sto: z.coerce
+      .number(getErrorMap('Invalid sell-open price.'))
+      .gt(0, 'Sell-open price must be positive.'),
+    fee_sto: z.coerce
+      .number(getErrorMap('Invalid sell-open fee.'))
+      .gte(0, 'Sell-open fee invalid.'),
+    traded_date_sto: z.coerce.date(
+      getErrorMap('Sell-open traded date invalid.'),
+    ),
+  }),
+  BuyCloseDataSchema: z.object({
+    price_btc: z.coerce
+      .number(getErrorMap('Invalid buy-close price.'))
+      .gt(0, 'Buy-close price must be positive.'),
+    fee_btc: z.coerce
+      .number(getErrorMap('Invalid buy-close fee.'))
+      .gte(0, 'Buy-close fee invalid.'),
+    traded_date_btc: z.coerce.date(
+      getErrorMap('Buy-close traded date invalid.'),
+    ),
+  }),
+};
 
 const CreateGoalFormSchema = z.object({
   goal_title: z.string(),
@@ -41,33 +71,61 @@ type CreateGoalFormInput = z.infer<typeof CreateGoalFormSchema>;
 
 class ValidationError extends Error {}
 
-export async function createOption(data: FormData): Promise<void> {
-  const entries = CreateOptionFormSchema.parse(
-    Object.fromEntries(data.entries()),
-  );
+export async function createOption(data: FormData): Promise<ActionStatus> {
+  const rawEntries = Object.fromEntries(data.entries());
+  var form: z.infer<typeof CreateOptionFormSchemas.FormDataSchema> | undefined;
+  var option:
+    | z.infer<typeof CreateOptionFormSchemas.OptionDataSchema>
+    | undefined;
+  var sto:
+    | z.infer<typeof CreateOptionFormSchemas.SellOpenDataSchema>
+    | undefined;
+  var btc:
+    | z.infer<typeof CreateOptionFormSchemas.BuyCloseDataSchema>
+    | undefined;
+
+  try {
+    form = CreateOptionFormSchemas.FormDataSchema.parse(rawEntries);
+    option = CreateOptionFormSchemas.OptionDataSchema.parse(rawEntries);
+    sto = CreateOptionFormSchemas.SellOpenDataSchema.parse(rawEntries);
+
+    if (form.action_btc) {
+      btc = CreateOptionFormSchemas.BuyCloseDataSchema.parse(rawEntries);
+    }
+
+    validateOptionInput(btc, sto);
+  } catch (err) {
+    var message = 'Failed to validate option input.';
+    if (err instanceof ValidationError) {
+      message = err.message;
+    } else if (err instanceof ZodError) {
+      message =
+        err.issues && err.issues.length > 0
+          ? err.issues[0].message
+          : err.message;
+    }
+    return { status: 'error', message };
+  }
+
   const client = await getClient();
   let btcId = null;
 
-  if (
-    entries.action_btc &&
-    numdef(entries.price_btc) &&
-    numdef(entries.fee_btc) &&
-    entries.traded_date_btc
-  ) {
+  if (form.action_btc && option && btc) {
+    console.log(`createOption: inserting new BTC`);
     await client.sql`INSERT INTO options (
       id, symbol, strike, otype, exp, price, fee, action, assigned, closed_by, traded, created
     ) VALUES (
       ${null},
-      ${entries.stock_symbol},
-      ${entries.strike_price},
-      ${entries.option_type},
-      ${sqldt(entries.expiration_date)},
-      ${toCents(entries.price_btc)},
-      ${toCents(entries.fee_btc)},
+      ${option.stock_symbol},
+      ${option.strike_price},
+      ${option.option_type},
+      ${sqldt(option.expiration_date)},
+      ${toCents(btc.price_btc)},
+      ${toCents(btc.fee_btc)},
       ${'BTC'},
       ${0},
       ${null},
-      ${sqldt(entries.traded_date_btc)},
+      ${sqldt(btc.traded_date_btc)},
       ${sqldt()}
     );`;
 
@@ -76,24 +134,39 @@ export async function createOption(data: FormData): Promise<void> {
     ).rows[0].id;
   }
 
-  await client.sql`INSERT INTO options (
-    id, symbol, strike, otype, exp, price, fee, action, assigned, closed_by, traded, created
-  ) VALUES (
-    ${null},
-    ${entries.stock_symbol},
-    ${entries.strike_price},
-    ${entries.option_type},
-    ${sqldt(entries.expiration_date)},
-    ${toCents(entries.price_sto)},
-    ${toCents(entries.fee_sto)},
-    ${'STO'},
-    ${0},
-    ${btcId},
-    ${sqldt(entries.traded_date_sto)},
-    ${sqldt()}
-  );`;
+  if (btcId && form.closed_option_id) {
+    console.log(
+      `createOption: updating existing STO id=${form.closed_option_id} closed by=${btcId}`,
+    );
+    await client.sql`UPDATE options SET closed_by=${btcId} WHERE id=${form.closed_option_id};`;
+  } else if (form.action_sto && option && sto) {
+    console.log(`createOption: inserting new STO closed by=${btcId}`);
+    await client.sql`INSERT INTO options (
+      id, symbol, strike, otype, exp, price, fee, action, assigned, closed_by, traded, created
+    ) VALUES (
+      ${null},
+      ${option.stock_symbol},
+      ${option.strike_price},
+      ${option.option_type},
+      ${sqldt(option.expiration_date)},
+      ${toCents(sto.price_sto)},
+      ${toCents(sto.fee_sto)},
+      ${'STO'},
+      ${0},
+      ${btcId},
+      ${sqldt(sto.traded_date_sto)},
+      ${sqldt()}
+    );`;
+  } else if (btcId) {
+    await client.sql`DELETE FROM options WHERE id=${btcId}`;
+    return {
+      status: 'error',
+      message: 'Unexpected error pairing sell-open option with buy-close.',
+    };
+  }
 
   revalidatePath('/');
+  return { status: 'ok' };
 }
 
 export async function upsertGoal(data: FormData): Promise<ActionStatus> {
@@ -185,5 +258,21 @@ function validateGoalInput(entries: CreateGoalFormInput): void {
     throw new ValidationError('Goal name cannot be blank.');
   } else if (entries.goal_amt <= 0) {
     throw new ValidationError('Target amount must be positive.');
+  }
+}
+
+function validateOptionInput(
+  btc: z.infer<typeof CreateOptionFormSchemas.BuyCloseDataSchema> | undefined,
+  sto: z.infer<typeof CreateOptionFormSchemas.SellOpenDataSchema> | undefined,
+): void {
+  const now = new Date();
+  if (btc && btc.traded_date_btc > now) {
+    throw new ValidationError('Buy-close trade occurs in the future.');
+  }
+  if (sto && sto.traded_date_sto > now) {
+    throw new ValidationError('Sell-open trade occurs in the future.');
+  }
+  if (btc && sto && btc.traded_date_btc < sto.traded_date_sto) {
+    throw new ValidationError('Buy-close cannot trade before sell-open.');
   }
 }

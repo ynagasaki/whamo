@@ -3,7 +3,13 @@ import { Option } from '../lib/model';
 import { dday, ddayPct, fmtDate, fmtMoney, tenseExp } from '../lib/util';
 import { CardProgressBar } from './widgets/cardProgressBar';
 
-export function OptionCard({ option }: { option: Option }) {
+export function OptionCard({
+  option,
+  editOptionCallback,
+}: {
+  option: Option;
+  editOptionCallback: (option: Option) => void;
+}) {
   const expMarketStart = dayjs(new Date(option.traded)).add(
     9 * 60 + 30,
     'minutes',
@@ -20,8 +26,13 @@ export function OptionCard({ option }: { option: Option }) {
             {option.otype}
           </div>
           <div className="block md:inline-block">
-            {option.symbol}
-            <span className="text-gray-400">@{option.strike}&nbsp;</span>
+            <span
+              className="border-dotted border-gray-300 text-gray-700 hover:cursor-pointer hover:border-b-2"
+              onClick={() => editOptionCallback(option)}
+            >
+              {option.symbol}
+              <span className="text-gray-400">@{option.strike}</span>
+            </span>
           </div>
         </span>
       </div>
