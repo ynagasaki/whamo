@@ -41,15 +41,26 @@ export function OptionForm({
             Type
           </label>
           <div className="relative inline-block w-32">
-            <select
-              className="focus:shadow-outline block w-full appearance-none rounded border border-gray-400 bg-white px-4 py-2 pr-8 leading-tight shadow hover:border-gray-500 focus:outline-none"
-              id="option_type"
-              name="option_type"
-              defaultValue={editData?.otype}
-            >
-              <option value="CALL">Call</option>
-              <option value="PUT">Put</option>
-            </select>
+            {!editData && (
+              <select
+                className="focus:shadow-outline block w-full appearance-none rounded border border-gray-400 bg-white px-4 py-2 pr-8 leading-tight shadow hover:border-gray-500 focus:outline-none"
+                id="option_type"
+                name="option_type"
+              >
+                <option value="CALL">Call</option>
+                <option value="PUT">Put</option>
+              </select>
+            )}
+            {!!editData && (
+              <input
+                type="text"
+                className="focus:shadow-outline w-32 appearance-none rounded border px-3 py-2 uppercase leading-tight text-gray-700 shadow focus:outline-none"
+                id="option_type"
+                name="option_type"
+                defaultValue={editData.otype}
+                readOnly
+              />
+            )}
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
               <ChevronDownIcon />
             </div>

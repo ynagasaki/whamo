@@ -7,6 +7,14 @@ import { revalidatePath } from 'next/cache';
 import { fetchGoalCurrentAmount } from './data';
 import { ActionStatus } from './model';
 
+function getErrorMap(message: string): { errorMap: () => { message: string } } {
+  return {
+    errorMap: () => {
+      return { message };
+    },
+  };
+}
+
 const CreateOptionFormSchemas = {
   FormDataSchema: z.object({
     action_btc: z.coerce.number().transform((v) => !!v),
@@ -21,69 +29,31 @@ const CreateOptionFormSchemas = {
       .regex(/^[A-Za-z0-9]+(\.[A-Za-z0-9]+)?$/, 'Invalid stock symbol format.')
       .transform((str) => str.toUpperCase()),
     strike_price: z.coerce
-      .number({
-        errorMap: () => {
-          return {
-            message: 'Invalid strike.',
-          };
-        },
-      })
+      .number(getErrorMap('Invalid strike price.'))
       .gt(0, 'Strike must be positive.'),
-    expiration_date: z.coerce.date({
-      errorMap: () => {
-        return { message: 'Invalid expiration date.' };
-      },
-    }),
+    expiration_date: z.coerce.date(getErrorMap('Invalid expiration date.')),
   }),
   SellOpenDataSchema: z.object({
     price_sto: z.coerce
-      .number({
-        errorMap: () => {
-          return {
-            message: 'Invalid sell-open price.',
-          };
-        },
-      })
+      .number(getErrorMap('Invalid sell-open price.'))
       .gt(0, 'Sell-open price must be positive.'),
     fee_sto: z.coerce
-      .number({
-        errorMap: () => {
-          return {
-            message: 'Invalid sell-open fee.',
-          };
-        },
-      })
+      .number(getErrorMap('Invalid sell-open fee.'))
       .gte(0, 'Sell-open fee invalid.'),
-    traded_date_sto: z.coerce.date({
-      errorMap: () => {
-        return { message: 'Sell-open traded date invalid.' };
-      },
-    }),
+    traded_date_sto: z.coerce.date(
+      getErrorMap('Sell-open traded date invalid.'),
+    ),
   }),
   BuyCloseDataSchema: z.object({
     price_btc: z.coerce
-      .number({
-        errorMap: () => {
-          return {
-            message: 'Invalid buy-close price.',
-          };
-        },
-      })
+      .number(getErrorMap('Invalid buy-close price.'))
       .gt(0, 'Buy-close price must be positive.'),
     fee_btc: z.coerce
-      .number({
-        errorMap: () => {
-          return {
-            message: 'Invalid buy-close fee.',
-          };
-        },
-      })
+      .number(getErrorMap('Invalid buy-close fee.'))
       .gte(0, 'Buy-close fee invalid.'),
-    traded_date_btc: z.coerce.date({
-      errorMap: () => {
-        return { message: 'Buy-close traded date invalid.' };
-      },
-    }),
+    traded_date_btc: z.coerce.date(
+      getErrorMap('Buy-close traded date invalid.'),
+    ),
   }),
 };
 
@@ -103,7 +73,6 @@ class ValidationError extends Error {}
 
 export async function createOption(data: FormData): Promise<ActionStatus> {
   const rawEntries = Object.fromEntries(data.entries());
-  console.log(rawEntries);
   var form: z.infer<typeof CreateOptionFormSchemas.FormDataSchema> | undefined;
   var option:
     | z.infer<typeof CreateOptionFormSchemas.OptionDataSchema>
