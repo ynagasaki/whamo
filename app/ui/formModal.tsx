@@ -121,7 +121,7 @@ function EditOptionFormModal({
     <div className="flex flex-wrap">
       <div className="w-full border-b pr-6 pt-0 md:w-1/4 md:border-0 md:pt-3">
         <div className="inline-block cursor-pointer p-2 pl-0 font-bold md:block md:p-3">
-          Edit Option
+          Close Option
         </div>
       </div>
       <div className="w-full justify-center md:w-3/4">
