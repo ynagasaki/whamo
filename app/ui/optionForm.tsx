@@ -109,7 +109,7 @@ export function OptionForm({
             Expiration
           </label>
           <input
-            type="date"
+            type={!editData ? "date" : "text"}
             id="expiration_date"
             name="expiration_date"
             defaultValue={editData?.exp}
