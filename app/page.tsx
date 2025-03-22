@@ -17,7 +17,6 @@ import { GoalCard } from '@/app/ui/goalCard';
 import { InputFormModal } from '@/app/ui/formModal';
 import { ExclamationCircleIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { OptionSumCard } from '@/app/ui/cards/optionSumCard';
-import { GoalsClosedCard } from '@/app/ui/cards/goalsClosedCard';
 import { ClosedGoalCard } from './ui/goalCardClosed';
 import { TopSymbolsCard } from './ui/cards/topSymbolsCard';
 import { TopTagsCard } from './ui/cards/topTagsCard';

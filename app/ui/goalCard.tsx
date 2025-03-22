@@ -64,7 +64,7 @@ export function GoalCard({
           </div>
         </div>
       </div>
-      {showDetails && <GoalContributions goal={goal} />}
+      {goal.curr_amt > 0 && showDetails && <GoalContributions goal={goal} />}
       {goal.curr_amt > 0 && (
         <div
           className="absolute inset-x-0 bottom-0 cursor-pointer"
@@ -93,8 +93,8 @@ async function unlinkContribution(
     redirect: 'follow',
     referrerPolicy: 'no-referrer',
   });
-  mutate(`/api/contribs?goal=${goalId}`);
-  mutate('/api/options/alloc');
+  await mutate(`/api/contribs?goal=${goalId}`);
+  await mutate('/api/options/alloc');
 }
 
 function GoalContributions({ goal }: { goal: Goal }) {
