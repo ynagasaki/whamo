@@ -1,10 +1,13 @@
 import { Goal } from '@/app/lib/model';
 import { useState } from 'react';
-import { upsertGoal } from '@/app/lib/actions';
+import { manageGoal } from '@/app/lib/actions';
 import { mutate } from 'swr';
 import clsx from 'clsx';
 import { Taggy } from './taggy';
-import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
+import {
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
+} from '@heroicons/react/20/solid';
 
 export function GoalForm({
   editData,
@@ -23,7 +26,7 @@ export function GoalForm({
   return (
     <form
       action={async (formData: FormData) => {
-        const result = await upsertGoal(formData);
+        const result = await manageGoal(formData);
         if (result.status === 'ok') {
           mutate('/api/goals');
           postSubmitCallback?.();
@@ -129,9 +132,9 @@ export function GoalForm({
             className="absolute right-0 top-3 rounded border-gray-400 md:top-4"
             onClick={() => setSubmitDisabled(!submitDisabled)}
           />
-          <ExclamationCircleIcon className="inline-block h-5 w-5 text-yellow-400" />
-          <label className="mt-2 inline-block border-b border-yellow-300 md:mt-3">
-            Check to confirm delete!!!
+          <ExclamationTriangleIcon className="inline-block h-5 w-5" />
+          <label className="mt-2 inline-block md:mt-3">
+            Check to confirm delete:
           </label>
         </div>
       )}

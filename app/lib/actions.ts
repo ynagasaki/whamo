@@ -4,7 +4,7 @@ import { z, ZodError } from 'zod';
 import { getClient } from './db';
 import { sqldt, toCents } from './util';
 import { revalidatePath } from 'next/cache';
-import { fetchGoalCurrentAmount } from './data';
+import { fetchContributions, fetchGoalCurrentAmount } from './data';
 import { ActionStatus } from './model';
 
 function getErrorMap(message: string): { errorMap: () => { message: string } } {
@@ -65,6 +65,10 @@ const CreateGoalFormSchema = z.object({
 
 const UpdateGoalFormSchema = CreateGoalFormSchema.extend({
   edit_goal_id: z.coerce.number(),
+});
+
+const DeleteGoalFormSchema = z.object({
+  delete_goal_id: z.coerce.number(),
 });
 
 type CreateGoalFormInput = z.infer<typeof CreateGoalFormSchema>;
@@ -169,9 +173,11 @@ export async function createOption(data: FormData): Promise<ActionStatus> {
   return { status: 'ok' };
 }
 
-export async function upsertGoal(data: FormData): Promise<ActionStatus> {
+export async function manageGoal(data: FormData): Promise<ActionStatus> {
   if (data.has('edit_goal_id')) {
     return await updateGoal(data);
+  } else if (data.has('delete_goal_id')) {
+    return await deleteGoal(data);
   } else {
     return await createGoal(data);
   }
@@ -249,6 +255,34 @@ export async function updateGoal(data: FormData): Promise<ActionStatus> {
     id=${entries.edit_goal_id};`;
 
   revalidatePath('/');
+
+  return { status: 'ok' };
+}
+
+export async function deleteGoal(data: FormData): Promise<ActionStatus> {
+  const entries = Object.fromEntries(data.entries());
+  let deleteForm = undefined;
+
+  try {
+    deleteForm = DeleteGoalFormSchema.parse(entries);
+  } catch (err) {
+    return {
+      status: 'error',
+      message: `Server error: ${(err as Error).message}`,
+    };
+  }
+
+  const contributions = await fetchContributions(deleteForm.delete_goal_id);
+
+  if (contributions.length > 0) {
+    return {
+      status: 'error',
+      message: 'Cannot delete goal with contributions.',
+    };
+  }
+
+  const client = await getClient();
+  await client.sql`DELETE FROM goals WHERE id=${deleteForm.delete_goal_id};`;
 
   return { status: 'ok' };
 }
