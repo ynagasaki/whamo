@@ -8,14 +8,17 @@ import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
 
 export function GoalForm({
   editData,
+  deleteGoal,
   postSubmitCallback,
 }: {
   editData?: Goal;
+  deleteGoal?: boolean;
   postSubmitCallback?: () => void;
 }) {
   const defaultSelectedTag = editData?.category ?? -1;
   const [selectedTag, setSelectedTag] = useState(defaultSelectedTag);
   const [errorMessage, setErrorMessage] = useState('');
+  const [submitDisabled, setSubmitDisabled] = useState(!!deleteGoal);
 
   return (
     <form
@@ -29,7 +32,7 @@ export function GoalForm({
         }
       }}
     >
-      <div className="">
+      <div className="pb-1 md:pb-3">
         <div className="mr-3 mt-2 inline-block align-top md:mt-3">
           <label
             htmlFor="goal_title"
@@ -43,6 +46,7 @@ export function GoalForm({
             name="goal_title"
             placeholder="Buy a hamburger..."
             defaultValue={editData?.name}
+            readOnly={!!deleteGoal}
             className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
@@ -60,6 +64,7 @@ export function GoalForm({
             name="goal_amt"
             placeholder="100.00"
             defaultValue={editData ? editData.amt / 100 : undefined}
+            readOnly={!!deleteGoal}
             className="focus:shadow-outline w-40 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           />
         </div>
@@ -82,7 +87,11 @@ export function GoalForm({
                         selectedTag === tagId,
                     },
                   )}
-                  onClick={() => setSelectedTag(tagId)}
+                  onClick={() => {
+                    if (!deleteGoal) {
+                      setSelectedTag(tagId);
+                    }
+                  }}
                 >
                   <Taggy tagId={tagId} forceBorder displayMode="full" />
                 </div>
@@ -94,7 +103,7 @@ export function GoalForm({
               name="goal_category"
               value={selectedTag}
             />
-            {editData && (
+            {editData && !deleteGoal && (
               <input
                 type="hidden"
                 id="edit_goal_id"
@@ -102,10 +111,31 @@ export function GoalForm({
                 value={editData.id}
               />
             )}
+            {editData && deleteGoal && (
+              <input
+                type="hidden"
+                id="delete_goal_id"
+                name="delete_goal_id"
+                value={editData.id}
+              />
+            )}
           </div>
         </div>
       </div>
-      <div className="mt-3 flex border-t pt-3 md:mt-6">
+      {deleteGoal && (
+        <div className="relative mt-2 border-t md:mt-3">
+          <input
+            type="checkbox"
+            className="absolute right-0 top-3 rounded border-gray-400 md:top-4"
+            onClick={() => setSubmitDisabled(!submitDisabled)}
+          />
+          <ExclamationCircleIcon className="inline-block h-5 w-5 text-yellow-400" />
+          <label className="mt-2 inline-block border-b border-yellow-300 md:mt-3">
+            Check to confirm delete!!!
+          </label>
+        </div>
+      )}
+      <div className="mt-2 flex border-t pt-3 md:mt-3">
         <div className="w-2/3 md:w-3/4">
           {errorMessage && (
             <div className="leading-tight">
@@ -117,12 +147,27 @@ export function GoalForm({
           )}
         </div>
         <div className="w-1/3 text-right md:w-1/4">
-          <button
-            type="submit"
-            className="w-20 rounded border-2 border-blue-400 p-1 font-bold text-blue-400 hover:bg-blue-100 md:w-24"
-          >
-            {!editData ? 'Add' : 'Save'}
-          </button>
+          {!deleteGoal && (
+            <button
+              type="submit"
+              className="w-20 rounded border-2 border-blue-400 p-1 font-bold text-blue-400 hover:bg-blue-100 md:w-24"
+            >
+              {!editData ? 'Add' : 'Save'}
+            </button>
+          )}
+          {deleteGoal && (
+            <button
+              type="submit"
+              className={clsx('w-20 rounded border-2 p-1 font-bold md:w-24', {
+                'border-red-400 text-red-400 hover:bg-red-100': !submitDisabled,
+                'border-red-200 text-red-200 hover:cursor-not-allowed':
+                  submitDisabled,
+              })}
+              disabled={submitDisabled}
+            >
+              Delete
+            </button>
+          )}
         </div>
       </div>
     </form>

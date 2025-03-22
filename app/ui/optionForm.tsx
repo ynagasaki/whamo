@@ -109,7 +109,7 @@ export function OptionForm({
             Expiration
           </label>
           <input
-            type={!editData ? "date" : "text"}
+            type={!editData ? 'date' : 'text'}
             id="expiration_date"
             name="expiration_date"
             defaultValue={editData?.exp}
@@ -207,7 +207,7 @@ export function OptionForm({
         <label htmlFor="action_btc" className="mt-2 block md:mt-3">
           Bought to Close
         </label>
-        <div className={clsx('pb-2 md:pb-3', { hidden: !showBtc })}>
+        <div className={clsx('pb-1 md:pb-3', { hidden: !showBtc })}>
           <div className="mr-3 mt-2 inline-block md:mt-3">
             <label
               htmlFor="price_btc"
