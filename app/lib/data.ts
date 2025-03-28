@@ -217,7 +217,7 @@ export async function fetchOptionsTransactionsValueByMonth(): Promise<
       SUBSTR(options.traded, 1, 7) AS yearmo,
       CASE
         WHEN action = 'STO' THEN price - ifnull(fee, 0)/100.0
-        WHEN action='BTC' THEN -price-ifnull(fee, 0)/100.0
+        WHEN action='BTC' THEN -price - ifnull(fee, 0)/100.0
       END AS xactamt
     FROM
       options
@@ -232,7 +232,7 @@ export async function fetchOptionsTransactionsValueByMonth(): Promise<
   return result.rows.map((item) => {
     return {
       category: dayjs(`${item.category}-01`).format('MMM'),
-      value: item.value,
+      value: item.value * 100,
     };
   });
 }
@@ -323,8 +323,8 @@ export async function fetchOptionsInRange(
       (IFNULL(o2.traded, o.exp) BETWEEN ${sqldt(start)} AND ${sqldt(end)})
       OR
       (o.traded <= ${sqldt(start)} AND IFNULL(o2.traded, o.exp) >= ${sqldt(
-        end,
-      )})
+    end,
+  )})
     )
     AND o.action <> 'BTC'
   ORDER BY
