@@ -22,6 +22,7 @@ import { TopSymbolsCard } from './ui/cards/topSymbolsCard';
 import { TopTagsCard } from './ui/cards/topTagsCard';
 import { OptionCard } from './ui/optionCard';
 import { EarnRateCard } from './ui/cards/earnRateCard';
+import { TransactedCard } from './ui/cards/transactedCard';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -90,7 +91,7 @@ export default function Page() {
       <div className="flex flex-wrap p-4">
         <div className="w-1/2 pr-2 md:w-1/4">
           <Suspense>
-            <OptionSumCard></OptionSumCard>
+            <TransactedCard />
           </Suspense>
         </div>
         <div className="w-1/2 px-2 pr-0 md:w-1/4 md:pr-2">
@@ -108,11 +109,11 @@ export default function Page() {
             <TopTagsCard></TopTagsCard>
           </Suspense>
         </div>
-        {/* <div className="w-1/2 pr-2 pt-2 md:w-1/4">
+        <div className="w-1/2 pr-2 pt-2 md:w-1/4">
           <Suspense>
-            <GoalsClosedCard />
+            <OptionSumCard></OptionSumCard>
           </Suspense>
-        </div> */}
+        </div>
       </div>
       <div className="mb-2 flex">
         <DndContext

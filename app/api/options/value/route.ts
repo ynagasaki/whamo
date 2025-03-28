@@ -1,6 +1,7 @@
 import {
   fetchClosedOptionsValueBySymbol,
   fetchClosedOptionsValueByYear,
+  fetchOptionsTransactionsValueByMonth,
 } from '@/app/lib/data';
 
 export async function GET(request: Request): Promise<Response> {
@@ -11,6 +12,10 @@ export async function GET(request: Request): Promise<Response> {
   switch (grouping) {
     case 'symbol': {
       result = await fetchClosedOptionsValueBySymbol();
+      break;
+    }
+    case 'txn-mo': {
+      result = await fetchOptionsTransactionsValueByMonth();
       break;
     }
     default: {

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { getClient } from './db';
 import { ContributionSummary, Option, Goal, AllocatableOption } from './model';
 import { sqldt } from './util';
@@ -194,6 +195,46 @@ export async function fetchClosedOptionsValueBySymbol(): Promise<
     category
   ORDER BY value DESC) LIMIT 3;`;
   return result.rows;
+}
+
+export async function fetchOptionsTransactionsValueByMonth(): Promise<
+  { category: string; value: number }[]
+> {
+  const start = dayjs(new Date())
+    .startOf('month')
+    .add(-2, 'month')
+    .startOf('month');
+  const end = dayjs(new Date()).endOf('month');
+  const client = await getClient();
+  const result = await client.sql<{
+    category: string;
+    value: number;
+  }>`SELECT
+    inner.yearmo AS category,
+    SUM(inner.xactamt) AS value
+  FROM (
+    SELECT
+      SUBSTR(options.traded, 1, 7) AS yearmo,
+      CASE
+        WHEN action = 'STO' THEN price - ifnull(fee, 0)/100.0
+        WHEN action='BTC' THEN -price-ifnull(fee, 0)/100.0
+      END AS xactamt
+    FROM
+      options
+    WHERE
+      traded BETWEEN ${sqldt(start.toDate())} AND ${sqldt(end.toDate())}
+    ) AS inner
+  GROUP BY
+    inner.yearmo
+  ORDER BY
+    inner.yearmo DESC;`;
+
+  return result.rows.map((item) => {
+    return {
+      category: dayjs(`${item.category}-01`).format('MMM'),
+      value: item.value,
+    };
+  });
 }
 
 export async function fetchCompletedGoalsCount(): Promise<
