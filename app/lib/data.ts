@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { getClient } from './db';
 import { ContributionSummary, Option, Goal, AllocatableOption } from './model';
 import { sqldt } from './util';
@@ -229,12 +229,46 @@ export async function fetchOptionsTransactionsValueByMonth(): Promise<
   ORDER BY
     inner.yearmo DESC;`;
 
-  return result.rows.map((item) => {
+  const resultMap = result.rows.map((item) => {
     return {
-      category: dayjs(`${item.category}-01`).format('MMM'),
-      value: item.value * 100,
+      category: dayjs(`${item.category}-01`),
+      value: item.value,
     };
   });
+  const mostRecent = resultMap
+    .map((item) => item.category)
+    .reduce(
+      (prevDate, currDate) =>
+        currDate.isAfter(prevDate) ? currDate : prevDate,
+      dayjs.unix(0),
+    );
+
+  for (
+    var currDate: Dayjs = end.startOf('month');
+    currDate.isAfter(mostRecent);
+    currDate = currDate.add(-1, 'months')
+  ) {
+    resultMap.push({
+      category: currDate,
+      value: 0,
+    });
+  }
+
+  return resultMap
+    .toSorted((item1, item2) => {
+      if (item1.category.isBefore(item2.category)) {
+        return 1;
+      } else if (item1.category.isAfter(item2.category)) {
+        return -1;
+      }
+      return 0;
+    })
+    .map((item) => {
+      return {
+        category: item.category.format('MMM'),
+        value: item.value * 100,
+      };
+    });
 }
 
 export async function fetchCompletedGoalsCount(): Promise<
@@ -323,8 +357,8 @@ export async function fetchOptionsInRange(
       (IFNULL(o2.traded, o.exp) BETWEEN ${sqldt(start)} AND ${sqldt(end)})
       OR
       (o.traded <= ${sqldt(start)} AND IFNULL(o2.traded, o.exp) >= ${sqldt(
-    end,
-  )})
+        end,
+      )})
     )
     AND o.action <> 'BTC'
   ORDER BY
