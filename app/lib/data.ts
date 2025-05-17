@@ -229,46 +229,22 @@ export async function fetchOptionsTransactionsValueByMonth(): Promise<
   ORDER BY
     inner.yearmo DESC;`;
 
-  const resultMap = result.rows.map((item) => {
-    return {
-      category: dayjs(`${item.category}-01`),
-      value: item.value,
-    };
-  });
-  const mostRecent = resultMap
-    .map((item) => item.category)
-    .reduce(
-      (prevDate, currDate) =>
-        currDate.isAfter(prevDate) ? currDate : prevDate,
-      dayjs.unix(0),
-    );
+  const computedResults: { category: string; value: number }[] = [];
+  const categoryToValue = new Map<string, number>();
+  result.rows.map((row) => categoryToValue.set(row.category, row.value));
 
   for (
     var currDate: Dayjs = end.startOf('month');
-    currDate.isAfter(mostRecent);
+    currDate.isSame(start) || currDate.isAfter(start);
     currDate = currDate.add(-1, 'months')
   ) {
-    resultMap.push({
-      category: currDate,
-      value: 0,
+    computedResults.push({
+      category: currDate.format('MMM'),
+      value: (categoryToValue.get(currDate.format('YYYY-MM')) ?? 0) * 100,
     });
   }
 
-  return resultMap
-    .toSorted((item1, item2) => {
-      if (item1.category.isBefore(item2.category)) {
-        return 1;
-      } else if (item1.category.isAfter(item2.category)) {
-        return -1;
-      }
-      return 0;
-    })
-    .map((item) => {
-      return {
-        category: item.category.format('MMM'),
-        value: item.value * 100,
-      };
-    });
+  return computedResults;
 }
 
 export async function fetchCompletedGoalsCount(): Promise<
