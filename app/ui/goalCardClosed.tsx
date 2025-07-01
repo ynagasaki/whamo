@@ -13,7 +13,7 @@ export function ClosedGoalCard({ goal }: { goal: Goal }) {
           <Taggy tagId={goal.category} displayMode="full" isDark={true} />
         )}
         <span className="block text-gray-400">
-          ${fmtMoney(goal.curr_amt)} saved
+          {fmtMoney(goal.curr_amt)} saved
         </span>
       </div>
       <div className="w-1/4 text-right md:w-1/2">

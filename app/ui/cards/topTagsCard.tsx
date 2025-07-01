@@ -47,7 +47,7 @@ export function TopTagsCard() {
                   <Taggy tagId={entry.goal_category} displayMode="full" />
                 </div>
                 <div className="inline-block w-2/3 text-right">
-                  ${fmtMoney(entry.value)}
+                  {fmtMoney(entry.value)}
                 </div>
               </div>
             );

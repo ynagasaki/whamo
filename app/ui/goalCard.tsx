@@ -38,7 +38,7 @@ export function GoalCard({
       <div className="flex flex-wrap">
         <div className="block w-full text-center md:hidden">
           <span className="inline-block text-purple-400 md:text-xl">
-            ${fmtMoney(goal.curr_amt)}
+            {fmtMoney(goal.curr_amt)}
           </span>
         </div>
         <div className="sm:w-full md:w-2/3">
@@ -55,9 +55,9 @@ export function GoalCard({
         <div className="flex w-full text-gray-400">
           <div className="w-2/3">
             <span className="hidden md:inline-block">
-              ${fmtMoney(goal.curr_amt)} of&nbsp;
+              {fmtMoney(goal.curr_amt)} of&nbsp;
             </span>
-            <span className="inline-block">${fmtMoney(goal.amt)}</span>
+            <span className="inline-block">{fmtMoney(goal.amt)}</span>
           </div>
           <div className="w-1/3 text-right">
             {goal.category && <Taggy tagId={goal.category} />}
@@ -135,7 +135,7 @@ function GoalContributions({ goal }: { goal: Goal }) {
             </div>
             <div className="w-1/2 text-right">
               <div className="leading-snug">
-                <span className="text-gray-400">$</span>
+                {/* <span className="text-gray-400">$</span> */}
                 {fmtMoney(cs.amt)}
               </div>
               <div className="leading-none">

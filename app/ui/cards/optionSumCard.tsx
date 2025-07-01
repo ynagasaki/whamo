@@ -27,7 +27,7 @@ export function OptionSumCard() {
   return (
     <div className="rounded-md bg-white p-3">
       <div className="text-center">
-        <span className="block text-xl sm:text-2xl">${fmtMoney(total)}</span>
+        <span className="block text-xl sm:text-2xl">{fmtMoney(total)}</span>
         <span className="block text-sm text-gray-400">Total Earned</span>
       </div>
       <div className="text-sm">
@@ -40,7 +40,7 @@ export function OptionSumCard() {
               >
                 <div className="inline-block w-1/3">{entry.category}</div>
                 <div className="inline-block w-2/3 text-right">
-                  ${fmtMoney(entry.value)}
+                  {fmtMoney(entry.value)}
                 </div>
               </div>
             );

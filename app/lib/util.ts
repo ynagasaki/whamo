@@ -21,9 +21,11 @@ export function fmtDate(dtStr?: string): string {
 }
 
 export function fmtMoney(amt: number): string {
-  return (amt / 100)
-    .toLocaleString('en-US', { style: 'currency', currency: 'USD' })
-    .substring(1);
+  return (amt / 100).toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    currencySign: 'accounting',
+  });
 }
 
 export function toCents(amt: number): number {

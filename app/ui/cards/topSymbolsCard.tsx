@@ -41,7 +41,7 @@ export function TopSymbolsCard() {
               >
                 <div className="inline-block w-1/3">{entry.category}</div>
                 <div className="inline-block w-2/3 text-right">
-                  ${fmtMoney(entry.value)}
+                  {fmtMoney(entry.value)}
                 </div>
               </div>
             );
