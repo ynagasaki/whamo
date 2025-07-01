@@ -38,7 +38,7 @@ export function OptionCard({
       </div>
       <div className="w-1/3 text-right">
         <div className="absolute right-0 top-0 mr-3 mt-3 md:relative md:m-0 md:text-xl">
-          <span className="text-green-200">$</span>
+          {/* <span className="text-green-200">$</span> */}
           <span className="text-green-400">
             {fmtMoney(option.price * 100 - option.fee)}
           </span>
