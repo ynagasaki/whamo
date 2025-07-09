@@ -11,7 +11,7 @@ import {
   rectIntersection,
 } from '@dnd-kit/core';
 import { AllocOptionCard } from '@/app/ui/allocateableOptionCard';
-import { AllocatableOption, Goal, Option } from '@/app/lib/model';
+import { AllocatableOption, ClosedOption, Goal, Option } from '@/app/lib/model';
 import { fetcher, postData } from '@/app/lib/util';
 import { GoalCard } from '@/app/ui/goalCard';
 import { InputFormModal } from '@/app/ui/formModal';
@@ -23,6 +23,7 @@ import { TopTagsCard } from './ui/cards/topTagsCard';
 import { OptionCard } from './ui/optionCard';
 import { EarnRateCard } from './ui/cards/earnRateCard';
 import { TransactedCard } from './ui/cards/transactedCard';
+import { ClosedOptionCard } from './ui/optionCardClosed';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -167,10 +168,17 @@ export default function Page() {
           </div>
         </DndContext>
       </div>
-      <div className="px-4">
-        <Suspense>
-          <ClosedGoalsList status="c" lookbackPeriod={365} />
-        </Suspense>
+      <div className="flex flex-wrap px-4">
+        <div className="w-1/2 pr-2">
+          <Suspense>
+            <ClosedOptionsList status="closed" />
+          </Suspense>
+        </div>
+        <div className="w-1/2 pl-2">
+          <Suspense>
+            <ClosedGoalsList status="c" lookbackPeriod={365} />
+          </Suspense>
+        </div>
       </div>
       {showOptionForm && (
         <InputFormModal
@@ -337,6 +345,36 @@ function ClosedGoalsList({
     <>
       {data.goals.map((goal: Goal) => {
         return <ClosedGoalCard key={`goal-${goal.id}`} goal={goal} />;
+      })}
+    </>
+  );
+}
+
+function ClosedOptionsList({ status }: { status: 'closed' }) {
+  const params: string[] = [`status=${status}`];
+  const qs = params.length > 0 ? `?${params.join('&')}` : '';
+  const { data, error } = useSWR(`/api/options${qs}`, fetcher);
+
+  if (error) {
+    return (
+      <div className="mb-2 rounded-md bg-gray-200 p-3 text-gray-400">
+        <ExclamationCircleIcon className="inline-block h-5 w-5" /> Failed to
+        load
+      </div>
+    );
+  }
+  if (!data) {
+    return (
+      <div className="mb-2 rounded-md bg-gray-200 p-3 text-gray-400">
+        Loading...
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {data.options.map((option: ClosedOption) => {
+        return <ClosedOptionCard key={`opt-${option.id}`} option={option} />;
       })}
     </>
   );

@@ -26,8 +26,8 @@ export function AllocOptionCard({
   });
   const style = transform
     ? {
-      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-    }
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+      }
     : undefined;
   const [isAssigned, setAssigned] = useState(!!option.assigned);
 
@@ -66,7 +66,7 @@ export function AllocOptionCard({
       </div>
       <div className="w-2/3">
         <span className="block text-green-200">
-          {option.closed_by ? 'closed' : 'expired'} {fmtDate(option.exp)}
+          {option.closed_by ? 'closed' : 'expired'} {fmtDate(option.closed_on)}
         </span>
       </div>
       <div className="w-1/3 text-right">

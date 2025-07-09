@@ -1,6 +1,12 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { getClient } from './db';
-import { ContributionSummary, Option, Goal, AllocatableOption } from './model';
+import {
+  ContributionSummary,
+  Option,
+  Goal,
+  AllocatableOption,
+  ClosedOption,
+} from './model';
 import { sqldt } from './util';
 
 export async function fetchOpenOptions(
@@ -94,7 +100,7 @@ export async function fetchAllocatableOptions(
   const client = await getClient();
   const result = await client.sql<AllocatableOption>`SELECT
     o.*,
-    IFNULL(o2.traded, o.exp) AS exp,
+    IFNULL(o2.traded, o.exp) AS closed_on,
     ((o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) - SUM(IFNULL(gc.amt, 0))) AS remaining_amt
   FROM
     options o
@@ -107,7 +113,7 @@ export async function fetchAllocatableOptions(
     o.id
   HAVING
     SUM(IFNULL(gc.amt, 0)) < (o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0))
-  ORDER BY o.exp ASC;`;
+  ORDER BY closed_on ASC;`;
   return result.rows;
 }
 
@@ -154,6 +160,24 @@ export async function makeContribution({
 export async function removeContribution(contribId: number): Promise<void> {
   const client = await getClient();
   await client.sql`DELETE FROM goal_contribs WHERE id=${contribId};`;
+}
+
+export async function fetchClosedOptions(
+  cutoffDate: Date = new Date(),
+): Promise<ClosedOption[]> {
+  const client = await getClient();
+  const result = await client.sql<ClosedOption>`SELECT
+    o.*,
+    IFNULL(o2.traded, o.exp) AS closed_on,
+    (o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) AS gain
+  FROM
+    options o
+    LEFT JOIN options o2 ON o.closed_by = o2.id
+  WHERE
+    (o.exp < ${sqldt(cutoffDate)} OR o.closed_by IS NOT NULL)
+    AND o.action IS NOT 'BTC'
+  ORDER BY closed_on DESC LIMIT 10;`;
+  return result.rows;
 }
 
 export async function fetchClosedOptionsValueByYear(): Promise<

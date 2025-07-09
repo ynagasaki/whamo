@@ -15,6 +15,11 @@ export interface Option {
   created: string;
 }
 
+export interface ClosedOption extends Option {
+  closed_on: string;
+  gain: number;
+}
+
 export interface Goal {
   id: number;
   name: string;
@@ -36,7 +41,7 @@ export interface ContributionSummary {
   created: string;
 }
 
-export interface AllocatableOption extends Option {
+export interface AllocatableOption extends ClosedOption {
   remaining_amt: number;
 }
 
