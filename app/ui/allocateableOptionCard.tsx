@@ -44,10 +44,29 @@ export function AllocOptionCard({
           <span className="font-bold">{fmtMoney(option.remaining_amt)}</span>
         </div>
       </div>
-      <div className="w-full">
+      <div className="w-2/3">
         <span className="block text-green-200">
           {option.closed_by ? 'closed' : 'expired'} {fmtDate(option.exp)}
         </span>
+      </div>
+      <div className="w-1/3 text-right">
+        {!!option.assigned && (
+          <div className="inline-block">
+            <div
+              className={`
+            rounded-full
+            border
+            border-green-700
+            px-2
+            py-1
+            text-xs
+            leading-none
+            text-green-700`}
+            >
+              assigned
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

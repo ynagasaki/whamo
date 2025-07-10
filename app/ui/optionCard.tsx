@@ -5,15 +5,15 @@ import { CardProgressBar } from './widgets/cardProgressBar';
 
 export function OptionCard({
   option,
+  progressStartDate,
   editOptionCallback,
 }: {
   option: Option;
+  progressStartDate: string | undefined;
   editOptionCallback: (option: Option) => void;
 }) {
-  const expMarketStart = dayjs(new Date(option.traded)).add(
-    9 * 60 + 30,
-    'minutes',
-  ); // set to 9:30 AM
+  const progressStart = new Date(progressStartDate ?? option.traded);
+  const expMarketStart = dayjs(progressStart).add(9 * 60 + 30, 'minutes'); // set to 9:30 AM
   const expMarketClose = dayjs(new Date(option.exp)).add(16 * 60, 'minutes'); // set to 4:00 PM
   const pct = ddayPct(expMarketStart.toDate(), expMarketClose.toDate());
 

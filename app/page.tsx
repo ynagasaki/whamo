@@ -239,6 +239,12 @@ function OptionsList({
       </div>
     );
   }
+  const sortedOptions = (data.options as Option[]).toSorted(
+    (o1: Option, o2: Option) => {
+      return o1.traded.localeCompare(o2.traded);
+    },
+  );
+  const oldestTradeDate = sortedOptions[0]?.traded;
 
   return (
     <>
@@ -248,6 +254,7 @@ function OptionsList({
             key={`option-${option.id}`}
             editOptionCallback={editOptionCallback}
             option={option}
+            progressStartDate={oldestTradeDate}
           />
         );
       })}

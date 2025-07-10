@@ -24,8 +24,6 @@ export function TransactedCard() {
   const txnSums = data.result as { category: string; value: number }[];
   const currTxnSum = txnSums[0];
 
-  console.log(`YOSHI:`, txnSums);
-
   return (
     <div className="rounded-md bg-white p-3">
       <div className="text-center">
