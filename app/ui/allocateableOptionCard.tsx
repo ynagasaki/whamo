@@ -3,6 +3,7 @@
 import { AllocatableOption } from '@/app/lib/model';
 import { fmtDate, fmtMoney } from '@/app/lib/util';
 import { useDraggable } from '@dnd-kit/core';
+import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
 
 export function AllocOptionCard({
   id,
@@ -24,11 +25,18 @@ export function AllocOptionCard({
   return (
     <div
       ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      className="relative mb-2 flex flex-wrap rounded-md bg-green-400 p-3 text-white shadow"
+      className="relative mb-2 flex flex-wrap rounded-md bg-green-400 p-3 pr-4 text-white shadow"
       style={style}
     >
+      <div
+        {...attributes}
+        {...listeners}
+        className="absolute inset-y-0 right-0"
+      >
+        <div className="flex h-full items-center">
+          <EllipsisVerticalIcon className="h-5 text-green-200" />
+        </div>
+      </div>
       <div className="w-1/2">
         <div className="mr-1 block text-xs font-bold tracking-tight text-green-700 md:inline-block md:tracking-normal">
           {option.otype}
