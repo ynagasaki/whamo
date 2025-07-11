@@ -26,8 +26,8 @@ export function AllocOptionCard({
   });
   const style = transform
     ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-      }
+      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+    }
     : undefined;
   const [isAssigned, setAssigned] = useState(!!option.assigned);
 
@@ -43,6 +43,7 @@ export function AllocOptionCard({
         {...attributes}
         {...listeners}
         className="absolute inset-y-0 right-0"
+        style={{ touchAction: 'none' }}
       >
         <div className="flex h-full items-center">
           <EllipsisVerticalIcon className="h-5 text-green-200" />
