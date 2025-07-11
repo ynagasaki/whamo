@@ -185,6 +185,7 @@ export default function Page() {
 
 function AllocatableOptionsList() {
   const { data, error } = useSWR(`/api/options/alloc`, fetcher);
+  const [hoveredId, setHoveredId] = useState(-1);
 
   if (error) {
     return (
@@ -210,6 +211,9 @@ function AllocatableOptionsList() {
             id={`alloc-opt-${option.id}`}
             option={option}
             key={`alloc-opt-${option.id}`}
+            isHovered={hoveredId === option.id}
+            onMouseEnter={() => setHoveredId(option.id)}
+            onMouseLeave={() => setHoveredId(-1)}
           />
         );
       })}

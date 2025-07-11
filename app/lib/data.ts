@@ -343,3 +343,13 @@ export async function fetchOptionsInRange(
 
   return result.rows;
 }
+
+export async function setOptionAssignment(
+  optionId: number,
+  isAssigned: boolean,
+): Promise<void> {
+  const client = await getClient();
+  await client.sql`UPDATE options SET assigned=${
+    isAssigned ? 1 : 0
+  } WHERE id=${optionId}`;
+}

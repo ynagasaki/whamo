@@ -1,16 +1,24 @@
 'use client';
 
 import { AllocatableOption } from '@/app/lib/model';
-import { fmtDate, fmtMoney } from '@/app/lib/util';
+import { fmtDate, fmtMoney, postData } from '@/app/lib/util';
 import { useDraggable } from '@dnd-kit/core';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
+import clsx from 'clsx';
+import { useState } from 'react';
 
 export function AllocOptionCard({
   id,
   option,
+  isHovered,
+  onMouseEnter,
+  onMouseLeave,
 }: {
   id: string;
   option: AllocatableOption;
+  isHovered: boolean;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
@@ -21,12 +29,15 @@ export function AllocOptionCard({
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
       }
     : undefined;
+  const [isAssigned, setAssigned] = useState(!!option.assigned);
 
   return (
     <div
       ref={setNodeRef}
       className="relative mb-2 flex flex-wrap rounded-md bg-green-400 p-3 pr-4 text-white shadow"
       style={style}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <div
         {...attributes}
@@ -58,20 +69,26 @@ export function AllocOptionCard({
         </span>
       </div>
       <div className="w-1/3 text-right">
-        {!!option.assigned && (
+        {option.closed_by === undefined && (
           <div className="inline-block">
             <div
-              className={`
-            rounded-full
-            border
-            border-green-700
-            px-2
-            py-1
-            text-xs
-            leading-none
-            text-green-700`}
+              className={clsx('rounded-full px-2 py-1 text-xs leading-none', {
+                'border border-green-700 text-green-700': !isAssigned,
+                'bg-green-700 text-white': isAssigned,
+                invisible: !isAssigned && !isHovered,
+                'cursor-pointer': isHovered,
+              })}
+              onClick={async () => {
+                const assignedValue = !isAssigned;
+                const data = {
+                  id: `${option.id}`,
+                  assigned: `${assignedValue}`,
+                };
+                await postData(`/api/options/alloc`, data);
+                setAssigned(assignedValue);
+              }}
             >
-              assigned
+              asgd.
             </div>
           </div>
         )}
