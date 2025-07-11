@@ -191,7 +191,7 @@ export default function Page() {
       </div>
       <div className="flex flex-wrap px-4">
         <div
-          className={clsx('w-full md:w-1/2 md:pr-2', {
+          className={clsx('w-full md:w-1/2 md:pr-2 md:block', {
             hidden: closedListTab !== 'options',
           })}
         >
@@ -200,7 +200,7 @@ export default function Page() {
           </Suspense>
         </div>
         <div
-          className={clsx('w-full md:w-1/2 md:pl-2', {
+          className={clsx('w-full md:w-1/2 md:pl-2 md:block', {
             hidden: closedListTab !== 'goals',
           })}
         >
