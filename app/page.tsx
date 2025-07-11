@@ -64,6 +64,9 @@ export default function Page() {
   };
 
   const [showOptionForm, setShowOptionForm] = useState(false);
+  const [closedListTab, setClosedListTab] = useState<'options' | 'goals'>(
+    'options',
+  );
   const [editGoalData, setEditGoalData] = useState<Goal | undefined>(undefined);
   const [editOptionData, setEditOptionData] = useState<Option | undefined>(
     undefined,
@@ -168,13 +171,39 @@ export default function Page() {
           </div>
         </DndContext>
       </div>
+      <div className="flex p-4 pt-0 md:hidden">
+        <div
+          className={clsx('w-1/2 text-center', {
+            'font-bold': closedListTab === 'options',
+          })}
+          onClick={() => setClosedListTab('options')}
+        >
+          Options
+        </div>
+        <div
+          className={clsx('w-1/2 text-center', {
+            'font-bold': closedListTab === 'goals',
+          })}
+          onClick={() => setClosedListTab('goals')}
+        >
+          Goals
+        </div>
+      </div>
       <div className="flex flex-wrap px-4">
-        <div className="w-1/2 pr-2">
+        <div
+          className={clsx('w-full md:w-1/2 md:pr-2', {
+            hidden: closedListTab !== 'options',
+          })}
+        >
           <Suspense>
             <ClosedOptionsList status="closed" />
           </Suspense>
         </div>
-        <div className="w-1/2 pl-2">
+        <div
+          className={clsx('w-full md:w-1/2 md:pl-2', {
+            hidden: closedListTab !== 'goals',
+          })}
+        >
           <Suspense>
             <ClosedGoalsList status="c" lookbackPeriod={365} />
           </Suspense>
