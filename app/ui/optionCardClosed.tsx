@@ -5,7 +5,6 @@ import { fmtMoney, fmtDate } from '@/app/lib/util';
 import clsx from 'clsx';
 
 export function ClosedOptionCard({ option }: { option: ClosedOption }) {
-  console.log(`YOSHI`, option);
   return (
     <div className="relative mb-1 flex flex-wrap rounded-md bg-gray-200 p-3">
       <div className="w-2/3">
