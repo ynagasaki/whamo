@@ -70,7 +70,7 @@ export function AllocOptionCard({
         </span>
       </div>
       <div className="w-1/3 text-right">
-        {option.closed_by === undefined && (
+        {(option.closed_by === null || option.closed_by === undefined) && (
           <div className="inline-block">
             <div
               className={clsx('rounded-full px-2 py-1 text-xs leading-none', {
