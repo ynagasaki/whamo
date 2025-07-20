@@ -36,7 +36,7 @@ export function ClosedOptionCard({ option }: { option: ClosedOption }) {
           {option.closed_by ? 'closed' : 'expired'} {fmtDate(option.closed_on)}
         </span>
       </div>
-      <div className="hidden w-1/3 text-right md:block">
+      <div className="w-1/3 text-right block">
         {!!option.assigned && (
           <div className="inline-block">
             <div className="rounded-full border border-gray-500 px-2 py-1 text-xs leading-none text-gray-500">
