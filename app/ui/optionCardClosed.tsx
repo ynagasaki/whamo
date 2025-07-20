@@ -40,7 +40,7 @@ export function ClosedOptionCard({ option }: { option: ClosedOption }) {
       </div>
       <div className="w-1/3 text-right">
         <div className="inline-block">
-          {option.assigned && (
+          {!!option.assigned && (
             <div className="rounded-full border border-gray-500 px-2 py-1 text-xs leading-none text-gray-500">
               asgd.
             </div>
