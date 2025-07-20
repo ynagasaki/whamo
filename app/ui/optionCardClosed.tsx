@@ -5,6 +5,8 @@ import { fmtMoney, fmtDate } from '@/app/lib/util';
 import clsx from 'clsx';
 
 export function ClosedOptionCard({ option }: { option: ClosedOption }) {
+  let isClosed = !(option.closed_by === null || option.closed_by === undefined);
+
   return (
     <div className="relative mb-1 flex flex-wrap rounded-md bg-gray-200 p-3">
       <div className="w-2/3">
@@ -31,19 +33,29 @@ export function ClosedOptionCard({ option }: { option: ClosedOption }) {
           </span>
         </div>
       </div>
-      <div className="w-full md:w-2/3">
+      <div className="w-2/3 border">
         <span className="text-gray-400">
-          {option.closed_by ? 'closed' : 'expired'} {fmtDate(option.closed_on)}
+          {isClosed ? 'closed' : 'expired'} {fmtDate(option.closed_on)}
         </span>
       </div>
-      <div className="w-1/3 text-right block">
-        {!!option.assigned && (
-          <div className="inline-block">
+      <div className="w-1/3 text-right">
+        <div className="inline-block">
+          {!isClosed && (
             <div className="rounded-full border border-gray-500 px-2 py-1 text-xs leading-none text-gray-500">
               asgd.
             </div>
-          </div>
-        )}
+          )}
+          {isClosed && (
+            <div className="text-sm text-gray-400">
+              <span className="block">
+                {fmtMoney(option.price * 100 - option.fee)}
+              </span>
+              <span className="block">
+                {fmtMoney(option.closed_price * 100 - option.closed_fee)}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

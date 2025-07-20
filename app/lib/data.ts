@@ -169,7 +169,9 @@ export async function fetchClosedOptions(
   const result = await client.sql<ClosedOption>`SELECT
     o.*,
     IFNULL(o2.traded, o.exp) AS closed_on,
-    (o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) AS gain
+    (o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) AS gain,
+    IFNULL(o2.price, 0) AS closed_price,
+    IFNULL(o2.fee, 0) AS closed_fee
   FROM
     options o
     LEFT JOIN options o2 ON o.closed_by = o2.id

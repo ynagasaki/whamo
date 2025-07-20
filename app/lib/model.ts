@@ -18,6 +18,8 @@ export interface Option {
 export interface ClosedOption extends Option {
   closed_on: string;
   gain: number;
+  closed_price: number;
+  closed_fee: number;
 }
 
 export interface Goal {
