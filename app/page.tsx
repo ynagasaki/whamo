@@ -133,7 +133,18 @@ export default function Page() {
             */}
             <div className="relative z-10">
               <Suspense>
-                <AllocatableOptionsList />
+                <AllocatableOptionsList
+                  editOptionCallback={(option: Option) => {
+                    if (showOptionForm) {
+                      setShowOptionForm(false);
+                      setEditOptionData(undefined);
+                      return;
+                    }
+                    setEditGoalData(undefined);
+                    setEditOptionData(option);
+                    setShowOptionForm(true);
+                  }}
+                />
               </Suspense>
             </div>
             <div className="relative z-0">
@@ -142,6 +153,7 @@ export default function Page() {
                   editOptionCallback={(option: Option) => {
                     if (showOptionForm) {
                       setShowOptionForm(false);
+                      setEditOptionData(undefined);
                       return;
                     }
                     setEditGoalData(undefined);
@@ -220,7 +232,11 @@ export default function Page() {
   );
 }
 
-function AllocatableOptionsList() {
+function AllocatableOptionsList({
+  editOptionCallback,
+}: {
+  editOptionCallback: (option: Option) => void;
+}) {
   const { data, error } = useSWR(`/api/options/alloc`, fetcher);
   const [hoveredId, setHoveredId] = useState(-1);
 
@@ -251,6 +267,7 @@ function AllocatableOptionsList() {
             isHovered={hoveredId === option.id}
             onMouseEnter={() => setHoveredId(option.id)}
             onMouseLeave={() => setHoveredId(-1)}
+            editOptionCallback={editOptionCallback}
           />
         );
       })}

@@ -1,6 +1,6 @@
 'use client';
 
-import { AllocatableOption } from '@/app/lib/model';
+import { AllocatableOption, Option } from '@/app/lib/model';
 import { fmtDate, fmtMoney, postData } from '@/app/lib/util';
 import { useDraggable } from '@dnd-kit/core';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
@@ -11,12 +11,14 @@ export function AllocOptionCard({
   id,
   option,
   isHovered,
+  editOptionCallback,
   onMouseEnter,
   onMouseLeave,
 }: {
   id: string;
   option: AllocatableOption;
   isHovered: boolean;
+  editOptionCallback: (option: Option) => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
 }) {
@@ -54,8 +56,13 @@ export function AllocOptionCard({
           {option.otype}
         </div>
         <div className="block md:inline-block">
-          {option.symbol}
-          <span className="text-green-200">@{option.strike}</span>
+          <span
+            className="border-dotted border-green-300 hover:cursor-pointer hover:border-b-2"
+            onClick={() => editOptionCallback(option)}
+          >
+            {option.symbol}
+            <span className="text-green-200">@{option.strike}</span>
+          </span>
         </div>
       </div>
       <div className="w-1/2 text-right">
