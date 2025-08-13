@@ -51,7 +51,7 @@ export function ClosedOptionCard({ option }: { option: ClosedOption }) {
                 {fmtMoney(option.price * 100 - option.fee)}
               </span>
               <span className="block">
-                {fmtMoney(option.closed_price * 100 - option.closed_fee)}
+                {fmtMoney(option.closed_price * 100 + option.closed_fee)}
               </span>
             </div>
           )}
