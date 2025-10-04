@@ -2,24 +2,15 @@
 
 import { Chart } from 'react-chartjs-2';
 import {
+  BarController,
   BarElement,
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
 } from 'chart.js';
 import dayjs from 'dayjs';
 
-ChartJS.register(
-  BarElement,
-  CategoryScale,
-  LineElement,
-  LinearScale,
-  PointElement,
-  Tooltip,
-);
+ChartJS.register(BarController, BarElement, CategoryScale, LinearScale);
 
 export interface TimelineData {
   dt: dayjs.Dayjs;
