@@ -201,6 +201,29 @@ export async function fetchClosedOptionsValueByYear(): Promise<
   return result.rows;
 }
 
+export async function fetchClosedOptionsValue(
+  from: Date,
+  to: Date = new Date(),
+): Promise<{ category: string; value: number }[]> {
+  const client = await getClient();
+  const result = await client.sql<{ category: string; value: number }>`SELECT
+    SUBSTR(o.exp, 1, 7) AS yearmo,
+    SUM(o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) AS value
+  FROM
+    options o
+    LEFT JOIN options o2 ON o.closed_by = o2.id
+  WHERE
+    (o.exp < ${sqldt(to)} OR o.closed_by IS NOT NULL)
+    AND o.action IS NOT 'BTC'
+    AND (o.exp >= ${sqldt(
+      from,
+    )} OR o.closed_by IS NOT NULL AND o2.traded >= ${sqldt(from)})
+  GROUP BY
+    yearmo
+  ORDER BY yearmo;`;
+  return result.rows;
+}
+
 export async function fetchClosedOptionsValueBySymbol(): Promise<
   { category: string; value: number }[]
 > {

@@ -41,7 +41,7 @@ export function GoalCard({
             {fmtMoney(goal.curr_amt)}
           </span>
         </div>
-        <div className="sm:w-full md:w-2/3 overflow-x-auto">
+        <div className="overflow-x-auto sm:w-full md:w-2/3">
           <span
             className="border-dotted border-gray-300 text-gray-700 hover:cursor-pointer hover:border-b-2"
             onClick={() => editGoalCallback(goal)}
