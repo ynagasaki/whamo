@@ -205,23 +205,20 @@ export async function fetchClosedOptionsValue(
   from: Date,
   to: Date = new Date(),
 ): Promise<
-  { category: string; value: number; value_loss: number; value_gain: number }[]
+  {
+    category: string;
+    value: number;
+    value_loss?: number;
+    value_gain?: number;
+  }[]
 > {
   const client = await getClient();
   const result = await client.sql<{
     category: string;
     value: number;
-    value_loss: number;
-    value_gain: number;
   }>`SELECT
     SUBSTR(o.exp, 1, 7) AS yearmo,
-    SUM(o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) AS value,
-    CASE
-      WHEN (o.price < IFNULL(o2.price, 0)) THEN SUM(o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0))
-    END AS value_loss,
-    CASE
-      WHEN (o.price > IFNULL(o2.price, 0)) THEN SUM(o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0))
-    END AS value_gain
+    SUM(o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) AS value
   FROM
     options o
     LEFT JOIN options o2 ON o.closed_by = o2.id
