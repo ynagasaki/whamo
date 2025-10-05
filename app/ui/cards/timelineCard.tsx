@@ -26,7 +26,12 @@ export function TimelineCard() {
     );
   }
 
-  const result = data.result as { yearmo: string; value: number }[];
+  const result = data.result as {
+    yearmo: string;
+    value: number;
+    value_loss?: number;
+    value_gain?: number;
+  }[];
   const timelineData: TimelineData[] = [];
   var i = 0;
 
@@ -46,7 +51,16 @@ export function TimelineCard() {
     const diff = currDate.diff(resultDate);
 
     if (diff == 0) {
-      timelineData.push({ dt: resultDate, value: currResult.value / 100 });
+      timelineData.push({
+        dt: resultDate,
+        value: currResult.value / 100,
+        value_gain: currResult.value_gain
+          ? currResult.value_gain / 100
+          : undefined,
+        value_loss: currResult.value_loss
+          ? currResult.value_loss / 100
+          : undefined,
+      });
       i++;
     } else if (diff > 0) {
       i++;
