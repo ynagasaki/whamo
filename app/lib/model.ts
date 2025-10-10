@@ -51,3 +51,10 @@ export interface ActionStatus {
   status: 'ok' | 'error';
   message?: string;
 }
+
+export interface AggValue {
+  category: string;
+  value: number;
+  value_loss?: number;
+  value_gain?: number;
+}

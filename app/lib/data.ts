@@ -1,4 +1,3 @@
-import dayjs, { Dayjs } from 'dayjs';
 import { getClient } from './db';
 import {
   ContributionSummary,
@@ -6,6 +5,7 @@ import {
   Goal,
   AllocatableOption,
   ClosedOption,
+  AggValue,
 } from './model';
 import { sqldt } from './util';
 
@@ -182,11 +182,9 @@ export async function fetchClosedOptions(
   return result.rows;
 }
 
-export async function fetchClosedOptionsValueByYear(): Promise<
-  { category: string; value: number }[]
-> {
+export async function fetchClosedOptionsValueByYear(): Promise<AggValue[]> {
   const client = await getClient();
-  const result = await client.sql<{ category: string; value: number }>`SELECT
+  const result = await client.sql<AggValue>`SELECT
     SUBSTR(o.exp, 1, 4) AS category,
     SUM(o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) AS value
   FROM
@@ -204,20 +202,10 @@ export async function fetchClosedOptionsValueByYear(): Promise<
 export async function fetchClosedOptionsValue(
   from: Date,
   to: Date = new Date(),
-): Promise<
-  {
-    category: string;
-    value: number;
-    value_loss?: number;
-    value_gain?: number;
-  }[]
-> {
+): Promise<AggValue[]> {
   const client = await getClient();
-  const result = await client.sql<{
-    category: string;
-    value: number;
-  }>`SELECT
-    SUBSTR(o.exp, 1, 7) AS yearmo,
+  const result = await client.sql<AggValue>`SELECT
+    SUBSTR(o.exp, 1, 7) AS category,
     SUM(o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) AS value
   FROM
     options o
@@ -229,19 +217,14 @@ export async function fetchClosedOptionsValue(
       from,
     )} OR o.closed_by IS NOT NULL AND o2.traded >= ${sqldt(from)})
   GROUP BY
-    yearmo
-  ORDER BY yearmo;`;
+    category
+  ORDER BY category;`;
   return result.rows;
 }
 
-export async function fetchClosedOptionsValueBySymbol(): Promise<
-  { category: string; value: number }[]
-> {
+export async function fetchClosedOptionsValueBySymbol(): Promise<AggValue[]> {
   const client = await getClient();
-  const result = await client.sql<{
-    category: string;
-    value: number;
-  }>`SELECT * FROM (SELECT
+  const result = await client.sql<AggValue>`SELECT * FROM (SELECT
     o.symbol AS category,
     SUM(o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) AS value
   FROM
@@ -256,54 +239,49 @@ export async function fetchClosedOptionsValueBySymbol(): Promise<
   return result.rows;
 }
 
-export async function fetchOptionsTransactionsValueByMonth(): Promise<
-  { category: string; value: number }[]
-> {
-  const start = dayjs(new Date())
-    .startOf('month')
-    .add(-2, 'month')
-    .startOf('month');
-  const end = dayjs(new Date()).endOf('month');
+export async function fetchOptionsTransactionsValueByMonth({
+  startDate,
+  endDate,
+}: {
+  startDate: Date;
+  endDate: Date;
+}): Promise<AggValue[]> {
   const client = await getClient();
   const result = await client.sql<{
     category: string;
-    value: number;
+    value_gain: number;
+    value_loss: number;
   }>`SELECT
     inner.yearmo AS category,
-    SUM(inner.xactamt) AS value
+    IFNULL(SUM(inner.value_gain), 0) AS value_gain,
+    IFNULL(SUM(inner.value_loss), 0) AS value_loss
   FROM (
     SELECT
       SUBSTR(options.traded, 1, 7) AS yearmo,
       CASE
-        WHEN action = 'STO' THEN price - ifnull(fee, 0)/100.0
-        WHEN action='BTC' THEN -price - ifnull(fee, 0)/100.0
-      END AS xactamt
+        WHEN action = 'STO' THEN price * 100 - IFNULL(fee, 0)
+      END AS value_gain,
+      CASE
+        WHEN action = 'BTC' THEN -price * 100 - IFNULL(fee, 0)
+      END AS value_loss
     FROM
       options
     WHERE
-      traded BETWEEN ${sqldt(start.toDate())} AND ${sqldt(end.toDate())}
+      traded BETWEEN ${sqldt(startDate)} AND ${sqldt(endDate)}
     ) AS inner
   GROUP BY
     inner.yearmo
   ORDER BY
-    inner.yearmo DESC;`;
+    inner.yearmo;`;
 
-  const computedResults: { category: string; value: number }[] = [];
-  const categoryToValue = new Map<string, number>();
-  result.rows.map((row) => categoryToValue.set(row.category, row.value));
-
-  for (
-    var currDate: Dayjs = end.startOf('month');
-    currDate.isSame(start) || currDate.isAfter(start);
-    currDate = currDate.add(-1, 'months')
-  ) {
-    computedResults.push({
-      category: currDate.format('MMM'),
-      value: (categoryToValue.get(currDate.format('YYYY-MM')) ?? 0) * 100,
-    });
-  }
-
-  return computedResults;
+  return result.rows.map((item) => {
+    return {
+      category: item.category,
+      value: item.value_gain + item.value_loss,
+      value_gain: item.value_gain,
+      value_loss: item.value_loss,
+    } as AggValue;
+  });
 }
 
 export async function fetchCompletedGoalsCount(): Promise<

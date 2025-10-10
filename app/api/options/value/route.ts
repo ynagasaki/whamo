@@ -4,12 +4,14 @@ import {
   fetchClosedOptionsValueByYear,
   fetchOptionsTransactionsValueByMonth,
 } from '@/app/lib/data';
+import { AggValue } from '@/app/lib/model';
 import dayjs from 'dayjs';
 
 export async function GET(request: Request): Promise<Response> {
   const params = new URL(request.url).searchParams;
+  // TODO: pass start/end dates as params
   const grouping = params.get('grp') ?? 'year';
-  let result;
+  let result: AggValue[];
 
   switch (grouping) {
     case 'symbol': {
@@ -17,7 +19,14 @@ export async function GET(request: Request): Promise<Response> {
       break;
     }
     case 'txn-mo': {
-      result = await fetchOptionsTransactionsValueByMonth();
+      result = await fetchOptionsTransactionsValueByMonth({
+        startDate: dayjs(new Date())
+          .startOf('month')
+          .add(-2, 'month')
+          .startOf('month')
+          .toDate(),
+        endDate: dayjs(new Date()).endOf('month').toDate(),
+      });
       break;
     }
     case 'mo': {

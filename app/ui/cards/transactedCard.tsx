@@ -1,6 +1,34 @@
 import useSWR from 'swr';
 import { fetcher, fmtMoney } from '@/app/lib/util';
 import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
+import { AggValue } from '@/app/lib/model';
+import dayjs, { Dayjs } from 'dayjs';
+
+function fillInMissingMonths(
+  result: AggValue[],
+  start: Dayjs,
+  end: Dayjs,
+): AggValue[] {
+  const computedResults: AggValue[] = [];
+  const categoryToValue = new Map<string, AggValue>();
+  result.map((row) => categoryToValue.set(row.category, row));
+
+  for (
+    var currDate: Dayjs = end.startOf('month');
+    currDate.isSame(start) || currDate.isAfter(start);
+    currDate = currDate.add(-1, 'months')
+  ) {
+    const existingEntry = categoryToValue.get(currDate.format('YYYY-MM'));
+    computedResults.push({
+      category: currDate.format('MMM'),
+      value: existingEntry?.value ?? 0,
+      value_gain: existingEntry?.value_gain ?? 0,
+      value_loss: existingEntry?.value_loss ?? 0,
+    });
+  }
+
+  return computedResults;
+}
 
 export function TransactedCard() {
   const { data, error } = useSWR(`/api/options/value?grp=txn-mo`, fetcher);
@@ -20,8 +48,12 @@ export function TransactedCard() {
       </div>
     );
   }
-
-  const txnSums = data.result as { category: string; value: number }[];
+  const start = dayjs(new Date())
+    .startOf('month')
+    .add(-2, 'month')
+    .startOf('month');
+  const end = dayjs(new Date()).endOf('month');
+  const txnSums = fillInMissingMonths(data.result as AggValue[], start, end);
   const currTxnSum = txnSums[0];
 
   return (

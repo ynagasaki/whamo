@@ -1,6 +1,7 @@
 import useSWR from 'swr';
 import { fetcher, fmtMoney } from '@/app/lib/util';
 import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
+import { AggValue } from '@/app/lib/model';
 
 export function TopSymbolsCard() {
   const { data, error } = useSWR(`/api/options/value?grp=symbol`, fetcher);
@@ -21,7 +22,7 @@ export function TopSymbolsCard() {
     );
   }
 
-  const result = data.result as { category: string; value: number }[];
+  const result = data.result as AggValue[];
 
   return (
     <div className="rounded-md bg-white p-3">

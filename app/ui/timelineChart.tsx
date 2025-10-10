@@ -28,17 +28,17 @@ export function TimelineChart({
 }) {
   const dataSorted = data.toSorted((a, b) => a.dt.diff(b.dt));
   const chartLabels: string[] = [];
-  const chartData: number[] = [];
-  const chartDataNegatives: number[] = [];
+  const chartDataPos: number[] = [];
+  const chartDataNeg: number[] = [];
 
   dataSorted.forEach((entry) => {
     chartLabels.push(entry.dt.format('MMM').substring(0, 1));
     if (entry.value_gain != undefined && entry.value_loss != undefined) {
-      chartData.push(entry.value_gain);
-      chartDataNegatives.push(entry.value_loss);
+      chartDataPos.push(entry.value_gain);
+      chartDataNeg.push(entry.value_loss);
     } else {
-      chartData.push(entry.value);
-      chartDataNegatives.push(0);
+      chartDataPos.push(entry.value > 0 ? entry.value : 0);
+      chartDataNeg.push(entry.value < 0 ? entry.value : 0);
     }
   });
 
@@ -50,14 +50,14 @@ export function TimelineChart({
         datasets: [
           {
             label: 'gain',
-            data: chartData,
+            data: chartDataPos,
             backgroundColor: 'rgb(183,148,244)',
             hoverBackgroundColor: 'rgb(183,148,244)',
             borderRadius: 3,
           },
           {
             label: 'loss',
-            data: chartDataNegatives,
+            data: chartDataNeg,
             backgroundColor: 'rgb(156, 163, 175)',
             hoverBackgroundColor: 'rgb(156, 163, 175)',
             borderRadius: 3,

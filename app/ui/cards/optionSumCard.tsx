@@ -1,6 +1,7 @@
 import useSWR from 'swr';
 import { fetcher, fmtMoney } from '@/app/lib/util';
 import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
+import { AggValue } from '@/app/lib/model';
 
 export function OptionSumCard() {
   const { data, error } = useSWR(`/api/options/value`, fetcher);
@@ -21,7 +22,7 @@ export function OptionSumCard() {
     );
   }
 
-  const result = data.result as { category: string; value: number }[];
+  const result = data.result as AggValue[];
   const total = result.reduce((prev, curr) => prev + curr.value, 0);
 
   return (

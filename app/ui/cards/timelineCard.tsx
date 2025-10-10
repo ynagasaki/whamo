@@ -3,11 +3,12 @@ import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
 import useSWR from 'swr';
 import { TimelineChart, TimelineData } from '../timelineChart';
 import dayjs from 'dayjs';
+import { AggValue } from '@/app/lib/model';
 
 export function TimelineCard() {
   const to = dayjs(new Date()).startOf('month');
   const from = to.add(-12, 'months').toDate();
-  const { data, error } = useSWR(`/api/options/value?grp=mo`, fetcher);
+  const { data, error } = useSWR(`/api/options/value?grp=txn-mo`, fetcher);
   const period: 'month' = 'month';
 
   if (error) {
@@ -26,12 +27,7 @@ export function TimelineCard() {
     );
   }
 
-  const result = data.result as {
-    yearmo: string;
-    value: number;
-    value_loss?: number;
-    value_gain?: number;
-  }[];
+  const result = data.result as AggValue[];
   const timelineData: TimelineData[] = [];
   var i = 0;
 
@@ -47,10 +43,12 @@ export function TimelineCard() {
       continue;
     }
 
-    const resultDate = dayjs(`${currResult.yearmo}-01`);
+    const resultDate = dayjs(`${currResult.category}-01`);
     const diff = currDate.diff(resultDate);
 
     if (diff == 0) {
+      // values are in cents, but timeline chart doesn't care about
+      // that so we have to convert to dollars here.
       timelineData.push({
         dt: resultDate,
         value: currResult.value / 100,
@@ -69,13 +67,6 @@ export function TimelineCard() {
     }
   }
 
-  result.map((entry) => {
-    return {
-      dt: dayjs(`${entry.yearmo}-01`),
-      value: entry.value,
-    };
-  });
-
   return (
     <div className="rounded-md bg-white p-3">
       <div className="text-center">
@@ -83,7 +74,7 @@ export function TimelineCard() {
           {fmtMoney(result.reduce((prev, curr) => prev + curr.value, 0)) ??
             'N/A'}
         </span>
-        <span className="block text-sm text-gray-400">TTM Earned</span>
+        <span className="block text-sm text-gray-400">TTM Transacted</span>
       </div>
       <div>
         <TimelineChart period="month" data={timelineData} />
