@@ -6,9 +6,14 @@ import dayjs from 'dayjs';
 import { AggValue } from '@/app/lib/model';
 
 export function TimelineCard() {
-  const to = dayjs(new Date()).startOf('month');
-  const from = to.add(-12, 'months').toDate();
-  const { data, error } = useSWR(`/api/options/value?grp=txn-mo`, fetcher);
+  const end = dayjs(new Date()).endOf('month');
+  const start = end.add(-12, 'months').startOf('month');
+  const { data, error } = useSWR(
+    `/api/options/value?grp=txn-mo&start=${start.format(
+      'YYYY-MM-DD',
+    )}&end=${end.format('YYYY-MM-DD')}`,
+    fetcher,
+  );
   const period: 'month' = 'month';
 
   if (error) {
@@ -32,8 +37,8 @@ export function TimelineCard() {
   var i = 0;
 
   for (
-    let currDate = dayjs(from);
-    dayjs(to).diff(currDate) >= 0;
+    let currDate = start;
+    end.diff(currDate) >= 0;
     currDate = currDate.add(1, period)
   ) {
     const currResult = result.at(i);

@@ -31,7 +31,17 @@ function fillInMissingMonths(
 }
 
 export function TransactedCard() {
-  const { data, error } = useSWR(`/api/options/value?grp=txn-mo`, fetcher);
+  const start = dayjs(new Date())
+    .startOf('month')
+    .add(-2, 'month')
+    .startOf('month');
+  const end = dayjs(new Date()).endOf('month');
+  const { data, error } = useSWR(
+    `/api/options/value?grp=txn-mo&start=${start.format(
+      'YYYY-MM-DD',
+    )}&end=${end.format('YYYY-MM-DD')}`,
+    fetcher,
+  );
 
   if (error) {
     return (
@@ -48,11 +58,7 @@ export function TransactedCard() {
       </div>
     );
   }
-  const start = dayjs(new Date())
-    .startOf('month')
-    .add(-2, 'month')
-    .startOf('month');
-  const end = dayjs(new Date()).endOf('month');
+
   const txnSums = fillInMissingMonths(data.result as AggValue[], start, end);
   const currTxnSum = txnSums[0];
 

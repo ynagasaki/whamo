@@ -9,9 +9,22 @@ import dayjs from 'dayjs';
 
 export async function GET(request: Request): Promise<Response> {
   const params = new URL(request.url).searchParams;
-  // TODO: pass start/end dates as params
   const grouping = params.get('grp') ?? 'year';
+  const defaultEndDate = dayjs(new Date()).endOf('month');
+  const defaultStartDate = defaultEndDate.add(-2, 'month').startOf('month');
+  const endDateStr = params.get('end') ?? defaultEndDate.format('YYYY-MM-DD');
+  const startDateStr =
+    params.get('start') ?? defaultStartDate.format('YYYY-MM-DD');
+  const endDate = dayjs(endDateStr);
+  const startDate = dayjs(startDateStr);
   let result: AggValue[];
+
+  if (!endDate.isValid()) {
+    throw new Error('Invalid end date; format must be YYYY-MM-DD');
+  }
+  if (!startDate.isValid()) {
+    throw new Error('Invalid start date; format must be YYYY-MM-DD');
+  }
 
   switch (grouping) {
     case 'symbol': {
@@ -20,12 +33,8 @@ export async function GET(request: Request): Promise<Response> {
     }
     case 'txn-mo': {
       result = await fetchOptionsTransactionsValueByMonth({
-        startDate: dayjs(new Date())
-          .startOf('month')
-          .add(-2, 'month')
-          .startOf('month')
-          .toDate(),
-        endDate: dayjs(new Date()).endOf('month').toDate(),
+        startDate: startDate.toDate(),
+        endDate: endDate.toDate(),
       });
       break;
     }
