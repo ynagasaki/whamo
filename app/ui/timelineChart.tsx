@@ -90,6 +90,24 @@ export function TimelineChart({
             },
             ticks: {
               color: 'rgb(156, 163, 175)',
+              callback: function (value, index, ticks) {
+                if (!(typeof value === 'string' || typeof value === 'number')) {
+                  return value;
+                } else if (
+                  typeof value === 'string' &&
+                  (isNaN(parseFloat(value)) || isNaN(parseInt(value)))
+                ) {
+                  return value;
+                } else if (
+                  typeof value === 'number' &&
+                  Math.abs(value) < 1000
+                ) {
+                  return value;
+                }
+                const valNum =
+                  typeof value === 'string' ? parseFloat(value) : value;
+                return valNum / 1000 + 'k';
+              },
             },
             grid: {
               display: true,
