@@ -39,6 +39,7 @@ export interface ContributionSummary {
   option_strike: number;
   option_type: OptionType;
   option_exp: string;
+  option_closed?: string;
   amt: number;
   created: string;
 }

@@ -86,9 +86,11 @@ export async function fetchContributions(
     o.strike AS option_strike,
     o.otype AS option_type,
     o.exp AS option_exp,
+    o2.traded AS option_closed,
     gc.amt AS amt
   FROM goal_contribs gc
     INNER JOIN options o ON gc.option = o.id
+    LEFT JOIN options o2 ON o.closed_by = o2.id
   WHERE gc.goal = ${goalId}
   ORDER BY o.exp DESC;`;
   return result.rows;
