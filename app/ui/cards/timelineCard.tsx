@@ -1,8 +1,8 @@
 import { fetcher, fmtMoney } from '@/app/lib/util';
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
 import useSWR from 'swr';
-import { TimelineChart, TimelineData } from '../timelineChart';
 import dayjs from 'dayjs';
+import { TimelineChart, TimelineData } from '../timelineChart';
 import { AggValue } from '@/app/lib/model';
 
 export function TimelineCard() {
@@ -72,17 +72,78 @@ export function TimelineCard() {
     }
   }
 
+  const txnSums: AggValue[] = [];
+  const maxTableEntries = 4;
+  for (
+    i = timelineData.length - 1;
+    i >= Math.max(0, timelineData.length - maxTableEntries);
+    i--
+  ) {
+    const currEntry = timelineData[i];
+    txnSums.push({
+      category: currEntry.dt.format('MMM'),
+      value: currEntry.value,
+      value_gain: currEntry.value_gain,
+      value_loss: currEntry.value_loss,
+    });
+  }
+
   return (
     <div className="rounded-md bg-white p-3">
-      <div className="text-center">
-        <span className="block text-xl sm:text-2xl">
-          {fmtMoney(result.reduce((prev, curr) => prev + curr.value, 0)) ??
-            'N/A'}
-        </span>
-        <span className="block text-sm text-gray-400">TTM Transacted</span>
+      <div className="flex flex-wrap">
+        <div className="hidden md:block md:w-1/4 md:pr-2">
+          <TimelineTable txnSums={txnSums} />
+        </div>
+        <div className="w-full md:w-3/4 md:pl-2">
+          <div className="text-center">
+            <span className="block text-xl sm:text-2xl">
+              {fmtMoney(result.reduce((prev, curr) => prev + curr.value, 0)) ??
+                'N/A'}
+            </span>
+            <span className="block text-sm text-gray-400">TTM Transacted</span>
+          </div>
+          <div>
+            <TimelineChart period="month" data={timelineData} />
+          </div>
+          <div className="md:hidden">
+            <TimelineTable txnSums={txnSums.slice(0, 3)} />
+          </div>
+        </div>
       </div>
-      <div>
-        <TimelineChart period="month" data={timelineData} />
+    </div>
+  );
+}
+
+function TimelineTable({ txnSums }: { txnSums: AggValue[] }) {
+  return (
+    <div className="b-0 m-0 p-0">
+      <div className="hidden text-center md:block">
+        <span className="block text-xl sm:text-2xl">
+          {fmtMoney(txnSums[0].value)}
+        </span>
+        <span className="block text-sm text-gray-400">
+          Transacted this month
+        </span>
+      </div>
+      <div className="flex flex-wrap text-xs md:text-sm">
+        <>
+          {txnSums.map((txn) => {
+            return (
+              <div
+                key={`txn-sum-${txn.category}`}
+                className="mt-1 w-full border-t pt-1 md:mt-2 md:pt-2"
+              >
+                <div className="inline-block w-1/3">{txn.category}</div>
+                <div className="inline-block w-2/3 text-right">
+                  {fmtMoney(txn.value)}
+                  {/* {txn.value_gain !== undefined && txn.value_loss !== undefined && <span>
+                    &nbsp;{fmtMoney(txn.value_gain)} / {fmtMoney(txn.value_loss)}
+                  </span>} */}
+                </div>
+              </div>
+            );
+          })}
+        </>
       </div>
     </div>
   );

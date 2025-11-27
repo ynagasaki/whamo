@@ -93,7 +93,7 @@ export default function Page() {
           }}
         ></PlusIcon>
       </div>
-      <div className="flex flex-wrap p-4">
+      {/* <div className="flex flex-wrap p-4">
         <div className="w-1/2 pr-2 md:w-1/4">
           <Suspense>
             <TransactedCard />
@@ -120,6 +120,13 @@ export default function Page() {
           </Suspense>
         </div>
         <div className="w-full pt-2 md:w-3/4 md:pl-2">
+          <Suspense>
+            <TimelineCard></TimelineCard>
+          </Suspense>
+        </div>
+      </div> */}
+      <div className="flex flex-wrap p-4">
+        <div className="w-full">
           <Suspense>
             <TimelineCard></TimelineCard>
           </Suspense>
