@@ -24,7 +24,7 @@ import { OptionCard } from './ui/optionCard';
 import { EarnRateCard } from './ui/cards/earnRateCard';
 import { TransactedCard } from './ui/cards/transactedCard';
 import { ClosedOptionCard } from './ui/optionCardClosed';
-import { TimelineCard } from './ui/cards/timelineCard';
+import { TransactedTimelineCard } from './ui/cards/transactedTimelineCard';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -121,14 +121,14 @@ export default function Page() {
         </div>
         <div className="w-full pt-2 md:w-3/4 md:pl-2">
           <Suspense>
-            <TimelineCard></TimelineCard>
+            <TransactedTimelineCard></TransactedTimelineCard>
           </Suspense>
         </div>
       </div> */}
       <div className="flex flex-wrap p-4">
         <div className="w-full">
           <Suspense>
-            <TimelineCard></TimelineCard>
+            <TransactedTimelineCard></TransactedTimelineCard>
           </Suspense>
         </div>
       </div>

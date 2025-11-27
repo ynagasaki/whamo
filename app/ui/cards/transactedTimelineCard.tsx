@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { TimelineChart, TimelineData } from '../timelineChart';
 import { AggValue } from '@/app/lib/model';
 
-export function TimelineCard() {
+export function TransactedTimelineCard() {
   const end = dayjs(new Date()).endOf('month');
   const start = end.add(-12, 'months').startOf('month');
   const { data, error } = useSWR(
