@@ -16,15 +16,11 @@ import { fetcher, postData } from '@/app/lib/util';
 import { GoalCard } from '@/app/ui/goalCard';
 import { InputFormModal } from '@/app/ui/formModal';
 import { ExclamationCircleIcon, PlusIcon } from '@heroicons/react/20/solid';
-import { OptionSumCard } from '@/app/ui/cards/optionSumCard';
 import { ClosedGoalCard } from './ui/goalCardClosed';
-import { TopSymbolsCard } from './ui/cards/topSymbolsCard';
-import { TopTagsCard } from './ui/cards/topTagsCard';
 import { OptionCard } from './ui/optionCard';
-import { EarnRateCard } from './ui/cards/earnRateCard';
-import { TransactedCard } from './ui/cards/transactedCard';
 import { ClosedOptionCard } from './ui/optionCardClosed';
 import { TransactedTimelineCard } from './ui/cards/transactedTimelineCard';
+import { EarnedTimelineCard } from './ui/cards/earnedTimelineCard';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -129,6 +125,11 @@ export default function Page() {
         <div className="w-full">
           <Suspense>
             <TransactedTimelineCard></TransactedTimelineCard>
+          </Suspense>
+        </div>
+        <div className="mt-2 w-full">
+          <Suspense>
+            <EarnedTimelineCard></EarnedTimelineCard>
           </Suspense>
         </div>
       </div>

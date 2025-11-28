@@ -2,6 +2,7 @@ import {
   fetchClosedOptionsValue,
   fetchClosedOptionsValueBySymbol,
   fetchClosedOptionsValueByYear,
+  fetchClosedOptionsValueTotal,
   fetchOptionsTransactionsValueByMonth,
 } from '@/app/lib/data';
 import { AggValue } from '@/app/lib/model';
@@ -39,11 +40,18 @@ export async function GET(request: Request): Promise<Response> {
       break;
     }
     case 'mo': {
-      result = await fetchClosedOptionsValue(
-        dayjs(new Date()).add(-12, 'months').toDate(),
-        new Date(),
-      );
-      break;
+      return Response.json({
+        result: await fetchClosedOptionsValue(
+          startDate.toDate(),
+          endDate.toDate(),
+        ),
+        startingTotal: (
+          await fetchClosedOptionsValueTotal(
+            dayjs('1700-01-01').toDate(),
+            startDate.toDate(),
+          )
+        ).value,
+      });
     }
     default: {
       result = await fetchClosedOptionsValueByYear();

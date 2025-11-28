@@ -224,6 +224,27 @@ export async function fetchClosedOptionsValue(
   return result.rows;
 }
 
+export async function fetchClosedOptionsValueTotal(
+  from: Date,
+  to: Date = new Date(),
+): Promise<AggValue> {
+  const client = await getClient();
+  const result = await client.sql<AggValue>`SELECT
+    'total' AS category,
+    SUM(o.price * 100 - o.fee - IFNULL(o2.price, 0) * 100 - IFNULL(o2.fee, 0)) AS value
+  FROM
+    options o
+    LEFT JOIN options o2 ON o.closed_by = o2.id
+  WHERE
+    (o.exp < ${sqldt(to)} OR o.closed_by IS NOT NULL)
+    AND o.action IS NOT 'BTC'
+    AND (o.exp >= ${sqldt(
+      from,
+    )} OR o.closed_by IS NOT NULL AND o2.traded >= ${sqldt(from)})
+  GROUP BY category;`;
+  return result.rows[0];
+}
+
 export async function fetchClosedOptionsValueBySymbol(): Promise<AggValue[]> {
   const client = await getClient();
   const result = await client.sql<AggValue>`SELECT * FROM (SELECT
