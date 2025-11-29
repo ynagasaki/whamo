@@ -2,8 +2,19 @@ import { fetcher, fmtMoney } from '@/app/lib/util';
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
-import { TimelineChart, TimelineData } from '../timelineChart';
+import {
+  TimelineChart,
+  TimelineDataset,
+  TimelineEntry,
+} from '../timelineChart';
 import { AggValue } from '@/app/lib/model';
+
+interface TimelineData {
+  dt: dayjs.Dayjs;
+  value: number;
+  value_loss?: number;
+  value_gain?: number;
+}
 
 export function TransactedTimelineCard() {
   const end = dayjs(new Date()).endOf('month');
@@ -88,6 +99,8 @@ export function TransactedTimelineCard() {
     });
   }
 
+  const chartDatasets = convertToChartDatasets(timelineData);
+
   return (
     <div className="rounded-md bg-white p-3">
       <div className="flex flex-wrap">
@@ -103,7 +116,7 @@ export function TransactedTimelineCard() {
             <span className="block text-sm text-gray-400">TTM Transacted</span>
           </div>
           <div>
-            <TimelineChart period="month" data={timelineData} />
+            <TimelineChart period="month" datasets={chartDatasets} />
           </div>
           <div className="md:hidden">
             <TimelineTable txnSums={txnSums.slice(0, 3)} />
@@ -147,4 +160,39 @@ function TimelineTable({ txnSums }: { txnSums: AggValue[] }) {
       </div>
     </div>
   );
+}
+
+function convertToChartDatasets(data: TimelineData[]): TimelineDataset[] {
+  const dataSorted = data.toSorted((a, b) => a.dt.diff(b.dt));
+  const chartDataPos: TimelineEntry[] = [];
+  const chartDataNeg: TimelineEntry[] = [];
+
+  dataSorted.forEach((entry) => {
+    if (entry.value_gain != undefined && entry.value_loss != undefined) {
+      chartDataPos.push({ dt: entry.dt, value: entry.value_gain });
+      chartDataNeg.push({ dt: entry.dt, value: entry.value_loss });
+    } else {
+      chartDataPos.push({
+        dt: entry.dt,
+        value: entry.value > 0 ? entry.value : 0,
+      });
+      chartDataNeg.push({
+        dt: entry.dt,
+        value: entry.value < 0 ? entry.value : 0,
+      });
+    }
+  });
+
+  return [
+    {
+      name: 'gain',
+      color: 'rgb(183,148,244)',
+      entries: chartDataPos,
+    },
+    {
+      name: 'loss',
+      color: 'rgb(156, 163, 175)',
+      entries: chartDataNeg,
+    },
+  ];
 }

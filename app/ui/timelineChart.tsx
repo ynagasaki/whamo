@@ -12,34 +12,41 @@ import dayjs from 'dayjs';
 
 ChartJS.register(BarController, BarElement, CategoryScale, LinearScale);
 
-export interface TimelineData {
+export interface TimelineEntry {
   dt: dayjs.Dayjs;
   value: number;
-  value_loss?: number;
-  value_gain?: number;
+}
+
+export interface TimelineDataset {
+  name: string;
+  color: string;
+  entries: TimelineEntry[];
 }
 
 export function TimelineChart({
-  data,
+  datasets,
   period,
 }: {
-  data: TimelineData[];
+  datasets: TimelineDataset[];
   period: 'month';
 }) {
-  const dataSorted = data.toSorted((a, b) => a.dt.diff(b.dt));
   const chartLabels: string[] = [];
-  const chartDataPos: number[] = [];
-  const chartDataNeg: number[] = [];
-
-  dataSorted.forEach((entry) => {
-    chartLabels.push(entry.dt.format('MMM').substring(0, 1));
-    if (entry.value_gain != undefined && entry.value_loss != undefined) {
-      chartDataPos.push(entry.value_gain);
-      chartDataNeg.push(entry.value_loss);
-    } else {
-      chartDataPos.push(entry.value > 0 ? entry.value : 0);
-      chartDataNeg.push(entry.value < 0 ? entry.value : 0);
-    }
+  const chartDatasets = datasets.map((timelineDataset) => {
+    const entriesSorted = timelineDataset.entries.toSorted((a, b) =>
+      a.dt.diff(b.dt),
+    );
+    return {
+      label: timelineDataset.name,
+      data: entriesSorted.map((timelineEntry) => {
+        if (chartLabels.length < entriesSorted.length) {
+          chartLabels.push(timelineEntry.dt.format('MMM').substring(0, 1));
+        }
+        return timelineEntry.value;
+      }),
+      backgroundColor: timelineDataset.color,
+      hoverBackgroundColor: timelineDataset.color,
+      borderRadius: 3,
+    };
   });
 
   return (
@@ -47,22 +54,7 @@ export function TimelineChart({
       type="bar"
       data={{
         labels: chartLabels,
-        datasets: [
-          {
-            label: 'gain',
-            data: chartDataPos,
-            backgroundColor: 'rgb(183,148,244)',
-            hoverBackgroundColor: 'rgb(183,148,244)',
-            borderRadius: 3,
-          },
-          {
-            label: 'loss',
-            data: chartDataNeg,
-            backgroundColor: 'rgb(156, 163, 175)',
-            hoverBackgroundColor: 'rgb(156, 163, 175)',
-            borderRadius: 3,
-          },
-        ],
+        datasets: chartDatasets,
       }}
       options={{
         animation: false,

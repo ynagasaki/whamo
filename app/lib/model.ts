@@ -59,3 +59,7 @@ export interface AggValue {
   value_loss?: number;
   value_gain?: number;
 }
+
+export interface AggTransactionCounts {
+  [key: string]: { [key: string]: number };
+}

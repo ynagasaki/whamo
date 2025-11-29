@@ -307,6 +307,34 @@ export async function fetchOptionsTransactionsValueByMonth({
   });
 }
 
+export async function fetchOptionTransactionVolumeByMonth({
+  startDate,
+  endDate,
+}: {
+  startDate: Date;
+  endDate: Date;
+}): Promise<{ category: string; symbol: string; count: number }[]> {
+  const client = await getClient();
+  const result = await client.sql<{
+    category: string;
+    symbol: string;
+    count: number;
+  }>`SELECT
+    SUBSTR(options.traded, 1, 7) AS yearmo,
+    options.symbol AS symbol,
+    SUM(1) AS count
+  FROM
+    options
+  WHERE
+    traded BETWEEN ${sqldt(startDate)} AND ${sqldt(endDate)}
+      AND options.action = 'STO'
+  GROUP BY
+    yearmo, symbol
+  ORDER BY
+    yearmo, symbol;`;
+  return result.rows;
+}
+
 export async function fetchCompletedGoalsCount(): Promise<
   { goal_category: number; tally: number }[]
 > {
