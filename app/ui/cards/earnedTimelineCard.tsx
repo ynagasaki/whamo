@@ -93,7 +93,9 @@ export function EarnedTimelineCard() {
             <span className="block text-xl sm:text-2xl">
               {fmtMoney(txnSums[0].value)}
             </span>
-            <span className="block text-sm text-gray-400">Total Earned</span>
+            <span className="block text-sm text-gray-400">
+              Cumulative Earned
+            </span>
           </div>
           <div>
             <TimelineLineChart period="month" data={timelineData} />
@@ -114,7 +116,7 @@ function TimelineTable({ txnSums }: { txnSums: AggValue[] }) {
         <span className="block text-xl sm:text-2xl">
           {fmtMoney(txnSums[0].value)}
         </span>
-        <span className="block text-sm text-gray-400">Total earned</span>
+        <span className="block text-sm text-gray-400">Cumulative earned</span>
       </div>
       <div className="flex flex-wrap text-xs md:text-sm">
         <>

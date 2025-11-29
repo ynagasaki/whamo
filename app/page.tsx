@@ -21,6 +21,7 @@ import { OptionCard } from './ui/optionCard';
 import { ClosedOptionCard } from './ui/optionCardClosed';
 import { TransactedTimelineCard } from './ui/cards/transactedTimelineCard';
 import { EarnedTimelineCard } from './ui/cards/earnedTimelineCard';
+import { SaleVolumeTimelineCard } from './ui/cards/saleVolumeTimelineCard';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -125,6 +126,11 @@ export default function Page() {
         <div className="w-full">
           <Suspense>
             <TransactedTimelineCard></TransactedTimelineCard>
+          </Suspense>
+        </div>
+        <div className="mt-2 w-full">
+          <Suspense>
+            <SaleVolumeTimelineCard></SaleVolumeTimelineCard>
           </Suspense>
         </div>
         <div className="mt-2 w-full">

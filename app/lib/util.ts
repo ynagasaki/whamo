@@ -1,6 +1,39 @@
 import { Option } from './model';
 import dayjs from 'dayjs';
 
+const COLORS = [
+  'rgb(183,148,244)',
+  '#ff637e',
+  '#ffb900',
+  '#ffdf20',
+  '#9ae600',
+  '#00d492',
+  '#00d5be',
+  '#00bcff',
+  '#7c86ff',
+  '#ed6bff',
+];
+
+const COLORS_BAD = ['rgb(156, 163, 175)'];
+
+export function getColorIterator(): {
+  nextColor: () => string;
+  nextBadColor: () => string;
+} {
+  let i = -1;
+  let i2 = -1;
+  return {
+    nextColor: function () {
+      i += 1;
+      return COLORS[i % COLORS.length];
+    },
+    nextBadColor: function () {
+      i2 += 1;
+      return COLORS_BAD[i2 % COLORS_BAD.length];
+    },
+  };
+}
+
 export function sqldt(dt: Date = new Date()): string {
   return dt.toISOString().split('T')[0];
 }

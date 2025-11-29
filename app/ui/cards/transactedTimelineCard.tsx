@@ -1,4 +1,4 @@
-import { fetcher, fmtMoney } from '@/app/lib/util';
+import { fetcher, fmtMoney, getColorIterator } from '@/app/lib/util';
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
@@ -166,6 +166,7 @@ function convertToChartDatasets(data: TimelineData[]): TimelineDataset[] {
   const dataSorted = data.toSorted((a, b) => a.dt.diff(b.dt));
   const chartDataPos: TimelineEntry[] = [];
   const chartDataNeg: TimelineEntry[] = [];
+  const colorIterator = getColorIterator();
 
   dataSorted.forEach((entry) => {
     if (entry.value_gain != undefined && entry.value_loss != undefined) {
@@ -186,12 +187,12 @@ function convertToChartDatasets(data: TimelineData[]): TimelineDataset[] {
   return [
     {
       name: 'gain',
-      color: 'rgb(183,148,244)',
+      color: colorIterator.nextColor(),
       entries: chartDataPos,
     },
     {
       name: 'loss',
-      color: 'rgb(156, 163, 175)',
+      color: colorIterator.nextBadColor(),
       entries: chartDataNeg,
     },
   ];

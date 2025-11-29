@@ -320,7 +320,7 @@ export async function fetchOptionTransactionVolumeByMonth({
     symbol: string;
     count: number;
   }>`SELECT
-    SUBSTR(options.traded, 1, 7) AS yearmo,
+    SUBSTR(options.traded, 1, 7) AS category,
     options.symbol AS symbol,
     SUM(1) AS count
   FROM
@@ -329,9 +329,9 @@ export async function fetchOptionTransactionVolumeByMonth({
     traded BETWEEN ${sqldt(startDate)} AND ${sqldt(endDate)}
       AND options.action = 'STO'
   GROUP BY
-    yearmo, symbol
+    category, symbol
   ORDER BY
-    yearmo, symbol;`;
+    category, symbol;`;
   return result.rows;
 }
 
