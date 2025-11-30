@@ -5,12 +5,13 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  LineController,
   PointElement,
   LineElement,
 } from 'chart.js';
 import dayjs from 'dayjs';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
+ChartJS.register(CategoryScale, LineController, LinearScale, PointElement, LineElement);
 
 export interface TimelineData {
   dt: dayjs.Dayjs;
