@@ -43,6 +43,7 @@ export function TransactedTimelineCard() {
     );
   }
 
+  // TODO: clean this up
   const result = data.result as AggValue[];
   const timelineData: TimelineData[] = [];
   var i = 0;
@@ -132,7 +133,7 @@ function TimelineTable({ txnSums }: { txnSums: AggValue[] }) {
     <div className="b-0 m-0 p-0">
       <div className="hidden text-center md:block">
         <span className="block text-xl sm:text-2xl">
-          {fmtMoney(txnSums[0].value)}
+          {fmtMoney(txnSums[0].value * 100)}
         </span>
         <span className="block text-sm text-gray-400">
           Transacted this month
@@ -148,10 +149,7 @@ function TimelineTable({ txnSums }: { txnSums: AggValue[] }) {
               >
                 <div className="inline-block w-1/3">{txn.category}</div>
                 <div className="inline-block w-2/3 text-right">
-                  {fmtMoney(txn.value)}
-                  {/* {txn.value_gain !== undefined && txn.value_loss !== undefined && <span>
-                    &nbsp;{fmtMoney(txn.value_gain)} / {fmtMoney(txn.value_loss)}
-                  </span>} */}
+                  {fmtMoney(txn.value * 100)}
                 </div>
               </div>
             );
