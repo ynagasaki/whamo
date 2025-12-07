@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Goal, Option } from '@/app/lib/model';
 import { OptionForm } from './optionForm';
 import { GoalForm } from './goalForm';
-import { TrashIcon } from '@heroicons/react/20/solid';
+import { TrashIcon } from '@heroicons/react/16/solid';
 
 export function InputFormModal({
   editGoalData,

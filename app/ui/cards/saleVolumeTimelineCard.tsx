@@ -1,5 +1,5 @@
 import { fetcher, fmtMoney, getColorIterator } from '@/app/lib/util';
-import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
+import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
 import useSWR from 'swr';
 import dayjs, { Dayjs } from 'dayjs';
 import { TimelineChart, TimelineDataset } from '../timelineChart';

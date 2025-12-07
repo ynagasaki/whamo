@@ -4,6 +4,7 @@ import {
   fetchClosedOptionsValueBySymbol,
   fetchClosedOptionsValueByYear,
   fetchClosedOptionsValueTotal,
+  fetchOptionsTransactedBefore,
   fetchOptionsTransactionsValueByMonth,
 } from '@/app/lib/data';
 import { AggValue } from '@/app/lib/model';
@@ -20,6 +21,7 @@ export async function GET(request: Request): Promise<Response> {
   const endDate = dayjs(endDateStr);
   const startDate = dayjs(startDateStr);
   let result: AggValue[];
+  let hasOlder = false;
 
   if (!endDate.isValid()) {
     throw new Error('Invalid end date; format must be YYYY-MM-DD');
@@ -38,6 +40,8 @@ export async function GET(request: Request): Promise<Response> {
         startDate: startDate.toDate(),
         endDate: endDate.toDate(),
       });
+      hasOlder =
+        (await fetchOptionsTransactedBefore(startDate.toDate())).length > 0;
       break;
     }
     case 'mo': {
@@ -61,5 +65,5 @@ export async function GET(request: Request): Promise<Response> {
     }
   }
 
-  return Response.json({ result });
+  return Response.json({ result, hasOlder });
 }

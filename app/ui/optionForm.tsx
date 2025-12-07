@@ -4,7 +4,7 @@ import { createOption } from '@/app/lib/actions';
 import {
   ChevronDownIcon,
   ExclamationCircleIcon,
-} from '@heroicons/react/20/solid';
+} from '@heroicons/react/16/solid';
 import { Option } from '@/app/lib/model';
 import clsx from 'clsx';
 

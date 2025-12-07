@@ -3,7 +3,7 @@
 import { AllocatableOption, Option } from '@/app/lib/model';
 import { fmtDate, fmtMoney, postData } from '@/app/lib/util';
 import { useDraggable } from '@dnd-kit/core';
-import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
+import { EllipsisVerticalIcon } from '@heroicons/react/16/solid';
 import clsx from 'clsx';
 import { useState } from 'react';
 

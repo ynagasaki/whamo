@@ -7,7 +7,7 @@ import { Taggy } from './taggy';
 import {
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
-} from '@heroicons/react/20/solid';
+} from '@heroicons/react/16/solid';
 
 export function GoalForm({
   editData,

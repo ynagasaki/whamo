@@ -33,7 +33,7 @@ export function EarnedTimelineCard() {
   }
   if (!data) {
     return (
-      <div className="rounded-md bg-white p-3 text-center text-gray-300">
+      <div className="min-h-[202px] rounded-md bg-white p-3 text-center text-gray-300">
         Loading...
       </div>
     );
@@ -166,9 +166,6 @@ function TimelineTable({ txnSums }: { txnSums: AggValue[] }) {
                 <div className="inline-block w-1/3">{txn.category}</div>
                 <div className="inline-block w-2/3 text-right">
                   {fmtMoney(txn.value)}
-                  {/* {txn.value_gain !== undefined && txn.value_loss !== undefined && <span>
-                    &nbsp;{fmtMoney(txn.value_gain)} / {fmtMoney(txn.value_loss)}
-                  </span>} */}
                 </div>
               </div>
             );

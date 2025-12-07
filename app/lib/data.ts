@@ -264,6 +264,23 @@ export async function fetchClosedOptionsValueBySymbol(): Promise<AggValue[]> {
   return result.rows;
 }
 
+export async function fetchOptionsTransactedBefore(
+  cutoff: Date,
+): Promise<Option[]> {
+  const client = await getClient();
+  const result = await client.sql<Option>`SELECT
+    *
+  FROM
+    options
+  WHERE
+    traded < ${sqldt(cutoff)}
+    AND action IS NOT 'BTC'
+  ORDER BY
+    traded
+  DESC LIMIT 10;`;
+  return result.rows;
+}
+
 export async function fetchOptionsTransactionsValueByMonth({
   startDate,
   endDate,

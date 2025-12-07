@@ -15,7 +15,7 @@ import { AllocatableOption, ClosedOption, Goal, Option } from '@/app/lib/model';
 import { fetcher, postData } from '@/app/lib/util';
 import { GoalCard } from '@/app/ui/goalCard';
 import { InputFormModal } from '@/app/ui/formModal';
-import { ExclamationCircleIcon, PlusIcon } from '@heroicons/react/20/solid';
+import { ExclamationCircleIcon, PlusIcon } from '@heroicons/react/16/solid';
 import { ClosedGoalCard } from './ui/goalCardClosed';
 import { OptionCard } from './ui/optionCard';
 import { ClosedOptionCard } from './ui/optionCardClosed';
