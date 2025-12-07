@@ -1,4 +1,5 @@
 import {
+  fetchClosedOptions,
   fetchClosedOptionsValue,
   fetchClosedOptionsValueBySymbol,
   fetchClosedOptionsValueByYear,
@@ -51,6 +52,7 @@ export async function GET(request: Request): Promise<Response> {
             startDate.toDate(),
           )
         ).value,
+        hasOlder: (await fetchClosedOptions(startDate.toDate())).length > 0,
       });
     }
     default: {

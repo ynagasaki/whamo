@@ -178,7 +178,9 @@ export async function fetchClosedOptions(
     options o
     LEFT JOIN options o2 ON o.closed_by = o2.id
   WHERE
-    (o.exp < ${sqldt(cutoffDate)} OR o.closed_by IS NOT NULL)
+    (o.exp < ${sqldt(
+      cutoffDate,
+    )} OR o.closed_by IS NOT NULL AND o.traded < ${sqldt(cutoffDate)})
     AND o.action IS NOT 'BTC'
   ORDER BY closed_on DESC LIMIT 10;`;
   return result.rows;

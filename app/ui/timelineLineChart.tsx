@@ -11,7 +11,13 @@ import {
 } from 'chart.js';
 import dayjs from 'dayjs';
 
-ChartJS.register(CategoryScale, LineController, LinearScale, PointElement, LineElement);
+ChartJS.register(
+  CategoryScale,
+  LineController,
+  LinearScale,
+  PointElement,
+  LineElement,
+);
 
 export interface TimelineData {
   dt: dayjs.Dayjs;
@@ -29,8 +35,14 @@ export function TimelineLineChart({
   const chartLabels: string[] = [];
   const chartData: number[] = [];
 
-  dataSorted.forEach((entry) => {
-    chartLabels.push(entry.dt.format('MMM').substring(0, 1));
+  dataSorted.forEach((entry, index) => {
+    let label = entry.dt.format('MMM').substring(0, 1);
+
+    if (index === 0 || entry.dt.month() === 0) {
+      label = `${label}${entry.dt.format('YY')}`;
+    }
+
+    chartLabels.push(label);
     chartData.push(entry.value);
   });
 

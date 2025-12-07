@@ -1,12 +1,19 @@
 import useSWR from 'swr';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { fetcher, fmtMoney } from '@/app/lib/util';
-import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ExclamationCircleIcon,
+} from '@heroicons/react/16/solid';
 import { AggValue } from '@/app/lib/model';
 import { TimelineLineChart, TimelineData } from '../timelineLineChart';
+import { useState } from 'react';
+import clsx from 'clsx';
 
 export function EarnedTimelineCard() {
-  const end = dayjs(new Date()).endOf('month');
+  const now = dayjs(new Date());
+  const [end, setEnd] = useState(now.endOf('month'));
   const start = end.add(-12, 'months').startOf('month');
   const { data, error } = useSWR(
     `/api/options/value?grp=mo&start=${start.format(
@@ -82,6 +89,8 @@ export function EarnedTimelineCard() {
     });
   }
 
+  const hasOlderData = !!data.hasOlder;
+
   return (
     <div className="rounded-md bg-white p-3">
       <div className="flex flex-wrap">
@@ -89,13 +98,41 @@ export function EarnedTimelineCard() {
           <TimelineTable txnSums={txnSums} />
         </div>
         <div className="w-full md:w-3/4 md:pl-2">
-          <div className="text-center">
-            <span className="block text-xl sm:text-2xl">
-              {fmtMoney(txnSums[0].value)}
-            </span>
-            <span className="block text-sm text-gray-400">
-              Cumulative Earned
-            </span>
+          <div className="flex flex-wrap">
+            <div className="w-1/5">
+              <button
+                className={clsx(
+                  'rounded-full border border-gray-200 text-gray-600 hover:border-gray-600',
+                  {
+                    hidden: !hasOlderData,
+                  },
+                )}
+                onClick={() => setEnd(end.add(-12, 'months'))}
+              >
+                <ChevronLeftIcon className="h-8 w-8 md:h-9 md:w-9" />
+              </button>
+            </div>
+            <div className="w-3/5 text-center">
+              <span className="block text-xl sm:text-2xl">
+                {fmtMoney(txnSums[0].value)}
+              </span>
+              <span className="block text-sm text-gray-400">
+                Cumulative Earned
+              </span>
+            </div>
+            <div className="w-1/5 text-right">
+              <button
+                className={clsx(
+                  'rounded-full border border-gray-200 text-gray-600 hover:border-gray-600',
+                  {
+                    hidden: end.add(1, 'month').diff(now) > 0,
+                  },
+                )}
+                onClick={() => setEnd(end.add(12, 'months'))}
+              >
+                <ChevronRightIcon className="h-8 w-8 md:h-9 md:w-9" />
+              </button>
+            </div>
           </div>
           <div>
             <TimelineLineChart period="month" data={timelineData} />
@@ -116,7 +153,7 @@ function TimelineTable({ txnSums }: { txnSums: AggValue[] }) {
         <span className="block text-xl sm:text-2xl">
           {fmtMoney(txnSums[0].value)}
         </span>
-        <span className="block text-sm text-gray-400">Cumulative earned</span>
+        <span className="block text-sm text-gray-400">Cumulative Earned</span>
       </div>
       <div className="flex flex-wrap text-xs md:text-sm">
         <>
