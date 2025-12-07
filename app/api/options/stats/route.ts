@@ -1,4 +1,7 @@
-import { fetchOptionTransactionVolumeByMonth } from '@/app/lib/data';
+import {
+  fetchOptionsTransactedBefore,
+  fetchOptionTransactionVolumeByMonth,
+} from '@/app/lib/data';
 import { AggTransactionCounts } from '@/app/lib/model';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -16,6 +19,8 @@ export async function GET(request: Request): Promise<Response> {
   if (grouping === 'sale-mo') {
     return Response.json({
       result: await calculateSalesByMonth(startDate, endDate),
+      hasOlder:
+        (await fetchOptionsTransactedBefore(startDate.toDate())).length > 0,
     });
   }
 

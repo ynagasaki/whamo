@@ -1,9 +1,15 @@
 import { fetcher, fmtMoney, getColorIterator } from '@/app/lib/util';
-import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ExclamationCircleIcon,
+} from '@heroicons/react/16/solid';
 import useSWR from 'swr';
 import dayjs, { Dayjs } from 'dayjs';
 import { TimelineChart, TimelineDataset } from '../timelineChart';
 import { AggTransactionCounts } from '@/app/lib/model';
+import { useState } from 'react';
+import clsx from 'clsx';
 
 interface TableData {
   dt: Dayjs;
@@ -11,7 +17,8 @@ interface TableData {
 }
 
 export function SaleVolumeTimelineCard() {
-  const end = dayjs(new Date()).endOf('month');
+  const now = dayjs(new Date());
+  const [end, setEnd] = useState(now.endOf('month'));
   const start = end.add(-12, 'months').startOf('month');
   const { data, error } = useSWR(
     `/api/options/stats?grp=sale-mo&start=${start.format(
@@ -31,7 +38,7 @@ export function SaleVolumeTimelineCard() {
   }
   if (!data) {
     return (
-      <div className="rounded-md bg-white p-3 text-center text-gray-300">
+      <div className="min-h-[202px] rounded-md bg-white p-3 text-center text-gray-300">
         Loading...
       </div>
     );
@@ -71,6 +78,8 @@ export function SaleVolumeTimelineCard() {
     tableData.unshift({ dt: currDate, value: totalCount });
   }
 
+  const hasOlder = data.hasOlder;
+
   return (
     <div className="rounded-md bg-white p-3">
       <div className="flex flex-wrap">
@@ -78,13 +87,41 @@ export function SaleVolumeTimelineCard() {
           <TimelineTable data={tableData.slice(0, 4)} />
         </div>
         <div className="w-full md:w-3/4 md:pl-2">
-          <div className="text-center">
-            <span className="block text-xl sm:text-2xl">
-              {tableData.reduce((prev, curr) => prev + curr.value, 0)}
-            </span>
-            <span className="block text-sm text-gray-400">
-              TTM Options Sold
-            </span>
+          <div className="flex flex-wrap">
+            <div className="w-1/5">
+              <button
+                className={clsx(
+                  'rounded-full border border-gray-200 text-gray-600 hover:border-gray-600',
+                  {
+                    hidden: !hasOlder,
+                  },
+                )}
+                onClick={() => setEnd(end.add(-12, 'months'))}
+              >
+                <ChevronLeftIcon className="h-8 w-8 md:h-9 md:w-9" />
+              </button>
+            </div>
+            <div className="w-3/5 text-center">
+              <span className="block text-xl sm:text-2xl">
+                {tableData.reduce((prev, curr) => prev + curr.value, 0)}
+              </span>
+              <span className="block text-sm text-gray-400">
+                TTM Options Sold
+              </span>
+            </div>
+            <div className="w-1/5 text-right">
+              <button
+                className={clsx(
+                  'rounded-full border border-gray-200 text-gray-600 hover:border-gray-600',
+                  {
+                    hidden: end.add(1, 'month').diff(now) > 0,
+                  },
+                )}
+                onClick={() => setEnd(end.add(12, 'months'))}
+              >
+                <ChevronRightIcon className="h-8 w-8 md:h-9 md:w-9" />
+              </button>
+            </div>
           </div>
           <div>
             <TimelineChart period="month" datasets={timelineDatasets} />
