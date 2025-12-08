@@ -37,11 +37,6 @@ export function TimelineLineChart({
 
   dataSorted.forEach((entry, index) => {
     let label = entry.dt.format('MMM').substring(0, 1);
-
-    if (index === 0 || entry.dt.month() === 0) {
-      label = `${label}${entry.dt.format('YY')}`;
-    }
-
     chartLabels.push(label);
     chartData.push(entry.value);
   });

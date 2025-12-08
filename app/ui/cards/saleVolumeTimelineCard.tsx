@@ -1,20 +1,16 @@
-import { fetcher, fmtMoney, getColorIterator } from '@/app/lib/util';
+import { fetcher, getColorIterator } from '@/app/lib/util';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ExclamationCircleIcon,
 } from '@heroicons/react/16/solid';
 import useSWR from 'swr';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { TimelineChart, TimelineDataset } from '../timelineChart';
 import { AggTransactionCounts } from '@/app/lib/model';
 import { useState } from 'react';
 import clsx from 'clsx';
-
-interface TableData {
-  dt: Dayjs;
-  value: number;
-}
+import { TableData, TimelineTable } from '../widgets/timelineTable';
 
 export function SaleVolumeTimelineCard() {
   const now = dayjs(new Date());
@@ -38,8 +34,17 @@ export function SaleVolumeTimelineCard() {
   }
   if (!data) {
     return (
-      <div className="min-h-[202px] rounded-md bg-white p-3 text-center text-gray-300">
-        Loading...
+      <div className="flex flex-wrap rounded-md bg-white p-3 text-center text-gray-300">
+        <div className="hidden md:block md:w-1/4 md:pr-2">
+          <TimelineTable
+            id="txn_load"
+            action="Transacted"
+            data={[]}
+            loading={true}
+            dataType="money"
+          />
+        </div>
+        <div className="w-full md:w-3/4 md:pl-2"></div>
       </div>
     );
   }
@@ -84,7 +89,12 @@ export function SaleVolumeTimelineCard() {
     <div className="rounded-md bg-white p-3">
       <div className="flex flex-wrap">
         <div className="hidden md:block md:w-1/4 md:pr-2">
-          <TimelineTable data={tableData.slice(0, 4)} />
+          <TimelineTable
+            id="sold"
+            action="Sold"
+            data={tableData.slice(0, 4)}
+            dataType="count"
+          />
         </div>
         <div className="w-full md:w-3/4 md:pl-2">
           <div className="flex flex-wrap">
@@ -127,41 +137,14 @@ export function SaleVolumeTimelineCard() {
             <TimelineChart period="month" datasets={timelineDatasets} />
           </div>
           <div className="md:hidden">
-            <TimelineTable data={tableData.slice(0, 3)} />
+            <TimelineTable
+              id="sold_sm"
+              action="Sold"
+              data={tableData.slice(0, 3)}
+              dataType="money"
+            />
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function TimelineTable({ data }: { data: TableData[] }) {
-  return (
-    <div className="b-0 m-0 p-0">
-      <div className="hidden text-center md:block">
-        <span className="block text-xl sm:text-2xl">
-          {data[0].value === 0 ? 'None' : data[0].value}
-        </span>
-        <span className="block text-sm text-gray-400">Sold this month</span>
-      </div>
-      <div className="flex flex-wrap text-xs md:text-sm">
-        <>
-          {data.map((entry) => {
-            return (
-              <div
-                key={`txn-sum-${entry.dt.format('MMM')}`}
-                className="mt-1 w-full border-t pt-1 md:mt-2 md:pt-2"
-              >
-                <div className="inline-block w-1/3">
-                  {entry.dt.format('MMM')}
-                </div>
-                <div className="inline-block w-2/3 text-right">
-                  {entry.value === 0 ? 'None' : entry.value}
-                </div>
-              </div>
-            );
-          })}
-        </>
       </div>
     </div>
   );

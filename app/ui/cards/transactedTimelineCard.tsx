@@ -14,6 +14,7 @@ import {
 import { AggValue } from '@/app/lib/model';
 import { useState } from 'react';
 import clsx from 'clsx';
+import { TableData, TimelineTable } from '../widgets/timelineTable';
 
 interface TimelineData {
   dt: dayjs.Dayjs;
@@ -44,8 +45,17 @@ export function TransactedTimelineCard() {
   }
   if (!data) {
     return (
-      <div className="min-h-[202px] rounded-md bg-white p-3 text-center text-gray-300">
-        Loading...
+      <div className="flex flex-wrap rounded-md bg-white p-3 text-center text-gray-300">
+        <div className="hidden md:block md:w-1/4 md:pr-2">
+          <TimelineTable
+            id="txn_load"
+            action="Transacted"
+            data={[]}
+            loading={true}
+            dataType="money"
+          />
+        </div>
+        <div className="w-full md:w-3/4 md:pl-2"></div>
       </div>
     );
   }
@@ -91,6 +101,7 @@ export function TransactedTimelineCard() {
     }
   }
 
+  const tableData: TableData[] = [];
   const txnSums: AggValue[] = [];
   const maxTableEntries = 4;
   for (
@@ -100,10 +111,14 @@ export function TransactedTimelineCard() {
   ) {
     const currEntry = timelineData[i];
     txnSums.push({
-      category: currEntry.dt.format('MMM'),
+      category: currEntry.dt.format('MMM YYYY'),
       value: currEntry.value,
       value_gain: currEntry.value_gain,
       value_loss: currEntry.value_loss,
+    });
+    tableData.push({
+      dt: currEntry.dt,
+      value: currEntry.value,
     });
   }
 
@@ -114,7 +129,12 @@ export function TransactedTimelineCard() {
     <div className="rounded-md bg-white p-3">
       <div className="flex flex-wrap">
         <div className="hidden md:block md:w-1/4 md:pr-2">
-          <TimelineTable txnSums={txnSums} />
+          <TimelineTable
+            id="txn"
+            action="Transacted"
+            data={tableData}
+            dataType="money"
+          />
         </div>
         <div className="w-full md:w-3/4 md:pl-2">
           <div className="flex flex-wrap">
@@ -159,41 +179,14 @@ export function TransactedTimelineCard() {
             <TimelineChart period="month" datasets={chartDatasets} />
           </div>
           <div className="md:hidden">
-            <TimelineTable txnSums={txnSums.slice(0, 3)} />
+            <TimelineTable
+              id="txn_sm"
+              action="Transacted"
+              data={tableData.slice(0, 3)}
+              dataType="money"
+            />
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function TimelineTable({ txnSums }: { txnSums: AggValue[] }) {
-  return (
-    <div className="b-0 m-0 p-0">
-      <div className="hidden text-center md:block">
-        <span className="block text-xl sm:text-2xl">
-          {fmtMoney(txnSums[0].value * 100)}
-        </span>
-        <span className="block text-sm text-gray-400">
-          Transacted this month
-        </span>
-      </div>
-      <div className="flex flex-wrap text-xs md:text-sm">
-        <>
-          {txnSums.map((txn) => {
-            return (
-              <div
-                key={`txn-sum-${txn.category}`}
-                className="mt-1 w-full border-t pt-1 md:mt-2 md:pt-2"
-              >
-                <div className="inline-block w-1/3">{txn.category}</div>
-                <div className="inline-block w-2/3 text-right">
-                  {fmtMoney(txn.value * 100)}
-                </div>
-              </div>
-            );
-          })}
-        </>
       </div>
     </div>
   );
