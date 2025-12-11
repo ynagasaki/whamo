@@ -109,7 +109,9 @@ export async function fetchAllocatableOptions(
     LEFT JOIN options o2 ON o.closed_by = o2.id
     LEFT JOIN goal_contribs gc ON gc.option = o.id
   WHERE
-    (o.exp < ${sqldt(dt)} OR o.closed_by IS NOT NULL)
+    (o.exp < ${sqldt(dt)} OR o.closed_by IS NOT NULL AND o2.traded < ${sqldt(
+      dt,
+    )})
     AND o.action IS NOT 'BTC'
   GROUP BY
     o.id
@@ -195,7 +197,9 @@ export async function fetchClosedOptionsValueByYear(): Promise<AggValue[]> {
     options o
     LEFT JOIN options o2 ON o.closed_by = o2.id
   WHERE
-    (o.exp < ${sqldt(new Date())} OR o.closed_by IS NOT NULL)
+    (o.exp < ${sqldt(
+      new Date(),
+    )} OR o.closed_by IS NOT NULL AND o2.traded < ${sqldt(new Date())})
     AND o.action IS NOT 'BTC'
   GROUP BY
     category
@@ -215,7 +219,9 @@ export async function fetchClosedOptionsValue(
     options o
     LEFT JOIN options o2 ON o.closed_by = o2.id
   WHERE
-    (o.exp < ${sqldt(to)} OR o.closed_by IS NOT NULL)
+    (o.exp < ${sqldt(to)} OR o.closed_by IS NOT NULL AND o2.traded < ${sqldt(
+      to,
+    )})
     AND o.action IS NOT 'BTC'
     AND (o.exp >= ${sqldt(
       from,
@@ -238,12 +244,19 @@ export async function fetchClosedOptionsValueTotal(
     options o
     LEFT JOIN options o2 ON o.closed_by = o2.id
   WHERE
-    (o.exp < ${sqldt(to)} OR o.closed_by IS NOT NULL)
+    (o.exp < ${sqldt(to)} OR o.closed_by IS NOT NULL AND o2.traded < ${sqldt(
+      to,
+    )})
     AND o.action IS NOT 'BTC'
     AND (o.exp >= ${sqldt(
       from,
     )} OR o.closed_by IS NOT NULL AND o2.traded >= ${sqldt(from)})
   GROUP BY category;`;
+
+  if (!result.rows || result.rows.length < 1) {
+    return { category: 'total', value: 0 };
+  }
+
   return result.rows[0];
 }
 
@@ -256,7 +269,9 @@ export async function fetchClosedOptionsValueBySymbol(): Promise<AggValue[]> {
     options o
     LEFT JOIN options o2 ON o.closed_by = o2.id
   WHERE
-    (o.exp < ${sqldt(new Date())} OR o.closed_by IS NOT NULL)
+    (o.exp < ${sqldt(
+      new Date(),
+    )} OR o.closed_by IS NOT NULL AND o2.traded < ${sqldt(new Date())})
     AND o.action IS NOT 'BTC'
   GROUP BY
     category

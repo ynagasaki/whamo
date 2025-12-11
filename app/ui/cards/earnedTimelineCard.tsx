@@ -54,6 +54,13 @@ export function EarnedTimelineCard() {
   var i = 0;
   var cumValue = data.startingTotal;
 
+  console.log(
+    `YOSHI start=${start.format('YYYY-MM-DD')}, end=${end.format(
+      'YYYY-MM-DD',
+    )}`,
+  );
+  console.log(`YOSHI result`, data);
+
   for (
     let currDate = start;
     end.diff(currDate) >= 0;
