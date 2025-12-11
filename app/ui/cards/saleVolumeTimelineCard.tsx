@@ -141,7 +141,7 @@ export function SaleVolumeTimelineCard() {
               id="sold_sm"
               action="Sold"
               data={tableData.slice(0, 3)}
-              dataType="money"
+              dataType="count"
             />
           </div>
         </div>
