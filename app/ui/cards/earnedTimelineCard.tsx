@@ -15,7 +15,7 @@ import { TableData, TimelineTable } from '../widgets/timelineTable';
 export function EarnedTimelineCard() {
   const now = dayjs(new Date());
   const [end, setEnd] = useState(now.endOf('month'));
-  const start = end.add(-12, 'months').startOf('month');
+  const start = end.add(-11, 'months').startOf('month');
   const { data, error } = useSWR(
     `/api/options/value?grp=mo&start=${start.format(
       'YYYY-MM-DD',
@@ -137,7 +137,7 @@ export function EarnedTimelineCard() {
                 {fmtMoney(txnSums[0].value)}
               </span>
               <span className="block text-sm text-gray-400">
-                Cumulative Earned
+                Cumulative earned thru {end.year()}
               </span>
             </div>
             <div className="w-1/5 text-right">

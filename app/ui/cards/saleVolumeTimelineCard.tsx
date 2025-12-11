@@ -15,7 +15,7 @@ import { TableData, TimelineTable } from '../widgets/timelineTable';
 export function SaleVolumeTimelineCard() {
   const now = dayjs(new Date());
   const [end, setEnd] = useState(now.endOf('month'));
-  const start = end.add(-12, 'months').startOf('month');
+  const start = end.add(-11, 'months').startOf('month');
   const { data, error } = useSWR(
     `/api/options/stats?grp=sale-mo&start=${start.format(
       'YYYY-MM-DD',
@@ -116,7 +116,7 @@ export function SaleVolumeTimelineCard() {
                 {tableData.reduce((prev, curr) => prev + curr.value, 0)}
               </span>
               <span className="block text-sm text-gray-400">
-                TTM Options Sold
+                Options sold in {end.year()}
               </span>
             </div>
             <div className="w-1/5 text-right">
