@@ -32,34 +32,11 @@ export function EarnedTimelineCard() {
       </div>
     );
   }
-  if (!data) {
-    return (
-      <div className="flex flex-wrap rounded-md bg-white p-3 text-center text-gray-300">
-        <div className="hidden md:block md:w-1/4 md:pr-2">
-          <TimelineTable
-            id="txn_load"
-            action="Transacted"
-            data={[]}
-            loading={true}
-            dataType="money"
-          />
-        </div>
-        <div className="w-full md:w-3/4 md:pl-2"></div>
-      </div>
-    );
-  }
 
-  const result = data.result as AggValue[];
+  const result: AggValue[] = !data ? [] : (data.result as AggValue[]);
   const timelineData: TimelineData[] = [];
   var i = 0;
-  var cumValue = data.startingTotal;
-
-  console.log(
-    `YOSHI start=${start.format('YYYY-MM-DD')}, end=${end.format(
-      'YYYY-MM-DD',
-    )}`,
-  );
-  console.log(`YOSHI result`, data);
+  var cumValue = data?.startingTotal ?? 0;
 
   for (
     let currDate = start;
@@ -111,7 +88,7 @@ export function EarnedTimelineCard() {
     });
   }
 
-  const hasOlderData = !!data.hasOlder;
+  const hasOlderData = !!data?.hasOlder;
 
   return (
     <div className="rounded-md bg-white p-3">
@@ -122,6 +99,7 @@ export function EarnedTimelineCard() {
             action="Earned thru"
             data={tableData}
             dataType="money"
+            loading={!data}
           />
         </div>
         <div className="w-full md:w-3/4 md:pl-2">
@@ -141,10 +119,13 @@ export function EarnedTimelineCard() {
             </div>
             <div className="w-3/5 text-center">
               <span className="block text-xl sm:text-2xl">
-                {fmtMoney(txnSums[0].value)}
+                {!!data && fmtMoney(txnSums[0].value)}
+                {!data && (
+                  <span className="inline-block w-32 bg-gray-200">&nbsp;</span>
+                )}
               </span>
               <span className="block text-sm text-gray-400">
-                Cumulative earned thru {end.year()}
+                Earned thru {end.year()}
               </span>
             </div>
             <div className="w-1/5 text-right">
@@ -170,6 +151,7 @@ export function EarnedTimelineCard() {
               action="Earned thru"
               data={tableData.slice(0, 3)}
               dataType="money"
+              loading={!data}
             />
           </div>
         </div>

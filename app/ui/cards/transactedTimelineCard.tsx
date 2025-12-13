@@ -43,25 +43,9 @@ export function TransactedTimelineCard() {
       </div>
     );
   }
-  if (!data) {
-    return (
-      <div className="flex flex-wrap rounded-md bg-white p-3 text-center text-gray-300">
-        <div className="hidden md:block md:w-1/4 md:pr-2">
-          <TimelineTable
-            id="txn_load"
-            action="Transacted"
-            data={[]}
-            loading={true}
-            dataType="money"
-          />
-        </div>
-        <div className="w-full md:w-3/4 md:pl-2"></div>
-      </div>
-    );
-  }
 
   // TODO: clean this up
-  const result = data.result as AggValue[];
+  const result: AggValue[] = !data ? [] : (data.result as AggValue[]);
   const timelineData: TimelineData[] = [];
   var i = 0;
 
@@ -123,7 +107,7 @@ export function TransactedTimelineCard() {
   }
 
   const chartDatasets = convertToChartDatasets(timelineData);
-  const hasOlder = data.hasOlder;
+  const hasOlder = !!data?.hasOlder;
 
   return (
     <div className="rounded-md bg-white p-3">
@@ -134,6 +118,7 @@ export function TransactedTimelineCard() {
             action="Transacted"
             data={tableData}
             dataType="money"
+            loading={!data}
           />
         </div>
         <div className="w-full md:w-3/4 md:pl-2">
@@ -153,9 +138,11 @@ export function TransactedTimelineCard() {
             </div>
             <div className="w-3/5 text-center">
               <span className="block text-xl sm:text-2xl">
-                {fmtMoney(
-                  result.reduce((prev, curr) => prev + curr.value, 0),
-                ) ?? 'N/A'}
+                {!!data &&
+                  fmtMoney(result.reduce((prev, curr) => prev + curr.value, 0))}
+                {!data && (
+                  <span className="inline-block w-32 bg-gray-200">&nbsp;</span>
+                )}
               </span>
               <span className="block text-sm text-gray-400">
                 Transacted in {end.year()}
@@ -184,6 +171,7 @@ export function TransactedTimelineCard() {
               action="Transacted"
               data={tableData.slice(0, 3)}
               dataType="money"
+              loading={!data}
             />
           </div>
         </div>

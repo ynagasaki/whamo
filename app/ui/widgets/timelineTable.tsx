@@ -27,44 +27,47 @@ export function TimelineTable({
   loading?: boolean;
 }) {
   const now = dayjs(new Date());
-  const renderData = !loading
-    ? data
-    : [
-        { dt: now, value: 1 },
-        { dt: now, value: 1 },
-        { dt: now, value: 1 },
-        { dt: now, value: 1 },
-      ];
   return (
     <div className="b-0 m-0 p-0">
       <div className="hidden text-center md:block">
         <span className="block text-xl sm:text-2xl">
-          {loading ? 'Loading' : renderDataValue(data[0], dataType)}
+          {!loading && renderDataValue(data[0], dataType)}
+          {loading && (
+            <span className="inline-block w-1/2 bg-gray-200">&nbsp;</span>
+          )}
         </span>
         <span className="block text-sm text-gray-400">
-          {loading
-            ? '...'
-            : `${action} ${
-                data[0].dt.year() === now.year() &&
-                data[0].dt.month() === now.month()
-                  ? 'this month'
-                  : data[0].dt.format("MMM 'YY")
-              }`}
+          {`${action} ${
+            data[0].dt.year() === now.year() &&
+            data[0].dt.month() === now.month()
+              ? 'this month'
+              : data[0].dt.format("MMM 'YY")
+          }`}
         </span>
       </div>
       <div className="flex flex-wrap text-xs md:text-sm">
         <>
-          {renderData.map((entry, idx) => {
+          {data.map((entry, idx) => {
             return (
               <div
                 key={`timeline-entry-${id}-${idx}`}
                 className="mt-1 w-full border-t pt-1 md:mt-2 md:pt-2"
               >
                 <div className="inline-block w-1/3 text-left">
-                  {loading ? '...' : entry.dt.format("MMM 'YY")}
+                  {loading && (
+                    <span className="inline-block w-full bg-gray-200">
+                      &nbsp;
+                    </span>
+                  )}
+                  {!loading && entry.dt.format("MMM 'YY")}
                 </div>
                 <div className="inline-block w-2/3 text-right">
-                  {loading ? '...' : renderDataValue(entry, dataType)}
+                  {!loading && renderDataValue(entry, dataType)}
+                  {loading && (
+                    <span className="inline-block w-1/2 bg-gray-200">
+                      &nbsp;
+                    </span>
+                  )}
                 </div>
               </div>
             );

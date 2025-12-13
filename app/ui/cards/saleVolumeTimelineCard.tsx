@@ -32,24 +32,10 @@ export function SaleVolumeTimelineCard() {
       </div>
     );
   }
-  if (!data) {
-    return (
-      <div className="flex flex-wrap rounded-md bg-white p-3 text-center text-gray-300">
-        <div className="hidden md:block md:w-1/4 md:pr-2">
-          <TimelineTable
-            id="txn_load"
-            action="Transacted"
-            data={[]}
-            loading={true}
-            dataType="money"
-          />
-        </div>
-        <div className="w-full md:w-3/4 md:pl-2"></div>
-      </div>
-    );
-  }
 
-  const result = data.result as AggTransactionCounts;
+  const result: AggTransactionCounts = !data
+    ? {}
+    : (data.result as AggTransactionCounts);
   const timelineDatasets: TimelineDataset[] = [];
   const tableData: TableData[] = [];
   const allSymbols = new Set<string>();
@@ -83,7 +69,7 @@ export function SaleVolumeTimelineCard() {
     tableData.unshift({ dt: currDate, value: totalCount });
   }
 
-  const hasOlder = data.hasOlder;
+  const hasOlder = !!data?.hasOlder;
 
   return (
     <div className="rounded-md bg-white p-3">
@@ -94,6 +80,7 @@ export function SaleVolumeTimelineCard() {
             action="Sold"
             data={tableData.slice(0, 4)}
             dataType="count"
+            loading={!data}
           />
         </div>
         <div className="w-full md:w-3/4 md:pl-2">
@@ -113,7 +100,11 @@ export function SaleVolumeTimelineCard() {
             </div>
             <div className="w-3/5 text-center">
               <span className="block text-xl sm:text-2xl">
-                {tableData.reduce((prev, curr) => prev + curr.value, 0)}
+                {!!data &&
+                  tableData.reduce((prev, curr) => prev + curr.value, 0)}
+                {!data && (
+                  <span className="inline-block w-32 bg-gray-200">&nbsp;</span>
+                )}
               </span>
               <span className="block text-sm text-gray-400">
                 Options sold in {end.year()}
@@ -142,6 +133,7 @@ export function SaleVolumeTimelineCard() {
               action="Sold"
               data={tableData.slice(0, 3)}
               dataType="count"
+              loading={!data}
             />
           </div>
         </div>
