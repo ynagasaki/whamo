@@ -17,7 +17,7 @@ export function EarnedTimelineCard() {
   const [end, setEnd] = useState(now.endOf('month'));
   const start = end.add(-11, 'months').startOf('month');
   const { data, error } = useSWR(
-    `/api/options/value?grp=mo&start=${start.format(
+    `/api/options/value?grp=txn-mo&start=${start.format(
       'YYYY-MM-DD',
     )}&end=${end.format('YYYY-MM-DD')}`,
     fetcher,
@@ -96,7 +96,7 @@ export function EarnedTimelineCard() {
         <div className="hidden md:block md:w-1/4 md:pr-2">
           <TimelineTable
             id="earn"
-            action="Earned thru"
+            action="Running total"
             data={tableData}
             dataType="money"
             loading={!data}
@@ -125,7 +125,7 @@ export function EarnedTimelineCard() {
                 )}
               </span>
               <span className="block text-sm text-gray-400">
-                Earned thru {end.year()}
+                Cumulative txns thru {end.format("MMM 'YY")}
               </span>
             </div>
             <div className="w-1/5 text-right">
@@ -148,7 +148,7 @@ export function EarnedTimelineCard() {
           <div className="md:hidden">
             <TimelineTable
               id="earn_sm"
-              action="Earned thru"
+              action="Running total"
               data={tableData.slice(0, 3)}
               dataType="money"
               loading={!data}

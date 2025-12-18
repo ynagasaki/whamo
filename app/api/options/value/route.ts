@@ -36,13 +36,20 @@ export async function GET(request: Request): Promise<Response> {
       break;
     }
     case 'txn-mo': {
-      result = await fetchOptionsTransactionsValueByMonth({
-        startDate: startDate.toDate(),
-        endDate: endDate.toDate(),
+      return Response.json({
+        result: await fetchOptionsTransactionsValueByMonth({
+          startDate: startDate.toDate(),
+          endDate: endDate.toDate(),
+        }),
+        startingTotal: (
+          await fetchOptionsTransactionsValueByMonth({
+            startDate: dayjs('1700-01-01').toDate(),
+            endDate: startDate.toDate(),
+          })
+        ).reduce((prev, curr) => prev + curr.value, 0),
+        hasOlder:
+          (await fetchOptionsTransactedBefore(startDate.toDate())).length > 0,
       });
-      hasOlder =
-        (await fetchOptionsTransactedBefore(startDate.toDate())).length > 0;
-      break;
     }
     case 'mo': {
       return Response.json({
