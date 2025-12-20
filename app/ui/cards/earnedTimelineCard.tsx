@@ -125,7 +125,7 @@ export function EarnedTimelineCard() {
                 )}
               </span>
               <span className="block text-sm text-gray-400">
-                Cumulative txns thru {end.format("MMM 'YY")}
+                Running total thru {end.format("MMM 'YY")}
               </span>
             </div>
             <div className="w-1/5 text-right">
