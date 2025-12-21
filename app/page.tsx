@@ -22,6 +22,12 @@ import { ClosedOptionCard } from './ui/optionCardClosed';
 import { TransactedTimelineCard } from './ui/cards/transactedTimelineCard';
 import { EarnedTimelineCard } from './ui/cards/earnedTimelineCard';
 import { SaleVolumeTimelineCard } from './ui/cards/saleVolumeTimelineCard';
+import {
+  FilterOptionsBar,
+  filtersContain,
+  matchesFilterLike,
+  OptionFilter,
+} from './ui/filterOptionsBar';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -69,6 +75,7 @@ export default function Page() {
   const [editOptionData, setEditOptionData] = useState<Option | undefined>(
     undefined,
   );
+  const [excludeFilters, setExcludeFilters] = useState<OptionFilter[]>([]);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-4xl flex-col bg-gray-100 pb-8">
@@ -139,6 +146,17 @@ export default function Page() {
           </Suspense>
         </div>
       </div>
+      <FilterOptionsBar
+        setExcludeFilter={(filter: OptionFilter, add: boolean) => {
+          if (add && !filtersContain(excludeFilters, filter)) {
+            setExcludeFilters([...excludeFilters, filter]);
+          } else if (!add) {
+            setExcludeFilters(
+              excludeFilters.filter((f) => !matchesFilterLike(f, filter)),
+            );
+          }
+        }}
+      ></FilterOptionsBar>
       <div className="mb-2 flex">
         <DndContext
           onDragEnd={dragEndHandler}
@@ -180,6 +198,7 @@ export default function Page() {
                     setEditOptionData(option);
                     setShowOptionForm(true);
                   }}
+                  excludeFilters={excludeFilters}
                 ></OptionsList>
               </Suspense>
             </div>
@@ -297,8 +316,10 @@ function AllocatableOptionsList({
 
 function OptionsList({
   editOptionCallback,
+  excludeFilters,
 }: {
   editOptionCallback: (option: Option) => void;
+  excludeFilters: OptionFilter[];
 }) {
   const { data, error } = useSWR(`/api/options`, fetcher);
 
@@ -326,16 +347,18 @@ function OptionsList({
 
   return (
     <>
-      {data.options.map((option: Option) => {
-        return (
-          <OptionCard
-            key={`option-${option.id}`}
-            editOptionCallback={editOptionCallback}
-            option={option}
-            progressStartDate={oldestTradeDate}
-          />
-        );
-      })}
+      {data.options
+        .filter((option: Option) => !filtersContain(excludeFilters, option))
+        .map((option: Option) => {
+          return (
+            <OptionCard
+              key={`option-${option.id}`}
+              editOptionCallback={editOptionCallback}
+              option={option}
+              progressStartDate={oldestTradeDate}
+            />
+          );
+        })}
     </>
   );
 }
