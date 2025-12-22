@@ -57,7 +57,7 @@ export function FilterOptionsBar({
   }
 
   return (
-    <div className="mb-2 px-4">
+    <div className="mb-2 flex flex-nowrap overflow-x-auto px-4">
       <>
         {filters.map((filter) => {
           return (
@@ -85,7 +85,8 @@ function FilterOptionButton({
   return (
     <button
       className={clsx(
-        'mr-2 inline-block rounded-full border border-gray-200 p-2 text-xs tracking-tight text-gray-700 md:text-sm md:tracking-normal',
+        'mr-2 inline-block flex flex-nowrap rounded-full border ' +
+          'border-gray-200 p-2 text-xs tracking-tight text-gray-700 md:text-sm md:tracking-normal',
         {
           'bg-gray-200': !enabled,
           'border-gray-300': enabled,
