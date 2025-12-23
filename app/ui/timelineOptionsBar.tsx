@@ -1,5 +1,5 @@
-import clsx from "clsx";
-import { useState } from "react";
+import clsx from 'clsx';
+import { useState } from 'react';
 
 export function TimelineOptionsBar({
   timelineRange,
@@ -9,11 +9,11 @@ export function TimelineOptionsBar({
   setTimelineRange: (range: 1 | 2) => void;
 }) {
   return (
-    <div className="w-full flex flex-nowrap">
+    <div className="flex w-full flex-nowrap">
       <button
         className={clsx(
           'mr-2 inline-block flex flex-nowrap rounded-full border ' +
-          'border-gray-200 p-2 text-xs tracking-tight text-gray-700 md:text-sm md:tracking-normal',
+            'border-gray-200 p-2 text-xs tracking-tight text-gray-700 md:text-sm md:tracking-normal',
           {
             'bg-gray-200': timelineRange === 1,
             'border-gray-300': timelineRange !== 1,
@@ -26,7 +26,7 @@ export function TimelineOptionsBar({
       <button
         className={clsx(
           'mr-2 inline-block flex flex-nowrap rounded-full border ' +
-          'border-gray-200 p-2 text-xs tracking-tight text-gray-700 md:text-sm md:tracking-normal',
+            'border-gray-200 p-2 text-xs tracking-tight text-gray-700 md:text-sm md:tracking-normal',
           {
             'bg-gray-200': timelineRange === 2,
             'border-gray-300': timelineRange !== 2,

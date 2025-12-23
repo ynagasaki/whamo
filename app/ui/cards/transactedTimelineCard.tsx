@@ -23,10 +23,14 @@ interface TimelineData {
   value_gain?: number;
 }
 
-export function TransactedTimelineCard({ timelineRange }: { timelineRange?: 1 | 2 }) {
+export function TransactedTimelineCard({
+  timelineRange,
+}: {
+  timelineRange?: 1 | 2;
+}) {
   const now = dayjs(new Date());
   const [end, setEnd] = useState(now.endOf('month'));
-  const lookback = (12 * (timelineRange ?? 1) - 1);
+  const lookback = 12 * (timelineRange ?? 1) - 1;
   const start = end.add(-lookback, 'months').startOf('month');
   const { data, error } = useSWR(
     `/api/options/value?grp=txn-mo&start=${start.format(
@@ -132,7 +136,9 @@ export function TransactedTimelineCard({ timelineRange }: { timelineRange?: 1 | 
                     hidden: !hasOlder,
                   },
                 )}
-                onClick={() => setEnd(end.add(-12 * (timelineRange ?? 1), 'months'))}
+                onClick={() =>
+                  setEnd(end.add(-12 * (timelineRange ?? 1), 'months'))
+                }
               >
                 <ChevronLeftIcon className="h-8 w-8 md:h-9 md:w-9" />
               </button>
@@ -146,7 +152,8 @@ export function TransactedTimelineCard({ timelineRange }: { timelineRange?: 1 | 
                 )}
               </span>
               <span className="block text-sm text-gray-400">
-                Transacted {start.format("MMM 'YY")} &ndash; {end.format("MMM 'YY")}
+                Transacted {start.format("MMM 'YY")} &ndash;{' '}
+                {end.format("MMM 'YY")}
               </span>
             </div>
             <div className="w-1/5 text-right">
@@ -158,9 +165,13 @@ export function TransactedTimelineCard({ timelineRange }: { timelineRange?: 1 | 
                   },
                 )}
                 onClick={() => {
-                  const targetEnd = end.add(12 * (timelineRange ?? 1), 'months');
+                  const targetEnd = end.add(
+                    12 * (timelineRange ?? 1),
+                    'months',
+                  );
                   setEnd(targetEnd.diff(now) > 0 ? now : targetEnd);
-                }}>
+                }}
+              >
                 <ChevronRightIcon className="h-8 w-8 md:h-9 md:w-9" />
               </button>
             </div>

@@ -132,20 +132,29 @@ export default function Page() {
         </div>
       </div> */}
       <div className="flex flex-wrap p-4">
-        <TimelineOptionsBar timelineRange={timelineRange} setTimelineRange={setTimelineRange}></TimelineOptionsBar>
+        <TimelineOptionsBar
+          timelineRange={timelineRange}
+          setTimelineRange={setTimelineRange}
+        ></TimelineOptionsBar>
         <div className="mt-2 w-full">
           <Suspense>
-            <TransactedTimelineCard timelineRange={timelineRange}></TransactedTimelineCard>
+            <TransactedTimelineCard
+              timelineRange={timelineRange}
+            ></TransactedTimelineCard>
           </Suspense>
         </div>
         <div className="mt-2 w-full">
           <Suspense>
-            <SaleVolumeTimelineCard timelineRange={timelineRange}></SaleVolumeTimelineCard>
+            <SaleVolumeTimelineCard
+              timelineRange={timelineRange}
+            ></SaleVolumeTimelineCard>
           </Suspense>
         </div>
         <div className="mt-2 w-full">
           <Suspense>
-            <EarnedTimelineCard timelineRange={timelineRange}></EarnedTimelineCard>
+            <EarnedTimelineCard
+              timelineRange={timelineRange}
+            ></EarnedTimelineCard>
           </Suspense>
         </div>
       </div>

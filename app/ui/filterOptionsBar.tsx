@@ -86,7 +86,7 @@ function FilterOptionButton({
     <button
       className={clsx(
         'mr-2 inline-block flex flex-nowrap rounded-full border ' +
-        'border-gray-200 p-2 text-xs tracking-tight text-gray-700 md:text-sm md:tracking-normal',
+          'border-gray-200 p-2 text-xs tracking-tight text-gray-700 md:text-sm md:tracking-normal',
         {
           'bg-gray-200': !enabled,
           'border-gray-300': enabled,
@@ -104,7 +104,7 @@ function FilterOptionButton({
       {enabled && (
         <EyeSlashIcon className="mr-1 inline-block h-4 w-4 text-gray-400"></EyeSlashIcon>
       )}
-      <div className="mr-1 hidden text-xs leading-5 font-bold text-gray-500 md:inline-block">
+      <div className="mr-1 hidden text-xs font-bold leading-5 text-gray-500 md:inline-block">
         {item.otype}
       </div>
       <div className="inline-block text-xs font-bold text-gray-500 md:hidden">
