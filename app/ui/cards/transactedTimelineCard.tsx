@@ -23,10 +23,11 @@ interface TimelineData {
   value_gain?: number;
 }
 
-export function TransactedTimelineCard() {
+export function TransactedTimelineCard({ timelineRange }: { timelineRange?: 1 | 2 }) {
   const now = dayjs(new Date());
   const [end, setEnd] = useState(now.endOf('month'));
-  const start = end.add(-11, 'months').startOf('month');
+  const lookback = (12 * (timelineRange ?? 1) - 1);
+  const start = end.add(-lookback, 'months').startOf('month');
   const { data, error } = useSWR(
     `/api/options/value?grp=txn-mo&start=${start.format(
       'YYYY-MM-DD',
@@ -131,7 +132,7 @@ export function TransactedTimelineCard() {
                     hidden: !hasOlder,
                   },
                 )}
-                onClick={() => setEnd(end.add(-12, 'months'))}
+                onClick={() => setEnd(end.add(-12 * (timelineRange ?? 1), 'months'))}
               >
                 <ChevronLeftIcon className="h-8 w-8 md:h-9 md:w-9" />
               </button>
@@ -145,7 +146,7 @@ export function TransactedTimelineCard() {
                 )}
               </span>
               <span className="block text-sm text-gray-400">
-                Transacted in {end.year()}
+                Transacted {start.format("MMM 'YY")} &ndash; {end.format("MMM 'YY")}
               </span>
             </div>
             <div className="w-1/5 text-right">
@@ -156,8 +157,10 @@ export function TransactedTimelineCard() {
                     hidden: end.add(1, 'month').diff(now) > 0,
                   },
                 )}
-                onClick={() => setEnd(end.add(12, 'months'))}
-              >
+                onClick={() => {
+                  const targetEnd = end.add(12 * (timelineRange ?? 1), 'months');
+                  setEnd(targetEnd.diff(now) > 0 ? now : targetEnd);
+                }}>
                 <ChevronRightIcon className="h-8 w-8 md:h-9 md:w-9" />
               </button>
             </div>

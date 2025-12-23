@@ -28,6 +28,7 @@ import {
   matchesFilterLike,
   OptionFilter,
 } from './ui/filterOptionsBar';
+import { TimelineOptionsBar } from './ui/timelineOptionsBar';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -76,6 +77,7 @@ export default function Page() {
     undefined,
   );
   const [excludeFilters, setExcludeFilters] = useState<OptionFilter[]>([]);
+  const [timelineRange, setTimelineRange] = useState<1 | 2>(1);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-4xl flex-col bg-gray-100 pb-8">
@@ -130,19 +132,20 @@ export default function Page() {
         </div>
       </div> */}
       <div className="flex flex-wrap p-4">
-        <div className="w-full">
+        <TimelineOptionsBar timelineRange={timelineRange} setTimelineRange={setTimelineRange}></TimelineOptionsBar>
+        <div className="mt-2 w-full">
           <Suspense>
-            <TransactedTimelineCard></TransactedTimelineCard>
+            <TransactedTimelineCard timelineRange={timelineRange}></TransactedTimelineCard>
           </Suspense>
         </div>
         <div className="mt-2 w-full">
           <Suspense>
-            <SaleVolumeTimelineCard></SaleVolumeTimelineCard>
+            <SaleVolumeTimelineCard timelineRange={timelineRange}></SaleVolumeTimelineCard>
           </Suspense>
         </div>
         <div className="mt-2 w-full">
           <Suspense>
-            <EarnedTimelineCard></EarnedTimelineCard>
+            <EarnedTimelineCard timelineRange={timelineRange}></EarnedTimelineCard>
           </Suspense>
         </div>
       </div>
