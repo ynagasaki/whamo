@@ -151,9 +151,8 @@ export function TransactedTimelineCard({
                   <span className="inline-block w-32 bg-gray-200">&nbsp;</span>
                 )}
               </span>
-              <span className="block text-sm text-gray-400">
-                Transacted {start.format("MMM 'YY")} &ndash;{' '}
-                {end.format("MMM 'YY")}
+              <span className="block text-xs text-gray-400 md:text-sm">
+                Transacted {start.format("MMM 'YY")}-{end.format("MMM 'YY")}
               </span>
             </div>
             <div className="w-1/5 text-right">
