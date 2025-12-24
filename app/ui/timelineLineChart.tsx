@@ -69,6 +69,8 @@ export function TimelineLineChart({
           x: {
             ticks: {
               color: 'rgb(156, 163, 175)',
+              maxRotation: 0,
+              minRotation: 0,
             },
             grid: {
               display: false,
