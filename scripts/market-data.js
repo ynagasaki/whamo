@@ -26,7 +26,7 @@ function getNextUpdateWaitMillis() {
       .startOf('day')
       .add(9, 'hours')
       .add(30, 'minutes');
-  } else if (now.hour() > 16) {
+  } else if (now.hour() > 16 || now.hour() === 16 && now.minute() >= 10) {
     nextCheckDate = now
       .add(1, 'day')
       .startOf('day')
@@ -39,6 +39,23 @@ function getNextUpdateWaitMillis() {
   }
   console.log(`  Will check again at: ${nextCheckDate.toISOString()}`);
   return nextCheckDate.diff(now);
+}
+
+function displayDuration(millis) {
+  const secs = millis / 1000;
+  const mins = secs / 60;
+  const hours = mins / 60;
+  const days = hours / 24;
+
+  if (mins < 0) {
+    return { value: secs, unit: 'sec' };
+  } else if (hours < 0) {
+    return { value: mins, unit: 'min' };
+  } else if (days < 0) {
+    return { value: hours, unit: 'hr' };
+  } else {
+    return { value: days, unit: 'day' };
+  }
 }
 
 async function updatePrices() {
@@ -103,8 +120,9 @@ async function updatePrices() {
     clearInterval(updatePricesTimer);
   }
   const waitMillis = getNextUpdateWaitMillis();
+  const dur = displayDuration(waitMillis);
   console.log(
-    `  Next run in ${waitMillis / 1000} sec (${waitMillis / 1000 / 60} min)`,
+    `  Next run in ${dur.value} ${dur.unit}`,
   );
   updatePricesTimer = setInterval(updatePrices, waitMillis);
 
