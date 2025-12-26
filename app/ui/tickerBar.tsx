@@ -45,6 +45,7 @@ function TickerCard({
   ticker: StockInfo;
   options: Option[];
 }) {
+  const counts = new Map<string, number>();
   const sortedOptions = options.toSorted((o1, o2) => {
     if (o1.otype === o2.otype) {
       return o1.strike - o2.strike;
@@ -53,7 +54,17 @@ function TickerCard({
       return -1;
     }
     return 1;
-  });
+  }).reduce((prev, curr) => {
+    const key = `${curr.otype}-${curr.strike}`;
+    if (prev.length > 0 && prev[prev.length - 1].strike === curr.strike && prev[prev.length - 1].otype === curr.otype) {
+      const c = counts.get(key) ?? 0;
+      counts.set(key, c + 1);
+      return prev;
+    }
+    counts.set(key, 1);
+    prev.push(curr);
+    return prev;
+  }, new Array<Option>());
 
   return (
     <div className="w-1/2 pr-2 md:w-1/4">
@@ -73,6 +84,7 @@ function TickerCard({
               const itm =
                 (option.otype === 'CALL' && ticker.price >= option.strike) ||
                 (option.otype === 'PUT' && ticker.price <= option.strike);
+              const count = counts.get(`${option.otype}-${option.strike}`);
 
               return (
                 <span
@@ -85,6 +97,10 @@ function TickerCard({
                     {option.otype.charAt(0)}-
                   </span>
                   {option.strike}
+                  {count && count > 1 && <span className={clsx("text-xs", {
+                    "text-gray-400": !itm,
+                    "text-yellow-500": itm,
+                  })}>&nbsp;x{count}</span>}
                 </span>
               );
             })}
