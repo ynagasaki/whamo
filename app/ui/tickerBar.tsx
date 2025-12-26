@@ -37,7 +37,7 @@ function TickerCard({ ticker }: { ticker: StockInfo }) {
           <span className="block text-sm">{ticker.symbol}</span>
           <span className="block text-xl">{ticker.price}</span>
           <span className="block text-xs text-gray-400">
-            {dayjs(ticker.last_updated).format('MMM DD HH:mm')}
+            {dayjs(ticker.last_updated).format('MM-DD HH:mm')}
           </span>
         </div>
         <div className="w-1/2">&nbsp;</div>
