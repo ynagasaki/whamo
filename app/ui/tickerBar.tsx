@@ -76,6 +76,7 @@ function TickerCard({
 
               return (
                 <span
+                  key={`opt-strike-${option.otype}-${option.symbol}-${option.strike}`}
                   className={clsx('block px-2 text-sm', {
                     'bg-yellow-200 text-yellow-600': itm,
                   })}
