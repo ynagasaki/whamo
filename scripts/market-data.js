@@ -10,6 +10,37 @@ function sqldt(dt) {
   return dt.toISOString();
 }
 
+function getNextUpdateWaitMillis() {
+  const now = dayjs(new Date());
+  let nextCheckDate = now.add(1, 'day');
+  console.log(`  Now is: ${now.toISOString()}`);
+  if (now.day() === 0) {
+    nextCheckDate = now
+      .add(1, 'day')
+      .startOf('day')
+      .add(9, 'hours')
+      .add(30, 'minutes');
+  } else if (now.day() === 6) {
+    nextCheckDate = now
+      .add(2, 'days')
+      .startOf('day')
+      .add(9, 'hours')
+      .add(30, 'minutes');
+  } else if (now.hour() > 16) {
+    nextCheckDate = now
+      .add(1, 'day')
+      .startOf('day')
+      .add(9, 'hours')
+      .add(30, 'minutes');
+  } else if (now.hour() < 9) {
+    nextCheckDate = now.add(30, 'minutes');
+  } else {
+    nextCheckDate = now.add(10, 'minutes');
+  }
+  console.log(`  Will check again at: ${nextCheckDate.toISOString()}`);
+  return nextCheckDate.diff(now);
+}
+
 async function updatePrices() {
   console.log(`Running updatePrices...`);
   console.log(`  Fetching...`);
@@ -67,6 +98,16 @@ async function updatePrices() {
          symbol=${symbol};`;
   }
 
+  console.log(`Determining next run...`);
+  if (updatePricesTimer) {
+    clearInterval(updatePricesTimer);
+  }
+  const waitMillis = getNextUpdateWaitMillis();
+  console.log(
+    `  Next run in ${waitMillis / 1000} sec (${waitMillis / 1000 / 60} min)`,
+  );
+  updatePricesTimer = setInterval(updatePrices, waitMillis);
+
   console.log(`Done.`);
 }
 
@@ -80,7 +121,7 @@ async function garbageCollect() {
   console.log(`Done.`);
 }
 
-const updatePricesTimer = setInterval(updatePrices, 1000 * 60 * 1);
+let updatePricesTimer = setInterval(updatePrices, 1000 * 5);
 const garbageCollectTimer = setInterval(
   garbageCollect,
   1000 * 60 * 60 * 24 * 7,
