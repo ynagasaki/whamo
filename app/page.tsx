@@ -11,7 +11,13 @@ import {
   rectIntersection,
 } from '@dnd-kit/core';
 import { AllocOptionCard } from '@/app/ui/allocateableOptionCard';
-import { AllocatableOption, ClosedOption, Goal, Option } from '@/app/lib/model';
+import {
+  AllocatableOption,
+  ClosedOption,
+  Goal,
+  Option,
+  StockInfo,
+} from '@/app/lib/model';
 import { fetcher, postData } from '@/app/lib/util';
 import { GoalCard } from '@/app/ui/goalCard';
 import { InputFormModal } from '@/app/ui/formModal';
@@ -29,6 +35,7 @@ import {
   OptionFilter,
 } from './ui/filterOptionsBar';
 import { TimelineOptionsBar } from './ui/timelineOptionsBar';
+import { TickerBar } from './ui/tickerBar';
 
 export default function Page() {
   const dragEndHandler = async (event: DragEndEvent): Promise<void> => {
@@ -99,38 +106,6 @@ export default function Page() {
           }}
         ></PlusIcon>
       </div>
-      {/* <div className="flex flex-wrap p-4">
-        <div className="w-1/2 pr-2 md:w-1/4">
-          <Suspense>
-            <TransactedCard />
-          </Suspense>
-        </div>
-        <div className="w-1/2 px-2 pr-0 md:w-1/4 md:pr-2">
-          <Suspense>
-            <EarnRateCard />
-          </Suspense>
-        </div>
-        <div className="w-1/2 px-2 pl-0 pt-2 md:w-1/4 md:pl-2 md:pt-0">
-          <Suspense>
-            <TopSymbolsCard></TopSymbolsCard>
-          </Suspense>
-        </div>
-        <div className="w-1/2 pl-2 pt-2 md:w-1/4 md:pt-0">
-          <Suspense>
-            <TopTagsCard></TopTagsCard>
-          </Suspense>
-        </div>
-        <div className="w-1/2 pr-2 pt-2 md:w-1/4">
-          <Suspense>
-            <OptionSumCard></OptionSumCard>
-          </Suspense>
-        </div>
-        <div className="w-full pt-2 md:w-3/4 md:pl-2">
-          <Suspense>
-            <TransactedTimelineCard></TransactedTimelineCard>
-          </Suspense>
-        </div>
-      </div> */}
       <div className="flex flex-wrap p-4">
         <TimelineOptionsBar
           timelineRange={timelineRange}
@@ -158,17 +133,22 @@ export default function Page() {
           </Suspense>
         </div>
       </div>
-      <FilterOptionsBar
-        setExcludeFilter={(filter: OptionFilter, add: boolean) => {
-          if (add && !filtersContain(excludeFilters, filter)) {
-            setExcludeFilters([...excludeFilters, filter]);
-          } else if (!add) {
-            setExcludeFilters(
-              excludeFilters.filter((f) => !matchesFilterLike(f, filter)),
-            );
-          }
-        }}
-      ></FilterOptionsBar>
+      <Suspense>
+        <TickerBar></TickerBar>
+      </Suspense>
+      <Suspense>
+        <FilterOptionsBar
+          setExcludeFilter={(filter: OptionFilter, add: boolean) => {
+            if (add && !filtersContain(excludeFilters, filter)) {
+              setExcludeFilters([...excludeFilters, filter]);
+            } else if (!add) {
+              setExcludeFilters(
+                excludeFilters.filter((f) => !matchesFilterLike(f, filter)),
+              );
+            }
+          }}
+        ></FilterOptionsBar>
+      </Suspense>
       <div className="mb-2 flex">
         <DndContext
           onDragEnd={dragEndHandler}
@@ -333,7 +313,7 @@ function OptionsList({
   editOptionCallback: (option: Option) => void;
   excludeFilters: OptionFilter[];
 }) {
-  const { data, error } = useSWR(`/api/options`, fetcher);
+  const { data, error } = useSWR(`/api/options?inc=stock_info`, fetcher);
 
   if (error) {
     return (
@@ -350,12 +330,14 @@ function OptionsList({
       </div>
     );
   }
+
   const sortedOptions = (data.options as Option[]).toSorted(
     (o1: Option, o2: Option) => {
       return o1.traded.localeCompare(o2.traded);
     },
   );
   const oldestTradeDate = sortedOptions[0]?.traded;
+  const stockInfo = data.stockInfo as StockInfo[];
 
   return (
     <>
@@ -368,6 +350,7 @@ function OptionsList({
               editOptionCallback={editOptionCallback}
               option={option}
               progressStartDate={oldestTradeDate}
+              stockInfo={stockInfo.find((si) => si.symbol === option.symbol)}
             />
           );
         })}

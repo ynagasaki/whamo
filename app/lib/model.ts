@@ -63,3 +63,9 @@ export interface AggValue {
 export interface AggTransactionCounts {
   [key: string]: { [key: string]: number };
 }
+
+export interface StockInfo {
+  symbol: string;
+  price: number;
+  last_updated: string;
+}

@@ -1,14 +1,18 @@
+import clsx from 'clsx';
 import dayjs from 'dayjs';
-import { Option } from '../lib/model';
+import { Option, StockInfo } from '../lib/model';
 import { dday, ddayPct, fmtDate, fmtMoney, tenseExp } from '../lib/util';
 import { CardProgressBar } from './widgets/cardProgressBar';
+import { CurrencyDollarIcon } from '@heroicons/react/16/solid';
 
 export function OptionCard({
   option,
+  stockInfo,
   progressStartDate,
   editOptionCallback,
 }: {
   option: Option;
+  stockInfo: StockInfo | undefined;
   progressStartDate: string | undefined;
   editOptionCallback: (option: Option) => void;
 }) {
@@ -16,9 +20,17 @@ export function OptionCard({
   const expMarketStart = dayjs(progressStart).add(9 * 60 + 30, 'minutes'); // set to 9:30 AM
   const expMarketClose = dayjs(new Date(option.exp)).add(16 * 60, 'minutes'); // set to 4:00 PM
   const pct = ddayPct(expMarketStart.toDate(), expMarketClose.toDate());
+  const itm =
+    stockInfo?.price !== undefined &&
+    ((option.otype === 'CALL' && stockInfo.price >= option.strike) ||
+      (option.otype === 'PUT' && stockInfo.price <= option.strike));
 
   return (
-    <div className="relative mb-2 flex flex-wrap rounded-md bg-white p-3">
+    <div
+      className={clsx('relative mb-2 flex flex-wrap rounded-md bg-white p-3', {
+        'border-l-2 border-yellow-400 md:border-l-4': itm,
+      })}
+    >
       <CardProgressBar idPrefix={`opt-${option.id}`} pct={Math.min(pct, 100)} />
       <div className="w-2/3">
         <span className="block text-gray-700">
@@ -31,14 +43,16 @@ export function OptionCard({
               onClick={() => editOptionCallback(option)}
             >
               {option.symbol}
-              <span className="text-gray-400">@{option.strike}</span>
+              <span className="mr-1 text-gray-400">@{option.strike}</span>
             </span>
+            {itm && (
+              <CurrencyDollarIcon className="mb-1 inline-block h-4 w-4 text-yellow-400"></CurrencyDollarIcon>
+            )}
           </div>
         </span>
       </div>
       <div className="w-1/3 text-right">
         <div className="absolute right-0 top-0 mr-3 mt-3 md:relative md:m-0 md:text-xl">
-          {/* <span className="text-green-200">$</span> */}
           <span className="text-green-400">
             {fmtMoney(option.price * 100 - option.fee)}
           </span>
