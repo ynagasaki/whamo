@@ -47,11 +47,11 @@ function displayDuration(millis) {
   const hours = mins / 60;
   const days = hours / 24;
 
-  if (mins < 0) {
+  if (mins < 1) {
     return { value: secs, unit: 'sec' };
-  } else if (hours < 0) {
+  } else if (hours < 1) {
     return { value: mins, unit: 'min' };
-  } else if (days < 0) {
+  } else if (days < 1) {
     return { value: hours, unit: 'hr' };
   } else {
     return { value: days, unit: 'day' };
