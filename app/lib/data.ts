@@ -6,6 +6,7 @@ import {
   AllocatableOption,
   ClosedOption,
   AggValue,
+  StockInfo,
 } from './model';
 import { sqldt } from './util';
 
@@ -474,4 +475,32 @@ export async function setOptionAssignment(
   await client.sql`UPDATE options SET assigned=${
     isAssigned ? 1 : 0
   } WHERE id=${optionId}`;
+}
+
+export async function fetchStockInfo(
+  dt: Date = new Date(),
+): Promise<StockInfo[]> {
+  const client = await getClient();
+  const result = await client.sql<StockInfo>`SELECT
+    sd.symbol AS symbol,
+    sd.price AS price,
+    sd.last_updated AS last_updated
+  FROM
+    (
+      SELECT
+        o.symbol AS symbol,
+        COUNT(1) AS count
+      FROM
+        options AS o
+      WHERE
+        exp >= ${sqldt(dt)}
+        AND closed_by IS NULL
+        AND action = 'STO'
+      GROUP BY
+        o.symbol
+    ) AS o
+    INNER JOIN
+      stock_data AS sd ON o.symbol = sd.symbol;`;
+
+  return result.rows;
 }

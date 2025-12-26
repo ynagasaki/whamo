@@ -3,6 +3,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "market-data": "node -r dotenv/config ./scripts/market-data.js dotenv_config_path=./config.env",
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
     "seed": "node -r dotenv/config ./scripts/seed.js dotenv_config_path=./config.env",
@@ -19,6 +20,7 @@
     "chart.js": "^4.4.7",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.13",
+    "finnhub": "^1.2.19",
     "next": "^14.2.23",
     "postcss": "8.4.31",
     "react": "18.2.0",

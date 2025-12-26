@@ -132,6 +132,12 @@ class Client {
       await this
         .sql`ALTER TABLE goals ADD COLUMN category INTEGER REFERENCES tags(id);`;
     } catch (err) {}
+
+    await this.sql`CREATE TABLE IF NOT EXISTS stock_data (
+      symbol VARCHAR(32) PRIMARY KEY,
+      price INTEGER NOT NULL,
+      last_updated DATETIME NOT NULL
+    );`;
   }
 }
 
