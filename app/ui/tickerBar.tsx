@@ -47,13 +47,13 @@ function TickerCard({
 }) {
   const counts = new Map<string, number>();
   const sortedOptions = options.toSorted((o1, o2) => {
-    if (o1.otype === o2.otype) {
-      return o1.strike - o2.strike;
+    if (o1.strike === o2.strike) {
+      if (o1.otype === 'CALL') {
+        return -1;
+      }
+      return 1;
     }
-    if (o1.otype === 'CALL') {
-      return -1;
-    }
-    return 1;
+    return o1.strike - o2.strike;
   }).reduce((prev, curr) => {
     const key = `${curr.otype}-${curr.strike}`;
     if (prev.length > 0 && prev[prev.length - 1].strike === curr.strike && prev[prev.length - 1].otype === curr.otype) {
@@ -65,6 +65,8 @@ function TickerCard({
     prev.push(curr);
     return prev;
   }, new Array<Option>());
+  const lower = sortedOptions.filter(o => o.strike <= ticker.price);
+  const upper = sortedOptions.filter(o => o.strike > ticker.price);
 
   return (
     <div className="w-1/2 pr-2 md:w-1/4">
@@ -80,33 +82,39 @@ function TickerCard({
         </div>
         <div className="h-16 w-1/2 overflow-y-auto">
           <>
-            {sortedOptions.map((option) => {
-              const itm =
-                (option.otype === 'CALL' && ticker.price >= option.strike) ||
-                (option.otype === 'PUT' && ticker.price <= option.strike);
-              const count = counts.get(`${option.otype}-${option.strike}`);
-
-              return (
-                <span
-                  key={`opt-strike-${option.otype}-${option.symbol}-${option.strike}`}
-                  className={clsx('block px-2 text-sm', {
-                    'bg-yellow-200 text-yellow-600': itm,
-                  })}
-                >
-                  <span className="text-xs font-bold">
-                    {option.otype.charAt(0)}-
-                  </span>
-                  {option.strike}
-                  {count && count > 1 && <span className={clsx("text-xs", {
-                    "text-gray-400": !itm,
-                    "text-yellow-500": itm,
-                  })}>&nbsp;x{count}</span>}
-                </span>
-              );
-            })}
+            {lower.map((option) => optionStrikeRow(option, ticker, counts))}
+          </>
+          {lower.length > 0 && upper.length > 0 && <hr className="border-yellow-400"></hr>}
+          <>
+            {upper.map((option) => optionStrikeRow(option, ticker, counts))}
           </>
         </div>
       </div>
     </div>
+  );
+}
+
+function optionStrikeRow(option: Option, ticker: StockInfo, counts: Map<string, number>) {
+  const itm =
+    (option.otype === 'CALL' && ticker.price >= option.strike) ||
+    (option.otype === 'PUT' && ticker.price <= option.strike);
+  const count = counts.get(`${option.otype}-${option.strike}`);
+
+  return (
+    <span
+      key={`opt-strike-${option.otype}-${option.symbol}-${option.strike}`}
+      className={clsx('block px-2 text-sm', {
+        'bg-yellow-200 text-yellow-600': itm,
+      })}
+    >
+      <span className="text-xs font-bold">
+        {option.otype.charAt(0)}-
+      </span>
+      {option.strike}
+      {count && count > 1 && <span className={clsx("text-xs", {
+        "text-gray-400": !itm,
+        "text-yellow-500": itm,
+      })}>&nbsp;x{count}</span>}
+    </span>
   );
 }
